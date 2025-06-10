@@ -1,4 +1,4 @@
 import TopGrpOrd
 
 def main : IO Unit :=
-  IO.println s!"Hello, {hello}!"
+  IO.println "Ordinal Homeomorphism Groups - Lean 4 Formalization"

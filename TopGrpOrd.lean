@@ -7,3 +7,8 @@ import OrdinalHomeo.DegreeOne.Galvin
 import OrdinalHomeo.DegreeOne.NormalGenerators
 import OrdinalHomeo.DegreeOne.PerfectGroups
 import OrdinalHomeo.DegreeOne.StrongDistortion
+import OrdinalHomeo.HigherDegree.SplitExactSequences
+import OrdinalHomeo.HigherDegree.FluxHomomorphisms
+import OrdinalHomeo.HigherDegree.PropertiesF0d
+import OrdinalHomeo.HigherDegree.Abelianization
+import OrdinalHomeo.HigherDegree.NormalGenerators
