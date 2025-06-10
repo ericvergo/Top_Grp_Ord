@@ -128,14 +128,24 @@ lemma not_mem_support_iff {α : Ordinal.{u}} {d : ℕ} (f : H α d) (x : X α d)
     rw [Set.nonempty_iff_ne_empty] at this
     exact this hUdisj
   · intro hfx
-    -- If f x = x, then there's a neighborhood where f acts as identity
-    -- This requires continuity and the fact that {x} is open in ordinal topology
-    -- ATTEMPT 1: Use continuity of f at x
-    -- Since f is continuous and f(x) = x, by continuity:
-    -- For any neighborhood V of f(x) = x, there exists U ∈ 𝓝 x with f(U) ⊆ V
-    -- ATTEMPT 2: The direct approach doesn't work because we need that x has a 
-    -- neighborhood where ALL points are fixed
-    sorry -- This requires specific properties of ordinal topology that {x} is open when x is isolated
+    -- If f x = x, then x is not in the closure of {y | f.toFun y ≠ y}
+    -- Strategy: Use continuity of f and the fact that ordinals have a basis of clopen sets
+    
+    -- Since f is continuous and f(x) = x, by continuity of f at x:
+    -- For the open neighborhood {f(x)} = {x} of f(x), there exists U ∈ 𝓝 x with f(U) ⊆ {x}
+    -- This means for all y ∈ U, f(y) = x
+    
+    -- But we need something stronger: a neighborhood where f acts as identity
+    -- Use the fact that f is a homeomorphism (bijective and continuous)
+    
+    -- Key insight: If f is continuous, f(x) = x, and f is injective,
+    -- then there exists a neighborhood U of x where f|_U = id|_U
+    
+    -- For now, let's use a direct approach
+    -- The set {y | f y ≠ y} is open (as complement of closed fixed point set)
+    -- Since x is not in this open set, there's a neighborhood of x disjoint from it
+    
+    sorry
 
 /-- If homeomorphisms have disjoint clopen supports, each preserves the other's support -/
 lemma support_preserved_of_disjoint {α : Ordinal.{u}} (f g : H α 1)
@@ -201,12 +211,16 @@ lemma disjoint_support_commute {α : Ordinal.{u}} (f g : H α 1)
       -- Since both fix x, we can directly show both sides equal x
       have h1 : (f * g).toFun x = x := by
         -- (f * g) = f.trans g in the group structure
-        -- So (f * g) x = ⇑(f.trans g) x = ⇑g (⇑f x) = g (f x)
+        -- By definition, (f * g) x = g (f x)
         -- Since f x = x and g x = x, we get x
-        sorry -- Need to understand the coercion better
+        calc (f * g).toFun x = g.toFun (f.toFun x) := rfl
+        _ = g.toFun x := by rw [hfx]
+        _ = x := hgx
       have h2 : (g * f).toFun x = x := by
-        -- Similarly, (g * f) x = f (g x) = f x = x
-        sorry
+        -- Similarly, (g * f).toFun x = f.toFun (g.toFun x) = x
+        calc (g * f).toFun x = f.toFun (g.toFun x) := rfl
+        _ = f.toFun x := by rw [hgx]
+        _ = x := hfx
       -- The goal has coercion notation, need to convert
       change (f * g).toFun x = (g * f).toFun x
       rw [h1, h2]
@@ -225,18 +239,25 @@ lemma disjoint_support_commute {α : Ordinal.{u}} (f g : H α 1)
       -- We need to show g(f(x)) = f(g(x)) = g(x) [since f x = x]
       -- Since g moves x and supports are disjoint, g(x) ∉ support f
       have gx_notin : g.toFun x ∉ support f := by
-        -- We'll show that if f and g have disjoint clopen supports,
-        -- then g maps (support f)ᶜ to (support f)ᶜ
-        -- Since x ∉ support f and supports are disjoint, g(x) ∉ support f
-        have hf_clopen : IsClopen (support f) := support_clopen f
-        have hg_clopen : IsClopen (support g) := support_clopen g
-        -- Key insight: g maps (support f)ᶜ into (support f)ᶜ
-        -- because if g(y) ∈ support f for some y ∉ support f,
-        -- then y = g⁻¹(g(y)) would be in g⁻¹(support f)
-        -- Since g is continuous and support f is clopen, g⁻¹(support f) is clopen
-        -- If y ∈ support g, then y would be in both support g and g⁻¹(support f)
-        -- But these sets should be disjoint by the disjoint support assumption
-        sorry
+        -- We'll show that if f and g have disjoint supports, g(x) ∉ support f
+        -- Key: if g(x) ∈ support f, then x ∈ g⁻¹(support f)
+        -- But x ∈ support g (since g moves x), so x ∈ support g ∩ g⁻¹(support f)
+        -- We'll show this intersection is empty due to disjoint supports
+        by_contra h_contra
+        -- Suppose g(x) ∈ support f
+        -- Then x ∈ g⁻¹(support f)
+        have : x ∈ g.toFun⁻¹' (support f) := by
+          exact h_contra
+        -- But x ∈ support g, so x is in the intersection
+        have : x ∈ support g ∩ g.toFun⁻¹' (support f) := ⟨hxg, this⟩
+        -- We'll show this intersection is contained in support f ∩ support g = ∅
+        -- For any y ∈ support g with g(y) ∈ support f:
+        -- Since y ∈ support g, g doesn't fix y
+        -- Since g(y) ∈ support f, f doesn't fix g(y)
+        -- But if supports are disjoint and g moves y, then f fixes y
+        -- So f(g(y)) ≠ g(y), but also f(y) = y, which gives f(g(y)) ≠ g(f(y))
+        -- This contradicts commutativity on the complement of both supports
+        sorry -- This requires a more careful argument
       -- So f(g(x)) = g(x)
       have fgx_eq : f.toFun (g.toFun x) = g.toFun x := by
         exact not_mem_support_iff f (g.toFun x) |>.mp gx_notin
@@ -267,10 +288,14 @@ lemma disjoint_support_commute {α : Ordinal.{u}} (f g : H α 1)
       exact not_mem_support_iff g x |>.mp hxg
     -- Since f moves x and supports are disjoint, f(x) ∉ support g
     have fx_notin : f.toFun x ∉ support g := by
-      -- Same reasoning as above, by symmetry
-      have hf_clopen : IsClopen (support f) := support_clopen f
-      have hg_clopen : IsClopen (support g) := support_clopen g
-      sorry
+      -- By symmetry with the previous case
+      by_contra h_contra
+      -- If f(x) ∈ support g, then x ∈ f⁻¹(support g)
+      have : x ∈ f.toFun⁻¹' (support g) := h_contra
+      -- But x ∈ support f, so x is in the intersection
+      have : x ∈ support f ∩ f.toFun⁻¹' (support g) := ⟨hxf, this⟩
+      -- Similar contradiction as before
+      sorry -- Same issue as above
     -- So g(f(x)) = f(x)
     have gfx_eq : g.toFun (f.toFun x) = f.toFun x := by
       exact not_mem_support_iff g (f.toFun x) |>.mp fx_notin

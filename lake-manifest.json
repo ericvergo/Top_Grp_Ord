@@ -5,7 +5,7 @@
    "type": "git",
    "subDir": null,
    "scope": "",
-   "rev": "30b4d6e87eaaa93450a25e8ad795bf3596275589",
+   "rev": "fa2a544b28453a4179cc78f8c36f42c2b8b6f4e0",
    "name": "mathlib",
    "manifestFile": "lake-manifest.json",
    "inputRev": null,
@@ -91,5 +91,5 @@
    "inputRev": "main",
    "inherited": true,
    "configFile": "lakefile.toml"}],
- "name": "CSG_Auto_formalization",
+ "name": "TopGrpOrd",
  "lakeDir": ".lake"}

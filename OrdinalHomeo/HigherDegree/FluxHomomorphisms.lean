@@ -44,7 +44,26 @@ def I_k (k : Fin (d - 1)) (Ω : Fin (d - 1) → Set (X α d))
   {x ∈ (Ω k)ᶜ ∩ nextToMaximalRankElements α d | (h.val : H α d).toFun x ∈ Ω k}
 
 theorem O_k_finite (k : Fin (d - 1)) (Ω : Fin (d - 1) → Set (X α d))
-  (h : PH α d) : (O_k k Ω h).Finite := sorry
+  (h : PH α d) : (O_k k Ω h).Finite := by
+  -- O_k consists of elements of nextToMaximalRankElements that h moves out of Ω k
+  -- Since h ∈ PH, it fixes maximal rank elements
+  -- The key is that h is continuous and nextToMaximalRankElements is discrete
+  -- This means h can only move finitely many elements of nextToMaximalRankElements
+  
+  -- The set O_k is a subset of nextToMaximalRankElements ∩ Ω k
+  have h_sub : O_k k Ω h ⊆ nextToMaximalRankElements α d := by
+    intro x hx
+    simp only [O_k, Set.mem_setOf_eq] at hx
+    exact hx.1.2
+  
+  -- In ordinal topology, nextToMaximalRankElements forms a discrete set
+  -- whose closure adds only the maximal rank elements
+  -- Since h is continuous and fixes maximal rank elements,
+  -- it can only move finitely many next-to-maximal rank elements
+  
+  -- ATTEMPT 1: Direct proof using discreteness failed - need more topology setup
+  -- ATTEMPT 2: Use that continuous maps from discrete subspaces have locally constant behavior
+  sorry
 
 theorem I_k_finite (k : Fin (d - 1)) (Ω : Fin (d - 1) → Set (X α d))
   (h : PH α d) : (I_k k Ω h).Finite := sorry

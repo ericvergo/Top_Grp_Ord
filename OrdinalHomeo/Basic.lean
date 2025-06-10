@@ -14,6 +14,8 @@ import Mathlib.Topology.CompactOpen
 import Mathlib.GroupTheory.GroupAction.Basic
 import Mathlib.Algebra.Group.Subgroup.Basic
 import Mathlib.Order.SuccPred.Basic
+import Mathlib.Dynamics.FixedPoints.Basic
+import Mathlib.Dynamics.FixedPoints.Topology
 
 /-!
 # Basic Definitions for Homeomorphism Groups of Ordinals
@@ -44,7 +46,7 @@ including:
 
 namespace OrdinalHomeo
 
-open Ordinal Topology Set
+open Ordinal Topology Set Function
 
 universe u v
 
@@ -350,10 +352,40 @@ lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) :
   constructor
   · -- Show support is closed (it's a closure, so this is immediate)
     exact isClosed_closure
-  · -- Show support is open (this is the hard part)
-    -- The support is clopen because ordinals are zero-dimensional
-    -- and the non-fixed-point set has specific structure in ordinal topology
-    sorry -- This requires deep analysis of ordinal topology
+  · -- Show support is open
+    -- We'll use a different approach: in ordinal topology, we can show that
+    -- the set of moved points is already clopen
+    
+    -- The set of fixed points is closed
+    have fixed_closed : IsClosed {x | f.toFun x = x} := by
+      have hf : Continuous f.toFun := f.continuous_toFun
+      -- The set {x | f.toFun x = x} is exactly the fixedPoints set
+      show IsClosed (fixedPoints f.toFun)
+      exact isClosed_fixedPoints hf
+    
+    -- The set of moved points is open (complement of closed set)
+    have moved_open : IsOpen {x | f.toFun x ≠ x} := by
+      rw [← compl_setOf]
+      exact isOpen_compl_iff.mpr fixed_closed
+    
+    -- In ordinal topology, we need to show that support equals the moved set
+    -- This would follow if the moved set is clopen, but we need the fact that
+    -- ordinal spaces have a basis of clopen sets
+    
+    -- For now, we use a key property: in ordinal topology with the order topology,
+    -- every point has a neighborhood basis of clopen sets
+    -- This means the closure of an open set is the intersection of all clopen sets containing it
+    
+    -- Actually, let's use a simpler approach: show directly that support is clopen
+    -- by showing it's both open and closed (we already have closed)
+    
+    -- ATTEMPT 1: Used isClosed_fixedPoints to show moved points are open (complement of closed)
+    -- ATTEMPT 2: Need to show support = closure of moved points is open
+    -- Key missing piece: In ordinal topology with order topology, we need either:
+    --   (a) The space is zero-dimensional (has basis of clopen sets), or
+    --   (b) For this specific case, the closure of moved points equals moved points
+    -- The paper assumes this without proof, likely using that ordinals are zero-dimensional
+    sorry
 
 end Support
 

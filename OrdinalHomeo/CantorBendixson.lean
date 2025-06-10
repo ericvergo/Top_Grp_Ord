@@ -60,6 +60,8 @@ lemma derivedSet_mono {A B : Set X} (h : A ⊆ B) : derivedSet A ⊆ derivedSet 
 lemma derivedSet_closed [T1Space X] {A : Set X} (hA : IsClosed A) : IsClosed (derivedSet A) := by
   -- ATTEMPT 1: Direct proof via complement being open failed - too complex
   -- ATTEMPT 2: This is a standard topology result that requires careful analysis
+  -- ATTEMPT 3: The key is showing that if x is not in derivedSet A, then there's an 
+  -- open neighborhood of x disjoint from derivedSet A
   sorry -- The proof requires showing that the limit points of limit points are limit points
 
 /-- The α-th Cantor-Bendixson derivative -/
@@ -82,6 +84,31 @@ decreasing_by
     assumption
 
 notation:max A "^(" α ")" => CantorBendixsonDerivative A α
+
+/-- The derived set of the empty set is empty -/
+lemma derivedSet_empty : derivedSet (∅ : Set X) = ∅ := by
+  ext x
+  simp only [derivedSet, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+  intro h
+  -- h says: ∀ U ∈ 𝓝 x, ∃ y ∈ U ∩ ∅, y ≠ x
+  -- But U ∩ ∅ = ∅, so this is impossible
+  have : (Set.univ : Set X) ∈ 𝓝 x := univ_mem
+  obtain ⟨y, hy, _⟩ := h Set.univ this
+  -- y ∈ univ ∩ ∅ means y ∈ ∅
+  simp only [Set.mem_inter_iff, Set.mem_univ, true_and] at hy
+  exact hy
+
+/-- A point not in A cannot be in the derived set of A if it has an open neighborhood disjoint from A -/
+lemma not_mem_derivedSet_of_disjoint_neighborhood {A : Set X} {x : X} 
+  (hx : x ∉ A) (U : Set X) (hU : U ∈ 𝓝 x) (hDisj : U ∩ A = ∅) : 
+  x ∉ derivedSet A := by
+  intro h
+  -- h says: ∀ V ∈ 𝓝 x, ∃ y ∈ V ∩ A, y ≠ x
+  -- Apply this to U
+  obtain ⟨y, hy, hy_ne⟩ := h U hU
+  -- But y ∈ U ∩ A contradicts U ∩ A = ∅
+  rw [hDisj, Set.mem_empty_iff_false] at hy
+  exact hy
 
 lemma CB_derivative_monotone {α β : Ordinal} (h : α ≤ β) (A : Set X) :
   A^(β) ⊆ A^(α) := by

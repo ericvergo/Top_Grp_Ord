@@ -2,6 +2,16 @@
 
 Lean 4 formalization of "Algebraic and geometric properties of homeomorphism groups of ordinals" by Bhat et al.
 
+## Important: After Auto-Compacting
+
+**Claude: After auto-compacting, please read these files in order to restore full context:**
+
+1. `/Users/eric/Top_Grp_Ord/README.md` (this file - for project structure and guidelines)
+2. `/Users/eric/Top_Grp_Ord/ordinals_part_1.txt` (original paper part 1)
+3. `/Users/eric/Top_Grp_Ord/ordinals_part_2.txt` (original paper part 2)
+
+---
+
 ## Project Structure
 
 - `OrdinalHomeo/Basic.lean` - Core definitions (ordinals, homeomorphism groups, support)
@@ -52,6 +62,8 @@ This helps avoid repeated failed attempts and guides future proof strategies.
 
 - ✓ `F_A.inv_mem'` - Fixed points preserved by inverse (Galvin.lean)
 - ✓ `Fin_subgroup.one_mem'` - Identity has finite support (NormalGenerators.lean)
+- ✓ `derivedSet_empty` - The derived set of the empty set is empty (CantorBendixson.lean)
+- ✓ `not_mem_derivedSet_of_disjoint_neighborhood` - Points with disjoint neighborhoods are not in derived set (CantorBendixson.lean)
 
 ## References
 

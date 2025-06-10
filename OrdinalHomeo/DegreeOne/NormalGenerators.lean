@@ -94,7 +94,7 @@ noncomputable def Fin_subgroup (α : Ordinal.{u}) : Subgroup (H α 1) :=
       -- The points moved by f⁻¹ are exactly those moved by f
       -- ATTEMPT 1: Direct proof with explicit construction failed due to complex type issues
       -- ATTEMPT 2: We know mathematically that f⁻¹ moves x iff f moves x
-      sorry } -- This requires careful handling of the existential quantifiers and the 'sorry' placeholder
+      sorry }
 
 /-- Fin(ω^(α+1)) is the maximal proper normal subgroup -/
 theorem maximal_normal_subgroup (α : Ordinal.{u}) :
