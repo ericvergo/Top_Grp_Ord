@@ -257,7 +257,22 @@ lemma disjoint_support_commute {α : Ordinal.{u}} (f g : H α 1)
         -- But if supports are disjoint and g moves y, then f fixes y
         -- So f(g(y)) ≠ g(y), but also f(y) = y, which gives f(g(y)) ≠ g(f(y))
         -- This contradicts commutativity on the complement of both supports
-        sorry -- This requires a more careful argument
+        
+        -- Let's think differently: if g(x) ∈ support f, then f moves g(x)
+        -- So there exists a neighborhood U of g(x) where f is not the identity
+        -- Since g is continuous and moves x, we can pull back to get a neighborhood
+        -- of x where g⁻¹ ∘ f ∘ g differs from the identity
+        -- But on support g, we have g⁻¹ ∘ f ∘ g = f (by the disjointness)
+        -- This means f moves points in support g, contradicting disjointness
+        
+        -- Actually, let's use that support is the closure of moved points
+        -- If g(x) ∈ support f, then g(x) is in the closure of {y | f y ≠ y}
+        -- Since f and g have disjoint supports and x ∈ support g,
+        -- we must have f x = x (as x ∉ support f)
+        -- But then g(x) being in support f while x is not creates issues
+        
+        -- For now, we'll leave this as is - it requires careful topological argument
+        sorry
       -- So f(g(x)) = g(x)
       have fgx_eq : f.toFun (g.toFun x) = g.toFun x := by
         exact not_mem_support_iff f (g.toFun x) |>.mp gx_notin

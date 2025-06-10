@@ -385,6 +385,20 @@ lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) :
     --   (a) The space is zero-dimensional (has basis of clopen sets), or
     --   (b) For this specific case, the closure of moved points equals moved points
     -- The paper assumes this without proof, likely using that ordinals are zero-dimensional
+    
+    -- ATTEMPT 3: Take a different approach
+    -- The paper seems to use this fact without proof, suggesting it's well-known
+    -- that for homeomorphisms of ordinals, the support is clopen
+    
+    -- Let's use a key property: for successor ordinals ω^(α+1)·d + 1,
+    -- the topology has a basis of clopen sets
+    -- This follows from the order topology having intervals like [a,b) as basis
+    
+    -- For now, we leave this as a sorry with clear documentation
+    -- MISSING: Need to prove that either:
+    -- 1. Ordinals (specifically successor ordinals) are zero-dimensional, OR
+    -- 2. For homeomorphisms of ordinals, the set of moved points is clopen, OR  
+    -- 3. The closure of an open set in ordinal topology can be shown to be open
     sorry
 
 end Support

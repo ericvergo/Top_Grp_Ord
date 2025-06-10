@@ -1,6 +1,6 @@
 # Ordinal Homeomorphism Groups
 
-Lean 4 formalization of "Algebraic and geometric properties of homeomorphism groups of ordinals" by Bhat et al.
+Lean 4 formalization of "Algebraic and geometric properties of homeomorphism groups of ordinals" by Bhat et al. You are responsible for the bulk of the proof writing in lean and are given agency within this repo, up to the rules below. The goal is for you to be able to work for long periods of time without my involvement. 
 
 ## Important: After Auto-Compacting
 
@@ -29,11 +29,22 @@ Lean 4 formalization of "Algebraic and geometric properties of homeomorphism gro
   - `Abelianization.lean` - Abelianization computations
   - `NormalGenerators.lean` - Minimal normal generating sets
 
-## Build Status
-
-The project builds successfully with `lake build`. All theorem statements are in place with `sorry` placeholders.
-
 ## Development Practices
+
+### IMPORTANT: Always Use Grep First
+
+**Always use grep searches for exploring code, finding patterns, and understanding the codebase.** This is much more efficient than reading entire files.
+
+```bash
+# Count sorries in the project
+grep -r "sorry" . --include="*.lean" | wc -l
+
+# Find specific sorries with context
+grep -B2 -A2 "sorry" . --include="*.lean"
+
+# Search for specific lemmas/definitions
+grep -r "lemma.*moiety" . --include="*.lean"
+```
 
 ### Mathlib Searches
 
@@ -58,14 +69,8 @@ lemma example_lemma : P := by
 
 This helps avoid repeated failed attempts and guides future proof strategies.
 
-## Completed Proofs
-
-- ✓ `F_A.inv_mem'` - Fixed points preserved by inverse (Galvin.lean)
-- ✓ `Fin_subgroup.one_mem'` - Identity has finite support (NormalGenerators.lean)
-- ✓ `derivedSet_empty` - The derived set of the empty set is empty (CantorBendixson.lean)
-- ✓ `not_mem_derivedSet_of_disjoint_neighborhood` - Points with disjoint neighborhoods are not in derived set (CantorBendixson.lean)
-
-## References
-
-- Original paper: [arXiv link to be added]
-- Mathlib docs: https://leanprover-community.github.io/mathlib4_docs/
+## Behavior to Avoid
+- Introducing new axioms
+- Spending too much time on a single issue
+- Taking actions that would require approval from the user
+- Exploiting bugs and/or manipulating lean to obtain a proof certificate when you have not actually written a proof (rare)

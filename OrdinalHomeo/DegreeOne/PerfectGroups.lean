@@ -50,6 +50,25 @@ noncomputable def commutatorWidth (G : Type*) [Group G] (h : UniformlyPerfect G)
 lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} {A : Set (X α 1)}
   (hA : TopologicalMoiety α A) (hSupp : support h ⊆ A) :
   ∃ σ τ : H α 1, h = ⁅σ, τ⁆ := by
+  -- The key idea: use a convergent A-translation τ
+  -- Then σ = ∏_{n=0}^∞ (τⁿ ∘ h ∘ τ⁻ⁿ) satisfies h = [σ, τ]
+  
+  -- Get a convergent A-translation
+  obtain ⟨τ, hτ_trans, hτ_moiety⟩ := exists_convergent_translation hA
+  
+  -- Define σ as the infinite product
+  -- For each compact set K, only finitely many terms are non-identity on K
+  -- This ensures the infinite product converges in the compact-open topology
+  
+  -- The proof that h = [σ, τ] follows from the standard commutator trick:
+  -- σ = h · (τhτ⁻¹) · (τ²hτ⁻²) · ...
+  -- στ = (τhτ⁻¹) · (τ²hτ⁻²) · ...
+  -- So στσ⁻¹ = h⁻¹ · σ · τ = h⁻¹ · (τhτ⁻¹) · (τ²hτ⁻²) · ... 
+  -- Therefore στσ⁻¹τ⁻¹ = h⁻¹
+  
+  -- For now, we use sorry as this requires:
+  -- 1. Proper construction of infinite products in topological groups
+  -- 2. The convergent translation existence theorem from Moiety.lean
   sorry
 
 /-- Main theorem: Homeo(ω^(α+1)) is uniformly perfect with width ≤ 3 -/

@@ -37,7 +37,16 @@ def flux_k (k : Fin (d - 1)) (Ω : Fin (d - 1) → Set (X α d))
 
 /-- The canonical action of H_{α,d} on the maximal rank elements -/
 noncomputable def canonical_action (α : Ordinal.{u}) (d : ℕ) : H α d →* Equiv.Perm (Fin d) where
-  toFun := sorry
+  toFun h := {
+    toFun := fun i => 
+      -- The maximal rank elements are ω^(α+1) * k for k ∈ {1,...,d}
+      -- h permutes these elements, so we need to find where h sends ω^(α+1) * (i+1)
+      -- and extract the coefficient
+      sorry,
+    invFun := fun i => sorry,
+    left_inv := sorry,
+    right_inv := sorry
+  }
   map_one' := sorry
   map_mul' := sorry
 
