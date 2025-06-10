@@ -1,7 +1,7 @@
 import Lake
 open Lake DSL
 
-package «CSG_Auto_formalization» where
+package «TopGrpOrd» where
   -- add package configuration options here
   leanOptions := #[
     ⟨`pp.unicode.fun, true⟩,  -- pretty-prints `fun a ↦ b`
