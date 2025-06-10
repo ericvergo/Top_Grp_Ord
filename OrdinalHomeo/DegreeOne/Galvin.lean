@@ -50,14 +50,17 @@ noncomputable def F_A {α : Ordinal.{u}} (A : Set (X α 1)) : Subgroup (H α 1) 
       rfl
     inv_mem' := by 
       intro f hf a ha
-      -- Show f⁻¹ a = a
-      -- We know f a = a, so we need to show f.symm a = a
+      -- Show f⁻¹.toFun a = a
+      -- In the group structure, f⁻¹ = f.symm
+      show f.symm.toFun a = a
+      -- We know f.toFun a = a
       have h : f.toFun a = a := hf a ha
-      -- f.symm a = a iff f a = a (since f is a bijection)
-      -- We need to show f.symm.toFun a = a
-      -- Since f.toFun a = a, and f is a bijection, f.symm.toFun a = a
-      -- Use the fact that if f fixes a point, so does f⁻¹
-      sorry  } -- This requires showing that fixed points of f are also fixed points of f.symm
+      -- Since f is a homeomorphism, if f(a) = a, then f.symm(a) = a
+      -- We can apply f.symm to both sides of f.toFun a = a
+      have : f.symm.toFun (f.toFun a) = f.symm.toFun a := by rw [h]
+      rw [← this]
+      -- Now use the fact that f.symm (f x) = x
+      exact f.symm_apply_apply a  }
 
 /-- Galvin's lemma: Uniform fragmentation using moieties -/
 theorem galvin_lemma {α : Ordinal.{u}} {A B : Set (X α 1)}

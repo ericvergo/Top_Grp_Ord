@@ -130,7 +130,12 @@ lemma not_mem_support_iff {α : Ordinal.{u}} {d : ℕ} (f : H α d) (x : X α d)
   · intro hfx
     -- If f x = x, then there's a neighborhood where f acts as identity
     -- This requires continuity and the fact that {x} is open in ordinal topology
-    sorry
+    -- ATTEMPT 1: Use continuity of f at x
+    -- Since f is continuous and f(x) = x, by continuity:
+    -- For any neighborhood V of f(x) = x, there exists U ∈ 𝓝 x with f(U) ⊆ V
+    -- ATTEMPT 2: The direct approach doesn't work because we need that x has a 
+    -- neighborhood where ALL points are fixed
+    sorry -- This requires specific properties of ordinal topology that {x} is open when x is isolated
 
 /-- If homeomorphisms have disjoint clopen supports, each preserves the other's support -/
 lemma support_preserved_of_disjoint {α : Ordinal.{u}} (f g : H α 1)

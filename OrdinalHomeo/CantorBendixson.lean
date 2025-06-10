@@ -58,7 +58,9 @@ lemma derivedSet_mono {A B : Set X} (h : A ⊆ B) : derivedSet A ⊆ derivedSet 
 
 /-- The derived set of a closed set is closed in a T1 space -/
 lemma derivedSet_closed [T1Space X] {A : Set X} (hA : IsClosed A) : IsClosed (derivedSet A) := by
-  sorry -- This is a standard result but requires proof
+  -- ATTEMPT 1: Direct proof via complement being open failed - too complex
+  -- ATTEMPT 2: This is a standard topology result that requires careful analysis
+  sorry -- The proof requires showing that the limit points of limit points are limit points
 
 /-- The α-th Cantor-Bendixson derivative -/
 noncomputable def CantorBendixsonDerivative {X : Type u} [TopologicalSpace X] (A : Set X) : Ordinal.{v} → Set X := fun α =>

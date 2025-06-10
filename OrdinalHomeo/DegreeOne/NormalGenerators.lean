@@ -78,8 +78,23 @@ theorem normal_generator_width_bound {α : Ordinal.{u}} {h : H α 1}
 noncomputable def Fin_subgroup (α : Ordinal.{u}) : Subgroup (H α 1) :=
   { carrier := {f | Set.Finite {x : X α 1 | ∃ y ∈ maximalRankSet α 1, x = sorry ∧ f.toFun x ≠ x}}
     mul_mem' := by sorry
-    one_mem' := by sorry
-    inv_mem' := by sorry }
+    one_mem' := by 
+      simp only [Set.mem_setOf_eq]
+      -- The identity doesn't move any points
+      convert Set.finite_empty
+      ext x
+      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_exists]
+      intro y hy
+      -- hy is a conjunction: y ∈ maximalRankSet α 1 ∧ x = sorry ∧ 1.toFun x ≠ x
+      -- For the identity homeomorphism, 1.toFun x = x for all x
+      exact hy.2.2 rfl
+    inv_mem' := by 
+      intro f hf
+      simp only [Set.mem_setOf_eq] at hf ⊢
+      -- The points moved by f⁻¹ are exactly those moved by f
+      -- ATTEMPT 1: Direct proof with explicit construction failed due to complex type issues
+      -- ATTEMPT 2: We know mathematically that f⁻¹ moves x iff f moves x
+      sorry } -- This requires careful handling of the existential quantifiers and the 'sorry' placeholder
 
 /-- Fin(ω^(α+1)) is the maximal proper normal subgroup -/
 theorem maximal_normal_subgroup (α : Ordinal.{u}) :
