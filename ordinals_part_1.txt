@@ -1,0 +1,771 @@
+\pdfoutput=1
+\documentclass[microtype]{gtpart}
+%\documentclass{amsart}
+%\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage[mathscr]{eucal}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\definecolor{darkred}{RGB}{200, 60, 0}
+\definecolor{mildblue}{RGB}{0, 100, 250}
+\usepackage{enumerate, cite}
+%\usepackage[left]{showlabels}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkred,
+    urlcolor=darkred,
+    citecolor=mildblue,      
+    urlcolor=darkred,
+}
+\usepackage[nameinlink]{cleveref}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Begin user defined commands
+
+
+\newcommand{\br}{\mathbb{R}}
+\newcommand{\bc}{\mathbb C}
+\newcommand{\bz}{\mathbb Z}
+\newcommand{\bn}{\mathbb N}
+\newcommand{\bq}{\mathbb Q}
+\newcommand{\bh}{\mathbb H}
+\newcommand{\bS}{\mathbb S}
+\newcommand{\bd}{\mathbb D}
+
+\newcommand{\cE}{\mathcal E}
+\newcommand{\cF}{\mathcal F}
+\newcommand{\cc}{\mathcal C}
+\newcommand{\cm}{\mathscr M}
+\newcommand{\cac}{\mathcal{AC}}
+
+
+
+\newcommand{\al}{\alpha}
+\newcommand{\be}{\beta}
+\newcommand{\si}{\sigma}
+\newcommand{\ep}{\epsilon}
+\newcommand{\ve}{\varepsilon}
+\newcommand{\vp}{\varphi}
+\newcommand{\Si}{\Sigma}
+\newcommand{\sig}{\sigma}
+
+
+\newcommand{\ssm}{\smallsetminus}
+\newcommand{\into}{\hookrightarrow}
+\newcommand{\mr}{\mathring}
+
+\newcommand{\sE}{\mathscr E}
+\newcommand{\Enp}{\s\varepsilon_{\mathrm{np}}}
+\newcommand{\Eno}{\s\varepsilon_{\mathrm{no}}}
+\newcommand{\Ep}{\varepsilon_{\mathrm{p}}}
+\newcommand{\Enpp}{\varepsilon_{\mathrm{npp}}}
+\newcommand{\sU}{\mathscr U}
+\newcommand{\sV}{\mathscr V}
+\newcommand{\sW}{\mathscr W}
+\newcommand{\sP}{\mathscr P}
+
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\mcg}{MCG}
+\DeclareMathOperator{\pmcg}{PMCG}
+\DeclareMathOperator{\mmcg}{MCG_{\mathscr M}}
+\DeclareMathOperator{\isom}{Isom}
+\DeclareMathOperator{\Ends}{\cE}
+\DeclareMathOperator{\Mod}{Mod}
+\DeclareMathOperator{\Homeo}{Homeo}
+\DeclareMathOperator{\PHomeo}{PHomeo}
+\DeclareMathOperator{\Diffeo}{Diffeo}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Fin}{Fin}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\PH}{PH}
+\DeclareMathOperator{\HH}H
+\DeclareMathOperator{\F}F
+\DeclareMathOperator{\Alt}{Alt}
+
+\renewcommand{\co}{\colon\thinspace}
+
+
+
+%  End user defined commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% These establish different environments for stating Theorems, Lemmas, Remarks, etc.
+
+\newtheorem{Thm}{Theorem}[section]
+\newtheorem{Thm*}{Theorem}
+\newtheorem{Prop}[Thm]{Proposition}
+\newtheorem{Lem}[Thm]{Lemma}
+\newtheorem{Cor}[Thm]{Corollary}
+\newtheorem{Cor*}[Thm*]{Corollary}
+\newtheorem{Conj}[Thm*]{Conjecture}
+\newtheorem{Question}[Thm]{Question}
+
+\newtheorem*{MainThm1}{\Cref{thm:normal generators 1}}
+\newtheorem*{MainThm2}{\Cref{thm:mainthm2}}
+\newtheorem*{MainThm3}{\Cref{thm:main3}}
+\newtheorem*{MainThm4}{\Cref{thm:ses}}
+\newtheorem*{MainThm5}{\Cref{thm:normal generators F}}
+\newtheorem*{MainThm5'}{\Cref{thm:perfect F}}
+\newtheorem*{MainThm6}{\Cref{thm:abelianization}}
+\newtheorem*{MainThm7}{\Cref{thm:cardinality}}
+
+
+
+\theoremstyle{definition}
+\newtheorem{Def}[Thm]{Definition}
+\newtheorem{Ex}[Thm]{Example}
+\newtheorem*{Ex*}{Examples}
+\newtheorem{Rem}[Thm]{Remark}
+\newtheorem{Problem}[Thm]{Problem}
+
+\numberwithin{equation}{section}
+
+
+\newcommand{\nv}[1]{\color{Cerulean}  \{#1\}\color{black}}
+
+
+% End environments 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{Algebraic and geometric properties of \\homeomorphism groups of ordinals}
+
+
+\author{Megha Bhat}
+\address{Department of Mathematics \\ CUNY Graduate Center \\ New York, NY 10016}
+\email{mbhat@gradcenter.cuny.edu}
+
+\author{Rongdao Chen}
+\address{Department of Mathematics \\ CUNY Queens College \\ Flushing, NY 11367}
+\email{rongdao.chen20@qmail.cuny.edu}
+
+\author{Adityo Mamun}
+\address{Department of Mathematics \\ CUNY Queens College \\ Flushing, NY 11367}
+\email{adityo.mamun23@qmail.cuny.edu}
+
+\author{Ariana Verbanac}
+\address{Department of Mathematics \\ CUNY Queens College \\ Flushing, NY 11367}
+\email{ariana.verbanac@qc.cuny.edu}
+
+\author{Eric Vergo}
+\address{Department of Mathematics \\ CUNY Queens College \\ Flushing, NY 11367}
+\email{eric.vergo10@qmail.cuny.edu}
+
+\author{Nicholas G. Vlamis}
+\address{Department of Mathematics \\ CUNY Graduate Center \\ New York, NY 10016, and \newline Department of Mathematics \\ CUNY Queens College \\ Flushing, NY 11367}
+\email{nvlamis@gc.cuny.edu}
+
+
+
+
+
+\begin{document}  
+
+\begin{abstract}
+We study the homeomorphism groups of ordinals equipped with their order topology, focusing on successor ordinals whose limit capacity is also a successor.  
+This is a rich family of groups that has connections to both permutation groups and homeomorphism groups of manifolds. 
+
+For ordinals of Cantor--Bendixson degree one, we prove that the homeomorphism group is strongly
+distorted and uniformly perfect, and we classify its normal generators. 
+As a corollary, we recover and provide a new proof of the classical result that the subgroup of finite permutations in the symmetric group on a countably infinite set is the maximal proper normal subgroup.
+
+For ordinals of higher Cantor--Bendixson degree, we establish a semi-direct product decomposition of the (pure) homeomorphism group.  
+When the limit capacity is one, we further compute the abelianizations and determine normal generating sets of minimal cardinality for
+these groups.
+
+
+\end{abstract}
+
+
+\maketitle
+
+\vspace{-0.5in}
+
+%-------------------
+% Introduction
+%-------------------
+
+
+\section{Introduction}
+
+An ordinal has a natural topology given by the order topology.
+Motivated by recent results in the study of homeomorphism groups of 2-manifolds, we investigate several algebraic and geometric properties of the homeomorphisms group of ordinals.
+We provide a discussion of this motivation from geometric topology after introducing our main results. 
+
+
+For an introduction to ordinals and the terminology that follows, see \Cref{sec:ordinals}. 
+Our results focus on successor ordinals, or equivalently, the compact ordinals. 
+Up to homeomorphism, a successor ordinal has the form \( \omega^\alpha\cdot d + 1 \), where \( \alpha \) is an ordinal (called the \emph{limit capacity}), \( \omega \) is the first infinite ordinal, and \( d \in \omega \) (called the \emph{coefficient}). 
+We study the successor ordinals for which the limit capacity is a successor ordinal. 
+Given an ordinal \( \alpha \) and \( d \in \omega \), let \( \HH_{\alpha,d} = \Homeo(\omega^{\alpha+1}\cdot d + 1) \), i.e., the group consisting of homeomorphisms \( \omega^{\alpha+1} \cdot d + 1 \to \omega^{\alpha +1}\cdot d + 1 \). 
+
+Our first slate of results is for the case when the coefficient is one. 
+In this case, \( \HH_{\alpha,1} \) is isomorphic to \( \Homeo(\omega^{\alpha+1}) \), and so we state our results for \( \Homeo(\omega^{\alpha+1}) \), as this is the view our proofs will take. 
+This class of groups can be thought of as a generalization of \( \Sym(\bn) \), the symmetric group on the natural numbers, as \( \Sym(\bn) \) is isomorphic to \( \Homeo(\omega) \). 
+
+
+An element \( g \) in a group \( G \) is a \emph{normal generator} of \( G \) if every element of \( G \) can be expressed as product of conjugates of \( g \) and \( g^{-1} \); it is a \emph{uniform normal generator} of \( G \) if there exists \( k \in \bn \)\footnote{Throughout, we use the convention that \( 0 \notin \bn \), i.e., \( \bn = \omega \ssm\{0\} \).} such that every element of \( G \) can be expressed a product of at most \( k \) conjugates of \( g \) and \( g^{-1} \), and the minimum such \( k \) is called the \( g \)-width of \( G \). 
+
+Every element of an ordinal is itself an ordinal.
+From this, we say an element of \( \omega^{\alpha+1} \) is \emph{maximal rank} if it is of the form \( \omega^\alpha \cdot k \) for some \( k \in \bn \). 
+
+\begin{MainThm1}[Normal generators]
+    Let \( \alpha \) be an ordinal. 
+    For \( h \in \Homeo(\omega^{\alpha+1}) \), the following are equivalent:
+    \begin{enumerate}[(i)]
+        \item \( h \) normally generates   \( \Homeo(\omega^{\alpha+1}) \).
+        \item \( h \) uniformly normally generates \( \Homeo(\omega^{\alpha+1}) \).
+        \item \( h \) induces an infinite permutation of the set of maximal rank elements of \( \omega^{\alpha+1} \). 
+    \end{enumerate}
+    Moreover, if one---and hence all---of the above conditions are satisfied, then the \( h \)-width of \( \Homeo(\omega^{\alpha+1}) \) is at most twelve. 
+\end{MainThm1}
+
+The proof of Theorem~\ref{thm:normal generators 1} relies on a uniform fragmentation result---a generalization of a lemma of Galvin \cite{GalvinGenerating} from permutation groups---and a technique from Anderson's proof \cite{AndersonAlgebraic} of the algebraic simplicity of several transformation groups, including the homeomorphism group of the Cantor set and the homeomorphism group of the 2-sphere.
+As an immediate consequence, \( \Homeo(\omega^{\alpha+1}) \) has a maximal proper normal subgroup. 
+
+\begin{Cor}
+\label{cor:max subgroup}
+Let \( \alpha \) be an ordinal. 
+The subgroup \( \mathrm{Fin}(\omega^{\alpha+1}) \) of \( \Homeo(\omega^{\alpha+1}) \) consisting of homeomorphisms that induce a finite permutation on the set of maximal rank elements in \( \omega^{\alpha+1} \) is the maximal proper normal subgroup of \( \Homeo(\omega^{\alpha+1}) \), that is, it contains every proper normal subgroup.  
+\qed
+\end{Cor}
+
+As \( \Homeo(\omega) \) is isomorphic to \( \Sym(\bn) \), \Cref{cor:max subgroup} recovers the classical theorem of Schreier--Ulam \cite{Schreier1933} that the subgroup of finite permutations in \( \Sym(\bn) \) is its maximal normal subgroup. 
+The proof presented here is arguably simpler than the standard proof given in classical texts such as in \cite{ScottGroup}, which relies on cycle decompositions. 
+Similarly, \Cref{thm:normal generators 1} can be viewed as a generalization of a theorem of Bertram \cite{BertramTheorem} showing that all infinite permutations in \( \Sym(\bn) \) are uniform normal generators.
+Unlike Bertram's proof, our proof does not rely on cycle decompositions. 
+Bertram proves that any permutation in \( \Sym(\bn) \) can be expressed as a product of four conjugates of any infinite permutation, raising the question of what the optimal constant  in \Cref{thm:normal generators 1} is. 
+
+
+A group \( G \) is \emph{perfect} if it is equal to its commutator subgroup \( [G,G] \), i.e., the subgroup generated by the set \( \{ [x,y] : x,y \in G \} \), where \( [x,y] = xyx^{-1}y^{-1} \).
+It is \emph{uniformly perfect} if there exists some \( k \in \bn \) such that every element of \( G \) can be expressed as a product of \( k \) commutators; the minimum such \( k \) is called the \emph{commutator width} of \( G \).  
+
+It is not difficult to find a commutator in \( \Homeo(\omega^{\alpha+1}) \) that induces an infinite permutation on the set of maximal rank elements of \( \omega^{\alpha+1} \); \Cref{thm:normal generators 1} then implies that \( \Homeo(\omega^{\alpha+1}) \) is a uniformly perfect group of commutator width at most twelve. 
+A direct proof, which is simpler than the proof of \Cref{thm:normal generators 1}, can be given of this fact that provides a better bound on the commutator width of \( G \).
+This is our second main result.
+
+\begin{MainThm2}
+	If \( \alpha \) is an ordinal, then \( \Homeo(\omega^{\alpha+1}) \) is uniformly perfect, and the commutator width is at most three. 
+\end{MainThm2}
+
+
+A theorem of Ore \cite{OreSome} says that every element of \( \Sym(\bn) \) can be expressed as a single commutator. 
+It is natural to ask whether the same is true for \( \Homeo(\omega^{\alpha+1}) \). 
+
+Continuing in analogy with \( \Sym(\bn) \), we turn to a geometric property.
+In \cite{BergmanGenerating}, Bergman showed that any left-invariant metric on \( \Sym(\bn) \) has bounded diameter; in the literature, this property is referred to as \emph{strong boundedness} or the \emph{Bergman property}. 
+There are several equivalent definitions of strongly bounded, one of relevance here is that every group action on a metric space has bounded orbits.
+As a consequence, any homomorphism from a strongly bounded group to a countable group has finite image, a fact we use below. 
+
+Adapting a technique appearing several places in the literature (see \cite[Construction~2.3]{LeRouxStrong}), we establish a property stronger than strong boundedness for \( \Homeo(\omega^{\alpha+1}) \). 
+A group \( G \) is \emph{strongly distorted} if there exists \( m \in \bn \) and \( \{w_n\}_{n\in\bn} \subset \bn \) such that for any sequence \( \{ g_n\}_{n\in\bn} \) in \( G \) there exists \( S \subset G \) of cardinality at most \( m \) satisfying \( g_n \in S^{w_n} \), where \( S^k = \{ s_1s_2\cdots s_k : s_1, \ldots, s_k \in S \} \). 
+The notion of strong distortion was introduced by Calegari--Freedman in \cite{CalegariDistortion}, where they established strong distortion for the homeomorphism groups of spheres; in the appendix of the same paper,  Cornulier showed that if \( G \) is strongly distorted, then \( G \) is strongly bounded. 
+
+\begin{MainThm3}
+For every ordinal \( \alpha \), the group \( \Homeo(\omega^{\alpha+1}) \) is strongly distorted.
+\end{MainThm3}
+
+Strong distortion also implies several other properties, including uncountable cofinality and the Schreier property; we refer the reader to the introduction of \cite{LeRouxStrong} for a thorough discussion.
+As strong distortion implies strong boundedness, Theorem~\ref{thm:main3}, in the case \( \alpha = 1 \), establishes that \( \mathrm{Sym}(\bn) \) is strongly bounded, recovering Bergman's  result \cite{BergmanGenerating} and providing a simpler proof. 
+
+We finish our discussion of the degree one case by observing that we cannot drop the hypothesis that the limit capacity is a successor. 
+It is a consequence of \cite[Theorem~3.9]{DowThin} that every countable group is a quotient of \( \Homeo(\omega_1) \), where \( \omega_1 \) is the first uncountable ordinal. 
+As a consequence, \( \Homeo(\omega_1) \) can be neither uniformly perfect, strongly bounded, nor strongly distorted. 
+
+
+We now turn to the case of coefficient, or equivalently Cantor--Bendixson degree, greater than one, investigating the algebraic structure of \( \HH_{\alpha,d} \) and establishing the failure of the above results when \( d > 1 \).
+There are several normal subgroups of \( \HH_{\alpha,d} \) that are essential to our results, which we must introduce.
+The first is \( \F_{\alpha,d} \), the subgroup consisting of the homeomorphisms of \( \omega^{\alpha+1}\cdot d+1 \) that induce a finite permutation on the subset \( N_{\alpha,d} := \{ \omega^{\alpha+1}\cdot k + \omega^\alpha \cdot \ell : k \in d, \ell \in \bn \} \), i.e., the elements of next-to-maximal rank. 
+The second is obtained by equipping \( \HH_{\alpha,d} \) with the compact-open topology and taking the closure of \( \F_{\alpha,d} \), which we denote \( \overline \F_{\alpha,d} \). 
+
+Lastly, let \( M_{\alpha,d} = \{ \omega^{\alpha+1}\cdot k : 1\leq k \leq d \}  \subset \omega^{\alpha+1}\cdot d + 1 \), i.e., the set of maximal rank elements. 
+Then \( M_{\alpha,d} \) is preserved by every element of \( \HH_{\alpha,d} \), yielding an action of this group on \( M_{\alpha,d} \)---which we call the \emph{canonical action}.
+We let \( \PH_{\alpha,d} \) denote the kernel of this action, i.e., the subgroup of \( \HH_{\alpha,d} \) fixing each element of \( M_{\alpha,d} \); we call this group the \emph{pure homeomorphism group} of \( \omega^\alpha\cdot d +1 \).
+Note that \( \HH_{\alpha,1} = \PH_{\alpha, 1} = \overline \F_{\alpha,1} \), where the last equality follows from \Cref{thm:normal generators 1}.
+
+Recall that a short exact sequence \( 1 \to A \to B \to C \to 1 \) is \emph{right split} if the map \( B \to C \) admits a section. 
+
+
+\begin{MainThm4}
+
+	Let \( \alpha \) be an ordinal, and let \( d \in \bn \ssm\{1\} \). 
+	
+	\begin{enumerate}[(1)]
+	
+		\item There exists a homomorphism \( \chi \co \PH_{\alpha,d} \to \bz^{d-1} \) such that 
+				\[
+					1 \longrightarrow \overline \F_{\alpha,d} \lhook\joinrel\longrightarrow \PH_{\alpha,d} \overset{\chi}\longrightarrow \bz^{d-1} \longrightarrow 1
+				\]
+				is a short exact sequence and it is right split. 
+				
+			\item If \( \Phi \co \HH_{\alpha,d} \to \Sym(M_{\alpha,d} ) \) is the canonical action, then the short exact sequence 
+				\[
+					1 \longrightarrow  \PH_{\alpha,d} \lhook\joinrel\longrightarrow \HH_{\alpha,d} \overset{\Phi}\longrightarrow \Sym(M_{\alpha,d}) \longrightarrow 1
+				\]
+				is right split.
+				
+		\end{enumerate}
+		
+\end{MainThm4}
+
+A short exact sequence is right split if and only if the middle group is a semi-direct product of the other two groups, yielding the following corollary. 
+
+\begin{Cor}(Semi-direct product decomposition)
+	Let \( \alpha \) be an ordinal, and let \( d \in \bn \).
+	If \( d > 1 \), then \( \PH_{\alpha,d} \) is isomorphic to \( \overline \F_{\alpha,d} \rtimes \bz^{d-1} \) and \( \HH_{\alpha,d} \) is isomorphic to \( \PH_{\alpha,d} \rtimes \Sym(d) \). 
+	In particular, \( \HH_{\alpha,d} \) is isomorphic to \( (\overline \F_{\alpha,d} \rtimes \bz^{d-1}) \rtimes \Sym(d) \). 
+
+\end{Cor}
+
+An explicit description of \( \chi \), and its section, is given in \Cref{sec:ses}, which comes from \( d-1 \) independent \emph{flux homomorphisms} counting the shifting of the elements of \( N_{\alpha,d} \). 
+As a consequence, we see that  \( \PH_{\alpha,d} \) and \( \HH_{\alpha,d} \) are neither perfect nor strongly bounded. 
+For the latter, note that \( \PH_{\alpha,d} \) has a countably infinite quotient and hence is not strongly bounded per the discussion above, and as \( \HH_{\alpha,d} \) has a finite-index subgroup that fails to be strongly bounded, it must also fail to be strongly bounded. 
+
+A topological group is \emph{coarsely bounded} if every continuous left-invariant metric on the group has bounded diameter (see \cite{RosendalBook}). 
+Equipped with the compact-open topology, \( \HH_{\alpha,d} \) is a topological group (see \Cref{sec:ordinals}).
+With this topology, it is readily verified that the homomorphism \( \chi \) is continuous, and hence it follows from \Cref{thm:ses} that \( \PH_{\alpha,d} \) (and hence \( \HH_{\alpha,d} \)) is not coarsely bounded.
+Together with \Cref{thm:main3}, this yields the following corollary. 
+
+\begin{Cor}
+\label{cor:d=1}
+	Let \( \alpha \) be an ordinal, and let \( d \in \bn \).
+	The following are equivalent:
+	\begin{enumerate}[(i)]
+	
+		\item \( \HH_{\alpha,d} \) is strongly distorted.
+		\item \( \HH_{\alpha,d} \) is strongly bounded.
+		\item \( \HH_{\alpha,d} \) is coarsely bounded.
+		\item \( d = 1 \). 
+		
+	\end{enumerate}
+\end{Cor}
+
+Recently, Branman--Domat--Hoganson--Lyman \cite[Theorem~A]{BranmanGraphical} showed that for a countable ordinal \( \alpha \), the group \( \Homeo(\omega^\alpha\cdot d +1) \) is coarsely bounded if and only if \( d = 1 \). 
+\Cref{cor:d=1} is a strengthening of this statement under the additional hypothesis that \( \alpha \) is a successor ordinal.
+We do not know if \( \Homeo(\omega^\lambda) \) is strongly bounded when \( \lambda \) is a countable limit ordinal; however, we do know that it is coaresly bounded \cite{MannLarge-scale}. 
+
+Before moving on, we stress that Corollary~\ref{cor:d=1} considers \( \HH_{\alpha,d} \) equipped with the compact-open topology.
+Given any ordinal \( \alpha \), Gheysens \cite{GheysensDynamics,GheysensHomeomorphism} has proven that \( \Homeo(\alpha) \), equipped with the topology of pointwise convergence, is a Roelcke precompact topological group, implying that it is coarsely bounded. 
+
+Ideally, we would like to use  \Cref{thm:ses} to compute the abelianizations of \( \PH_{\alpha,d} \) and \( \HH_{\alpha,d} \), as well as to produce normal generating sets. 
+The main obstacle is working with \( \F_{\alpha,d} \), which is a complicated group.  
+If we quotient out by \( \F_{\alpha,d} \), then we do have the tools to proceed.
+The downside is that the isomorphism class of this quotient does not depend on \( \alpha \).
+Indeed, let \( \mathrm K_{\alpha,d} \) denote the kernel of the action of \( \HH_{\alpha,d} \) on the set \( N_{\alpha,d} \). 
+It can be readily verified that \( \HH_{\alpha,d} / \mathrm K_{\alpha,d} \) is isomorphic to \( \HH_{0,d} \), leading us to the investigation of the groups \( \Homeo(\omega\cdot d +1) \). 
+The difference in the case \( \alpha =0 \) is that \( \F_{0,d} \) is the group of finitely supported homeomorphisms; in particular, the elements of \( \F_{0,d} \) are supported away from the set \( M_{0,d} \). 
+ 
+
+\begin{MainThm5}
+\label{thm:d}
+Let  \( d \in \bn \).
+For  \( f \in \overline \F_{0,d} \), the following are equivalent:
+	\begin{enumerate}[(i)]
+	
+		\item \( f \) normally generates \( \overline \F_{0,d} \).
+		
+		\item \( f \) uniformly normally generates \( \overline F_{0,d} \).
+		
+		\item \( f \) induces an infinite permutation of the set \( \{ \omega \cdot k +  \ell : \ell \in \bn \} \) for each \( k \in d \). 
+		
+	\end{enumerate}
+	
+\end{MainThm5}
+
+\Cref{thm:normal generators F} stated below contains another condition---related to \Cref{thm:normal generators 2}---that we omit here, as we do not have the appropriate definitions yet at hand.
+The proof of \Cref{thm:normal generators F} follows from a  fragmentation lemma, \Cref{lem:factorization2}, that holds for all \( \alpha \) but that is strongest when \( \alpha =1 \), again as \( \F_{0,d} \) consists only of finitely supported homeomorphisms.  
+Fragmentation will allow us to view any element of \( \overline \F_{0,d} \) as a composition of \( d+1 \) homeomorphisms, each of which can be viewed as homeomorphism of \( \Homeo(\omega) \).  
+This fragmentation also allows to consider the abelianization of \( \overline \F_{0,d} \)
+
+\begin{MainThm5'}
+If \( d \in \bn \), then \( \overline \F_{0,d} \) is uniformly perfect and has commutator width at most four. 
+\end{MainThm5'}
+
+As consequences of \Cref{thm:ses}, \Cref{thm:perfect F}, and \Cref{thm:normal generators F}, we can compute the abelianizations of \( \PH_{0,d} \) and \( \HH_{0,d} \) as well as the minimal cardinality of normal generating sets.
+A subset of a group is a \emph{normal generating set} if the elements of the set together with all their conjugates generate the group.
+
+\begin{MainThm6}
+
+
+    If \( d \in \bn\ssm\{1\} \), then:
+    
+    	\begin{enumerate}[(1)]
+    	
+    		\item The abelianization of \( \PH_{0,d} \) is isomorphic to \( \bz^{d-1} \).
+    		
+    		\item The abelianization of \( \HH_{0,d} \) is isomorphic to \( \bz/2\bz \times \bz/2\bz \).
+    		
+    	\end{enumerate}
+	
+\end{MainThm6}
+
+The computation of the abelianization of \( \PH_{0,d} \) and of \( \HH_{0,d} \) implies that the minimal cardinality for a normal generating set is at least \( d-1 \) and at least two, respectively.
+Our final theorem, says this is in fact an equality, and the proofs construct explicit normal generating sets of the desired cardinalities. 
+
+\begin{MainThm7}
+
+	If \( d \in \bn \ssm \{1\} \), then the minimal cardinality of a normal generating set for \( \PH_{0,d} \) is \( d-1 \) and is two for \( \HH_{0,d} \).
+
+\end{MainThm7}
+
+We do not have a good sense of whether one should expect the above theorems to hold for \( \alpha > 0 \).
+A resolution in either direction would be interesting. 
+ 
+
+
+
+\subsection*{Motivation and context}
+
+The end space of a non-compact manifold is an encoding of the different ways of escaping to infinity in the manifold, and this set of directions naturally inherits a topology from the manifold.
+For example, \( \br \) is two-ended while \( \br^2 \) is one ended, and if a compact totally disconnected subset \( E \) of the 2-sphere \( \mathbb S^2 \) is removed from \( \mathbb S^2 \), then the end space of the resulting manifold, \( \mathbb S^2 \ssm E \), is homeomorphic to \( E \). 
+The end space is a topological invariant of the manifold and hence any homeomorphism between manifolds induces a homeomorphism on the end spaces. 
+Therefore, given a manifold \( M \) with end space \( E \) there is a canonical homomorphism \( \Homeo(M) \to \Homeo(E) \) given by the action of \( \Homeo(M) \) on \( E \). 
+
+Now, if \( E \) is a second-countable Stone space (i.e., \( E \) is second countable, compact, zero-dimensional, and Hausdorff), then \( E \) embeds as a subset of \( \mathbb S^2 \).
+Identifying \( E \) with such an embedding, it follows from \cite{RichardsClassification} that the canonical homomorphism \( \Homeo(\mathbb S^2 \ssm E) \to \Homeo(E) \) is surjective. 
+Moreover, as any two isotopic homeomorphisms induce the same action on \( E \), this homomorphism factors to give an epimorphism \( \mcg(\mathbb S^2 \ssm E) \to \Homeo(E) \), where \( \mcg(\mathbb S^2\ssm E) \) is the \emph{mapping class group} of \( \mathbb S^2 \ssm E \), i.e., the group of isotopy classes of homeomorphisms \( \mathbb S^2 \ssm E \to \mathbb S^2 \ssm E \). 
+The group \( \mcg(\mathbb S^2 \ssm E) \) is an example of a \emph{big} mapping class group, a class of groups that have been investigated intensely recently. 
+We therefore see that theorems about big mapping class groups have ramifications for theorems regarding homeomorphism groups of second-countable Stone spaces. 
+
+Homeomorphism groups of Stone spaces have a long history of being studied from the perspective of automorphism groups of Boolean algebras, and the mapping class group perspective has brought a renewed interest.
+Ordinals are Stone spaces, and the topological structure of ordinals are simpler than Stone spaces in general. 
+This has led to a recent interest in homeomorphism groups of ordinals, e.g., see \cite{HernandezAmple, BestvinaClassification, BranmanGraphical}.
+
+Many of the theorems here are motivated by work of the last author and his collaborators on big mapping class groups, see \cite{VlamisHomeomorphism,AramayonaFirst}. 
+But with that said, we stress that our results do not follow from that setting. 
+For one, only countable  successor ordinals can be realized as the end space of a manifold (assuming the manifold is second countable; even dropping the second countability assumption on the manifold, the type of ordinals that can appear are quite limited, see \cite{FernandezEnds} for a discussion of ends in non-metrizable manifolds).
+
+Second, if \( E = \omega^{\alpha+1} + 1 \) for some countable ordinal \( \alpha \), then our first slate of results fail for \( \mcg(\mathbb S^2 \ssm E) \). 
+Let us explain:
+Using the work of Domat--Dickmann \cite{DomatBig}, Malestein--Tao \cite{MalesteinSelf} showed that \( \mcg( \mathbb S^2 \ssm (\omega+1) ) \) surjects onto the additive group of real numbers.
+Now, there is an epimorphism \( \mcg(\mathbb S^2 \ssm E) \to \mcg(\mathbb S^2 \ssm (\omega+1)) \) obtained by ``filling in'' the ends that are neither maximal nor next-to-maximal rank (this is called a \emph{forgetful homomorphism} in the literature). 
+It follows that \( \mcg(\mathbb S^2 \ssm E) \) also surjects onto the reals; in particular, \( \mcg(\mathbb S^2 \ssm E) \) is neither uniformly perfect,  finitely normally generated, strongly bounded, nor strongly distorted. 
+Therefore, our results together with the work of Malestein--Tao, show that the failure of \( \Homeo(\mathbb S^2 \ssm E) \) to be strongly bounded, uniformly perfect, and finitely normally generated, stems from a two-dimensional obstruction, i.e., it cannot be detected by the action on the end space.
+It is also interesting to note that the results only fail in the category of abstract groups, meaning their analogs in the category of topological groups hold; in particular, Mann--Rafi \cite{MannLarge-scale} showed that \( \mcg(\mathbb S^2 \ssm E) \) is coarsely bounded, and it follows from the work of the last author with Lanier \cite{LanierMapping} that \( \mcg(\mathbb S^2 \ssm E) \) is topologically normally generated by a single mapping class (Baik \cite{BaikTopological} also showed finite topological normal generation for \( \mcg(\mathbb S^2 \ssm (\omega^{\alpha+1}\cdot d +1)) \), where \( \alpha \) is a countable ordinal and \( d \in \bn \)). 
+
+
+\subsection*{Acknowledgments}
+
+This paper stems from a vertically integrated summer research program at Queens College supported by NGV's NSF Award DMS-2212922.
+NGV was also supported in part by PSC-CUNY Awards  66435-00 54 and Award 67380-00 55. 
+
+The authors thank Kathryn Mann for the reference to Galvin's work and Ferr\'an Valdez for a discussion of his forthcoming work with collaborators on the geometry of homeomorphism groups of ordinals. 
+
+%-----------------
+% Topology of ordinals
+%-----------------
+
+\section{Ordinals and their topology}
+\label{sec:ordinals}
+
+We provide an introduction to ordinals and their topology, aimed at non-experts. 
+In the first three subsections we cover the basics of ordinals, following \cite[\S4.1--2]{CiesielskiSet} and \cite[Chapter~2]{JechSet}.
+
+\subsection{Defining the ordinals}
+We will use von Neumman's definition of the ordinals.
+
+\begin{Def}[Ordinal]
+A set \( \alpha \) is an \emph{ordinal} if it satisfies the following:
+\begin{enumerate}[(i)]
+	\item if \( \beta \in \alpha \), then \( \beta \subset \alpha \);
+	\item if \( \beta, \gamma \in \alpha \), then \( \beta = \gamma \), \( \beta \in \gamma \), or \( \gamma \in \beta \); and
+	\item if \( B \subset \alpha \) is nonempty, then there exists \( \gamma \in B \) such that \( \gamma \cap B = \varnothing \). 
+\end{enumerate}
+\end{Def}
+
+Every element of an ordinal is itself an ordinal.
+An ordinal can be well-ordered by set inclusion, i.e., if \( \alpha \) is an ordinal and \( \beta, \gamma \in \alpha \), declaring \( \beta \leq \gamma \) if and only if \( \beta \subseteq \gamma \) yields a well-ordering relation on \( \alpha \).
+Note that if \( \beta, \gamma \in \alpha \), then \( \gamma < \beta \) if and only if \( \gamma \in \beta \). 
+In particular, if \( \beta \in \alpha \), then \( \beta = \{ \eta \in \alpha : \eta < \beta \} \). 
+If \( \alpha \) and \( \beta \) are order-isomorphic ordinals, then  \( \alpha = \beta \); it now follows from basic properties of well-ordered sets that given two ordinals \( \alpha \) and \( \beta \), either \( \alpha = \beta \), \( \alpha \in \beta \), or \( \beta \in \alpha \). 
+We can therefore compare any two distinct ordinals, writing \( \beta < \alpha \) if and only if \( \beta \in \alpha \) (here, we have slightly abused notation, using \( < \) to denote both a relation on a given ordinal and as a comparison of two distinct ordinals; however, no confusion arises with this abuse).
+In other words,
+\begin{quote}
+	\emph{The ordinal \( \alpha \) is the set of all ordinals less than \( \alpha \).}
+\end{quote}
+
+Given any ordinal \( \alpha \), the set \( \alpha \cup \{\alpha\} \) is an ordinal, called the \emph{successor of \( \alpha \)}. 
+An ordinal is a \emph{successor ordinal} if it is the successor to some ordinal; otherwise, it is a \emph{limit ordinal}\footnote{We follow \cite{CiesielskiSet} in considering 0 a limit ordinal.}.
+From the discussion above, any set of ordinals has a least element; this least element is necessarily the empty set and is denoted by 0.
+Therefore, 0 is the first limit ordinal. 
+We can now proceed to construct the natural numbers, identifying 1 with \( \{0\} \), or equivalently, \( \{\varnothing\} \), 2 with \( \{ 0, 1\} \), or equivalently, \( \{ \varnothing, \{\varnothing\} \} \), etc. 
+Throughout, we will identity the natural numbers, denoted \( \bn \), with \( \bn = \{ 1, 2, \ldots \} \); in particular, \( 0 \notin \bn \). 
+The natural numbers together with 0 constitute the set of finite ordinals, which itself is an ordinal, denoted \( \omega \); equivalently, \( \omega \) is the first infinite ordinal.  
+Note that \( \omega \) is the first non-zero limit ordinal. 
+
+Let us finish this subsection with recalling transfinite induction, which follows from the existence of minimal elements in well-ordered sets. 
+
+\begin{Thm}[Transfinite induction]
+	Let \( \alpha \) be an ordinal, and let \( S \subset \alpha \). 
+	Suppose \( S \) satisfies the following: if \( \lambda \in \alpha \) and \( \beta \in S \) for all \( \beta < \lambda \), then \( \lambda \in S \).
+	Then \( S = \alpha \). 
+	\qed
+\end{Thm}
+
+The above statement is a bit awkward because we are avoiding using the languages of classes, allowing us to make a statement that is valid in ZFC.  
+
+
+\subsection{Ordinal arithmetic}
+
+With the definition of an ordinal, it follows from the basic theory of well-ordered sets that every well-ordered set is order isomorphic to a unique ordinal, a fact we will use to define ordinal arithmetic.
+
+\begin{Def}[Ordinal addition]
+\label{def:addition}
+Let \( \alpha \) and \( \beta \) be ordinals. 
+We define the \emph{sum} of \( \alpha \) and \( \beta \), denoted \( \alpha + \beta \), to be the ordinal that is order isomorphic to the set \( \alpha \sqcup \beta \) equipped with the order \( \preceq \) given by \( \eta \preceq \gamma \) if and only if either
+\begin{itemize}
+	\item \( \eta, \gamma \in \alpha \) and \( \eta \leq \gamma \),
+	\item \( \eta, \gamma \in \beta \) and \( \eta \leq \gamma \), or
+	\item \( \eta \in \alpha \) and \( \gamma \in \beta \). 
+\end{itemize}
+\end{Def}
+
+Observe that \( \alpha +1 \) is the successor of \( \alpha \) for any ordinal \( \alpha \). 
+Note that addition of ordinals is not commutative, e.g., \( 1 + \omega \neq \omega +1 \), as \( 1 + \omega \) is a limit ordinal (namely \( \omega \)) and \( \omega+1 \) is a successor ordinal. 
+However, ordinal addition is associative. 
+
+\begin{Def}[Ordinal multiplication]
+\label{def:multiplication}
+We define the \emph{product} of \( \alpha \) and \( \beta \), denoted \( \alpha\cdot\beta \), to be the ordinal that is order isomorphic to the set \( \beta \times \alpha \) equipped with the lexicographical ordering. 
+\end{Def}
+
+As for summation, multiplication of ordinals is not commutative, e.g., \( 2 \cdot \omega \neq \omega \cdot 2 \), as the elements of \( 2 \cdot \omega \) are all finite ordinals (i.e., \( 2\cdot \omega = \omega \)) whereas \( \omega \in \omega \cdot 2 \). 
+
+\begin{Def}[Ordinal exponentiation]
+We define the \emph{exponentiation} of \( \alpha \) by \( \beta \), denoted \( \alpha^\beta \), to be the ordinal that is order isomorphic to the set of functions 
+\[ 
+	\{ f \co \beta \to \alpha : |\{\eta\in \beta : f(\eta) \neq 0 \}| < \infty\}
+\]
+equipped with the order \( \prec \) given by \( f \prec g \) if and only if there exists \( \eta \in \beta \) such that \( f(\eta) < g(\eta) \) and \( f(\gamma) = g(\gamma) \) for all \( \gamma < \eta \). 
+\end{Def}
+
+All the above ordinal arithmetic operations can be defined using transfinite recursion.
+It is worth noting how this works for exponentiation: we set \( \alpha^0 = 1 \), \( \alpha^{\beta+1} = \alpha^\beta \cdot \alpha \) for all \( \beta \), and \( \alpha^\lambda = \bigcup_{\beta<\lambda} \alpha^\beta \) for a limit ordinal \( \lambda \). 
+We mention this as it is important for us to know that
+\begin{equation}
+\label{eq:exponent}
+	\omega^{\alpha+1} = \omega^\alpha \cdot \omega .
+\end{equation}
+
+
+We can now provide a normal form for ordinals, known as Cantor normal form:
+
+\begin{Thm}[Cantor Normal Form]
+If \( \alpha \) is a non-zero ordinal, then \( \alpha \) can be uniquely represented in the form
+\begin{equation}
+	\label{eq:cantor}
+	\alpha = \omega^{\beta_1}\cdot k_1 + \cdots + \omega^{\beta_n}\cdot k_n,
+\end{equation}
+where \( n \in \bn \), \( \alpha \geq \beta_1 > \cdots > \beta_n \), and \( k_1, \ldots, k_n \in \bn \). 
+\qed
+\end{Thm}
+
+Following \cite{KieftenbeldClassification}, we call \( \beta_1 \) in \eqref{eq:cantor} the \emph{limit capacity} of \( \alpha \) and \( k_1 \) the \emph{coefficient} of \( \alpha \). 
+
+\subsection{Topology of ordinals}
+
+An ordinal has a canonical topology given by the order topology; for all that follows, whenever we reference the topology of an ordinal, we are referring to the order topology. 
+Let \( \alpha \) be an ordinal.
+A subbasis for the order topology on \( \alpha \) is given by the sets of form \( [0, \beta) = \{ \eta \in \alpha : \eta < \beta \} \) and \( (\beta, \alpha) = \{ \eta \in\alpha : \beta < \eta \} \), where \( \beta \in \alpha \). 
+
+Now, let \( \lambda \in \alpha \) be a limit ordinal. 
+Note that if \( \beta < \lambda \) then \( \beta+1 < \lambda \), and observe that if \( \lambda \in \alpha \) is a limit ordinal, then \( [0, \lambda) = \bigcup_{\eta < \lambda} [0, \eta+1) \).
+It follows that the sets of the form \( [0, \beta+1) = [0,\beta] \) and \( (\beta, \alpha)=[\beta+1, \alpha) \) with \( \beta \in \alpha \) form a subbasis for the order topology. 
+In particular, the order topology admits a basis consisting of clopen sets, i.e., it is zero-dimensional.
+Moreover, it is an exercise to check that sets of the form \( [\beta, \gamma] \) are compact and that if \( \lambda \) is a limit ordinal then \( [0, \lambda) \) fails to be compact. 
+We summarize this in the following proposition. 
+
+\begin{Prop}
+An ordinal is a zero-dimensional Hausdorff topological space.
+Moreover, a non-zero ordinal is compact if and only if it is a successor ordinal. 
+\qed
+\end{Prop}
+
+For the remainder of the article, we will focus on successor ordinals, and hence, the compact ordinals.
+The next goal of this subsection is to classify the successor ordinals up to homeomorphism, which is accomplished in \Cref{thm:classification}.
+In the process, we establish several preliminary results and introduce the Cantor--Bendixson derivative. 
+
+
+\begin{Rem}
+A topological classification of ordinals, both successor and limit, is given by Kieftenbeld--L{\"o}we in \cite{KieftenbeldClassification}, a report for the Institute for Logic, Language, and Computation.
+We reproduce a complete argument for the classification of the compact ordinals here as it is instructive and convenient for the reader.
+\end{Rem}
+
+\begin{Lem}
+\label{lem:commutative}
+If \( \alpha \) and \( \beta \) are successor ordinals, then \( \alpha + \beta \) is homeomorphic to the topological disjoint union of \( \alpha \) and \( \beta \).
+In particular, \( \alpha + \beta \) and \( \beta + \alpha \) are homeomorphic. 
+\end{Lem}
+
+\begin{proof}
+By definition, \( \alpha + \beta \) is order isomorphic to the disjoint union of \( \alpha \) and \( \beta \) with the order \( \preceq \) given in Definition~\ref{def:addition}; call this well-ordered set \( X \) and equip it with its order topology, so that \( X \) is homeomorphic to \( \alpha + \beta \). 
+The inclusions of \( \alpha \) and \( \beta \) into \( X \) are topological embeddings.
+The image of \( \beta \) in \( X \) is closed and the image of \( \alpha \) is open. 
+As \( \alpha \) is compact, it must also be closed.
+Therefore, both \( \alpha \) and \( \beta \) are clopen subsets of \( X \), implying \( X \), and hence, \( \alpha + \beta \) is homeomorphic to the topological disjoint union of \( \alpha \) and \( \beta \).
+Similarly, \( \beta + \alpha \) is homeomorphic to the topological disjoint union of \( \alpha \) and \( \beta \), implying that \( \alpha + \beta \) and \( \beta + \alpha \) are homeomorphic. 
+\end{proof}
+
+\begin{Lem}
+\label{lem:sum-equal}
+Let \( \alpha \) and \( \beta \) be ordinals. 
+If the limit capacity of \( \beta \) is strictly less than that of \( \alpha \), then \( \beta + \alpha = \alpha \). 
+\end{Lem}
+
+\begin{proof}
+As the limit capacity of \( \beta \) is strictly less than \( \alpha \), it follows that \( \beta \cdot \omega \leq \alpha \), as \( \beta + k < \alpha \) for all \( k \in \omega \). 
+Let \( \gamma \) be the ordinal order isomorphic to the complement of \( \beta \cdot \omega \) in \( \alpha \).
+Then \( \alpha = \beta \cdot \omega + \gamma \). 
+So, \( \beta + \alpha = \beta + ( \beta \cdot \omega + \gamma ) = ( \beta + \beta \cdot \omega) + \gamma \).
+It is readily checked that \( \beta + \beta \cdot \omega = \beta \cdot \omega \), and hence \( \beta + \alpha = \alpha \). 
+\end{proof}
+
+
+\begin{Prop}
+\label{prop:reverse}
+Let \( \alpha \) be an ordinal. 
+If \( \beta \) is the limit capacity of \( \alpha \) and \( k \) is its coefficient, then \( \alpha \) is homeomorphic to \( \omega^\beta \cdot k + 1 \). 
+\end{Prop}
+
+\begin{proof}
+As \( \alpha \) is a successor, the Cantor normal form of \( \alpha \) is given by 
+\[
+	\alpha = \omega^{\beta_1}\cdot k_1 + \cdots + \omega^{\beta_n} \cdot k_n + 1,
+\]
+where \( \beta_1 = \beta \) and \( k_1 = k \). 
+We can therefore write
+\[
+	\alpha = \left(\omega^{\beta}\cdot k + 1 \right) + \gamma,
+\]
+where \( \gamma \) is a successor ordinal. 
+By \Cref{lem:commutative}, \( \alpha \) is homeomorphic to \( \gamma + \left(\omega^{\beta} \cdot k + 1\right) \). 
+As the limit capacity of \( \gamma \) is strictly less than that of \( \omega^{\beta} \cdot k + 1 \), \Cref{lem:sum-equal} implies that \( \gamma + \left(\omega^{\beta} \cdot k + 1\right) = \omega^{\beta} \cdot k + 1 \), and hence \( \alpha \) is homeomorphic to \( \omega^{\beta}\cdot k + 1 \). 
+\end{proof}
+
+
+To classify the compact ordinals, we need to show that the limit capacity and the coefficient of a successor ordinal are topological invariants. 
+For this, we need the Cantor--Bendixson derivative. 
+
+\begin{Def}[Cantor--Bendixson derivative]
+Let \( X \) be a topological space.
+The \emph{derived set of \( X \)}, denoted \( X' \), is the subset of \( X \) consisting of all the accumulation points in \( X \). 
+Given an ordinal \( \alpha \), the \( \alpha^{\text{th}} \)-Cantor--Bendixson derivative of \( X \), denoted \( X^{(\alpha)} \), is defined via transfinite recursion as follows:
+\begin{itemize}
+	\item \( X^{(0)} = X' \),
+	\item \( X^{(\alpha+1)} = \left(X^{(\alpha)}\right)' \), and
+	\item if \( \lambda \) is a limit ordinal, then \( X^{(\lambda)} = \bigcap_{\beta < \lambda} X^{(\beta)} \). 
+\end{itemize}
+\end{Def}
+
+Next, we introduce the Cantor--Bendixson degree and rank.
+We will not make the most general definition, rather focusing on a definition that suits our purposes.
+
+\begin{Def}[Cantor--Bendixson rank and degree]
+Let \( X \) be a topological space. 
+The \emph{Cantor--Bendixson rank of \( X \)}  is the least ordinal \( \alpha \) such that \( X^{(\alpha)} \) is empty, if such an ordinal exists; otherwise, it is set to be \( \infty \). 
+If \( X \) is compact and its Cantor--Bendixson degree is an ordinal \( \alpha \), then \( \alpha \) is necessarily a successor ordinal, allowing us to define the \emph{Cantor--Bendixson degree of \( X \)} to be the cardinality of \( X^{(\alpha-1)} \), which is finite. 
+\end{Def}
+
+Using the Cantor normal form and transfinite induction, it is an exercise to show the following: 
+
+\begin{Prop}
+\label{prop:forward}
+The Cantor--Bendixson rank of a successor ordinal is equal to the successor of its limit capacity and its Cantor--Bendixson degree is equal to its coefficient.
+\qed
+\end{Prop}
+
+The classification of successor ordinals up to homeomorphism now follows immediately from \Cref{prop:reverse} and \Cref{prop:forward}.
+
+\begin{Thm}[Topological classification of successor ordinals]
+\label{thm:classification}
+Two successor ordinals are homeomorphic if and only if their limit capacities and their coefficients agree, or equivalently, their Cantor--Bendixson ranks and degrees agree. 
+\qed
+\end{Thm}
+
+
+Next, we establish a stability property for neighborhoods of elements of ordinals.
+First, we need to extend the notion of Cantor--Bendixson rank to elements of ordinals.
+
+\begin{Def}[Rank of a point]
+Let \( X \) be a topological space of Cantor--Bendixson rank \( \alpha \), with \( \alpha \neq \infty \). 
+For \( x \in X \), we define the \emph{rank of \( x \)} to be the least ordinal \( \beta \) such that \( x \notin X^{(\beta)} \). 
+\end{Def}
+
+We can use the classification of successor ordinals to show that each element of an ordinal is \emph{stable} in the sense introduced by Mann--Rafi \cite{MannLarge-scale}.
+
+\begin{Def}[Stable point]
+Let \( X \) be a zero-dimensional topological space.
+A point \( x \in X \) is \emph{stable} if it admits a neighborhood basis consisting of pairwise homeomorphic clopen sets. 
+\end{Def}
+
+\begin{Lem}
+\label{lem:stable}
+Let \( \alpha \) be an ordinal,  let \( b \in \alpha +1 \), let \( \beta+1 \) be the rank of \( b \), and let \( U \) be a clopen neighborhood of \( b \) in \( \alpha + 1 \). 
+If the rank of every element of \( U \ssm \{b\} \) has rank strictly less than \( \beta + 1 \), then \( U \) is homeomorphic to \( \omega^{\beta} + 1 \). 
+\end{Lem}
+
+\begin{proof}
+Observe that if \( \eta \leq \beta \), then \( U \) contains an element of rank \( \eta \). 
+It follows that, as \( U \) is a well-ordered set, \( U \) must be isomorphic to an ordinal of Cantor--Bendixson rank \( \beta + 1 \) and Cantor--Bendixson degree 1. 
+Therefore, by \Cref{thm:classification}, \( U \) homeomorphic to \( \omega^\beta + 1 \). 
+\end{proof}
+
+
+Note that all sufficiently small neighborhoods of \( b \) in \( \alpha \) satisfy the hypothesis of \Cref{lem:stable}, allowing us to conclude that \( b \) is stable. 
+
+\begin{Prop}
+Every element of an ordinal is stable. 
+\qed
+\end{Prop}
+
+As already noted, \Cref{lem:stable} says that all sufficiently small clopen neighborhoods of \( b \) in \( \alpha \) are homeomorphic. 
+It will be useful to have a name for such sets.
+
+\begin{Def}[Stable neighborhood]
+For an ordinal \( \alpha \), a clopen neighborhood \( U \) of an element \( b \) in a \( \alpha + 1 \) is \emph{stable} if \( b \) is the unique highest rank element in \( U \).
+\end{Def}
+
+By \Cref{lem:stable}, a stable neighborhood of a rank \( \beta + 1 \) element of \( \alpha + 1 \) is homeomorphic to \( \omega^\beta + 1 \). 
+
+
+Our theorems deal with the successor ordinals whose limit capacities are successor ordinals, that is, ordinals that are homeomorphic to \( \omega^{\alpha + 1}\cdot d + 1 \). 
+For the remainder of this section, we focus on \( d =1 \), introducing a convenient coordinate system.
+For any ordinal \( \alpha \), the successor of \( \omega^\alpha \) is \( \omega^\alpha \cup \{ \omega^\alpha \}  = \omega^\alpha + 1 \); topologically, this says that \( \omega^\alpha + 1 \) is the one-point compactification of \( \omega^\alpha \). 
+Moreover, \( \omega^{\alpha} \) is the unique rank \( \alpha + 1 \) element of \( \omega^{\alpha} + 1 \), which means that every homeomorphism of \( \omega^\alpha +1 \) fixes \( \omega^\alpha \), which yields the following.
+
+\begin{Lem}
+\label{lem:isomorphism}
+For any ordinal \( \alpha \),  \( \Homeo(\omega^\alpha + 1) \) is isomorphic to \( \Homeo(\omega^\alpha) \).
+\qed 
+\end{Lem}
+
+In the next section, where we focus on Cantor--Bendixson degree one ordinals, the prior lemma allows us to focus on \( \omega^\alpha \) rather than \( \omega^{\alpha} + 1 \). 
+The advantage of this viewpoint is the following proposition. 
+
+\begin{Prop}
+\label{prop:coordinates}
+For any ordinal \( \alpha \), the spaces \( \omega^{\alpha+1} \) and \( \bn \times (\omega^\alpha + 1) \) are homeomorphic. 
+\end{Prop}
+
+\begin{proof}
+For each \( k \in \bn \), \( \omega^\alpha \cdot k +1 \in \omega^{\alpha +1} \). 
+Now, for \( \eta \in \omega^{\alpha +1} \), there exists \( k \in \bn \) such that \( \eta \in \omega^\alpha\cdot k + 1 \).
+It follows that
+\begin{align*}
+	\omega^{\alpha+1}	&= \bigcup_{k\in\bn} (\omega^\alpha\cdot k +1 ) \\
+					&= [0, \omega^\alpha] \cup \bigcup_{k\in\bn} (\omega^\alpha\cdot k, \omega^\alpha \cdot (k+1)] \\
+					&= [0, \omega^\alpha] \cup \bigcup_{k\in\bn} [\omega^\alpha\cdot k + 1, \omega^\alpha \cdot (k+1)] \\
+					&=  \bigcup_{k\in \omega} I_k,
+\end{align*}
+where we let \( I_0 = [0, \omega^\alpha] \) and \( I_k = [\omega^\alpha\cdot k + 1, \omega^\alpha \cdot (k+1)] \) for \( k \in \bn \).
+Now, for distinct \( j,k \in \omega \),  \( I_k \) is clopen and \( I_k \cap I_j = \varnothing \).
+Therefore, \( \omega^{\alpha+1} \) is homeomorphic to the topological disjoint union of the \( I_k \).
+To finish, observe that each of the \( I_k \) is order isomorphic to, and hence homeomorphic to, \( \omega^\alpha + 1 \), implying that \( \omega^{\alpha+1} \) is homeomorphic to \( \omega \times (\omega^\alpha + 1) \), which is itself is clearly homeomorphic to \( \bn \times (\omega^\alpha+1) \). 
+\end{proof}
+
