@@ -62,15 +62,27 @@ lemma successorOrdinal_iff_exists_max (α : Ordinal.{u}) :
   · intro ⟨β, hβ⟩
     rw [hβ]
     constructor
-    · exact Ordinal.succ_ne_zero β
+    · exact Order.succ_ne_bot β
     · use β
       constructor
-      · sorry -- β < succ β
+      · exact Order.lt_succ_of_not_isMax (not_isMax β)
       · intro γ hγ
-        sorry -- Need the correct lemma name for le_of_lt_succ
+        exact Order.le_of_lt_succ hγ
   · intro ⟨hα, β, hβ, hmax⟩
     -- If β is the maximum element less than α, then α = succ β
-    sorry
+    use β
+    -- We need to show α = Order.succ β
+    apply le_antisymm
+    · -- α ≤ Order.succ β
+      by_contra h
+      push_neg at h
+      -- h : Order.succ β < α
+      have : Order.succ β ≤ β := hmax (Order.succ β) h
+      have : β < β := lt_of_lt_of_le (Order.lt_succ_of_not_isMax (not_isMax β)) this
+      exact lt_irrefl β this
+    · -- Order.succ β ≤ α
+      rw [Order.succ_le_iff]
+      exact hβ
 
 end OrdinalClassification
 
@@ -115,6 +127,10 @@ noncomputable instance (α : Ordinal.{u}) (d : ℕ) : LinearOrder (X α d) :=
 instance (α : Ordinal.{u}) (d : ℕ) : OrderTopology (X α d) := 
   inferInstanceAs (OrderTopology (OrdinalSpace _))
 
+noncomputable instance (α : Ordinal.{u}) (d : ℕ) : WellFoundedLT (X α d) := by
+  unfold X OrdinalSpace
+  infer_instance
+
 /-- For an ordinal α and d ∈ ℕ, H_{α,d} = Homeo(ω^{α+1}·d + 1) -/
 def H (α : Ordinal.{u}) (d : ℕ) : Type u := X α d ≃ₜ X α d
 
@@ -158,12 +174,22 @@ def nextToMaximalRankSet (α : Ordinal.{u}) (d : ℕ) : Set Ordinal.{u} :=
 /-- Convert an ordinal to an element of X α d -/
 noncomputable def toX {α : Ordinal.{u}} {d : ℕ} (x : Ordinal.{u}) (h : x < ω^(α+1) * d + 1) : X α d := by
   -- X α d = OrdinalSpace (ω^{α+1}·d + 1) = (ω^{α+1}·d + 1).toType
-  -- This requires proper handling of ordinal embeddings
-  sorry
+  -- We use enumIsoToType to convert
+  have : x ∈ Set.Iio (ω^(α+1) * d + 1) := h
+  exact (Ordinal.enumIsoToType (ω^(α+1) * d + 1)) ⟨x, this⟩
 
 /-- The maximal rank elements in X α d -/
 def maximalRankElements (α : Ordinal.{u}) (d : ℕ) : Set (X α d) :=
-  {toX (ω^(α+1) * k) (by sorry) | k ∈ Icc 1 d}
+  {x | ∃ (k : ℕ) (hk : k ∈ Icc 1 d), x = toX (ω^(α+1) * (k : Ordinal)) (by 
+    -- We need to show ω^(α+1) * k < ω^(α+1) * d + 1
+    -- Since k ∈ Icc 1 d, we have k ≤ d
+    have hk' : k ≤ d := (Set.mem_Icc.mp hk).2
+    have : ω^(α+1) * (k : Ordinal) ≤ ω^(α+1) * (d : Ordinal) := by
+      apply mul_le_mul_left'
+      -- For ordinals, (k : Ordinal) ≤ (d : Ordinal) iff k ≤ d as naturals
+      exact Nat.cast_le.mpr hk'
+    exact lt_of_le_of_lt this (lt_add_one _)
+  )}
 
 /-- The pure homeomorphism group PH_{α,d} (homeomorphisms fixing maximal rank elements) -/
 noncomputable def PH (α : Ordinal.{u}) (d : ℕ) : Subgroup (H α d) := {
@@ -183,24 +209,43 @@ noncomputable def PH (α : Ordinal.{u}) (d : ℕ) : Subgroup (H α d) := {
   inv_mem' := by
     intro f hf x hx
     simp only [Set.mem_setOf_eq] at hf ⊢
-    -- f⁻¹(x) = y iff f(y) = x
-    -- Since f(x) = x, we have f⁻¹(x) = x
-    have : f.toFun x = x := hf x hx
-    -- Use the fact that f is bijective
-    -- We need: f.symm.toFun x = x
-    -- We know: f.toFun x = x
-    -- f.symm is the inverse of f, so if f fixes x, then f.symm fixes x too
-    -- We want to show: f.symm.toFun x = x
-    -- We know: f.toFun x = x
-    -- Key fact: f.symm.toFun y = z iff f.toFun z = y
-    -- So: f.symm.toFun x = z iff f.toFun z = x
-    -- Since f.toFun x = x, we have z = x
-    sorry  -- This requires showing that fixed points of f are also fixed points of f.symm
+    -- We need to show: f⁻¹.toFun x = x
+    -- Since f.toFun x = x, we have f⁻¹(x) = x
+    have h : f.toFun x = x := hf x hx
+    -- Since inv h := h.symm in the group structure
+    show f.symm.toFun x = x
+    -- Use the fact that if f x = x, then f.symm x = x
+    -- because f.symm (f x) = x and f x = x
+    have : f.symm (f.toFun x) = x := f.symm_apply_apply x
+    rw [h] at this
+    exact this
 }
 
 /-- The next-to-maximal rank elements in X α d -/
 def nextToMaximalRankElements (α : Ordinal.{u}) (d : ℕ) : Set (X α d) :=
-  {x | ∃ (k ℓ : ℕ), k < d ∧ ℓ ≥ 1 ∧ x = toX (ω^(α+1) * k + ω^α * ℓ) (by sorry)}
+  {x | ∃ (k ℓ : ℕ) (hk : k < d) (hℓ : ℓ ≥ 1), x = toX (ω^(α+1) * (k : Ordinal) + ω^α * (ℓ : Ordinal)) (by 
+    -- We need to show ω^(α+1) * k + ω^α * ℓ < ω^(α+1) * d + 1
+    -- Since k < d and ℓ ≥ 1
+    -- First, ω^α * ℓ < ω^(α+1) for any ℓ : ℕ
+    have h1 : ω^α * (ℓ : Ordinal) < ω^(α+1) := by
+      calc ω^α * (ℓ : Ordinal) 
+          < ω^α * ω := by
+            apply Ordinal.mul_lt_mul_of_pos_left
+            · exact nat_lt_omega0 ℓ
+            · exact opow_pos _ omega0_pos
+      _ = ω^(α+1) := by 
+        rw [← opow_succ, add_one_eq_succ]
+    -- Now the main calculation
+    calc ω^(α+1) * (k : Ordinal) + ω^α * (ℓ : Ordinal) 
+        < ω^(α+1) * (k : Ordinal) + ω^(α+1) := add_lt_add_left h1 _
+    _ = ω^(α+1) * ((k : Ordinal) + 1) := by 
+      rw [mul_add, mul_one]
+    _ ≤ ω^(α+1) * (d : Ordinal) := by
+      apply mul_le_mul_left'
+      have : k + 1 ≤ d := Nat.succ_le_of_lt hk
+      exact_mod_cast this
+    _ < ω^(α+1) * (d : Ordinal) + 1 := lt_add_one _
+  )}
 
 /-- The subgroup F_{α,d} (homeomorphisms inducing finite permutations on next-to-maximal rank) -/
 noncomputable def F (α : Ordinal.{u}) (d : ℕ) : Subgroup (H α d) := {
@@ -245,20 +290,39 @@ noncomputable def F (α : Ordinal.{u}) (d : ℕ) : Subgroup (H α d) := {
     · intro ⟨hx, h⟩
       refine ⟨hx, ?_⟩
       intro heq
-      apply h
-      -- We need to show f.symm.toFun (f.toFun x) ≠ f.toFun x
-      -- But f.symm.toFun (f.toFun x) = x by definition
-      -- And heq says f.toFun x = x
-      -- So we need x ≠ x, which is what h says
-      sorry
+      -- We want to show f.toFun x ≠ x
+      -- We have h: f⁻¹.toFun x ≠ x  
+      -- We assume for contradiction that heq: f.toFun x = x
+      -- Then f⁻¹.toFun x = f⁻¹.toFun (f.toFun x) = x, contradicting h
+      have h_inv_eq : f⁻¹.toFun = f.symm.toFun := rfl
+      rw [h_inv_eq] at h
+      -- Now h: f.symm.toFun x ≠ x
+      -- heq: f.toFun x = x
+      -- But f.symm.toFun (f.toFun x) = x, so f.symm.toFun x = x, contradiction
+      have contradiction : f.symm.toFun (f.toFun x) = x := f.symm_apply_apply x
+      rw [heq] at contradiction
+      exact False.elim (h contradiction)
     · intro ⟨hx, h⟩
       refine ⟨hx, ?_⟩
       intro heq
       have : f.toFun x = x := by
-        -- heq says f.symm.toFun x = x
-        -- We need f.toFun x = x
-        -- This follows because f and f.symm are inverses
-        sorry
+        -- heq says f⁻¹.toFun x = x
+        -- In our group, f⁻¹ is defined as f.symm
+        -- So heq is equivalent to f.symm.toFun x = x
+        -- We use: f.toFun x = f.toFun (f.symm.toFun x) (since f.symm.toFun x = x)
+        --                  = (f.trans f.symm).toFun x
+        --                  = id x = x
+        have h_inv_eq : f⁻¹.toFun = f.symm.toFun := rfl
+        rw [h_inv_eq] at heq
+        -- We want to show f.toFun x = x
+        -- We have heq: f.symm.toFun x = x (after rewriting with h_inv_eq)
+        -- We know that f.toFun (f.symm.toFun y) = y for any y
+        -- Setting y = x: f.toFun (f.symm.toFun x) = x
+        -- But heq says f.symm.toFun x = x
+        -- So f.toFun x = f.toFun (f.symm.toFun x) = x
+        have h_identity : f.toFun (f.symm.toFun x) = x := f.apply_symm_apply x
+        rw [heq] at h_identity
+        exact h_identity
       exact h this
 }
 
@@ -279,7 +343,17 @@ lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) :
   IsClopen (support f) := by
   -- In ordinal topology, the set of fixed points is closed, hence its complement is open
   -- Since ordinals are zero-dimensional, every open set is also closed
-  sorry -- This requires understanding that ordinals are zero-dimensional spaces
+  -- This requires several steps:
+  -- 1. Show that {x | f.toFun x ≠ x} is open (since f is continuous and diagonal is closed)
+  -- 2. Show that in ordinal topology, open sets have clopen closure
+  -- 3. Use the fact that ordinals are zero-dimensional spaces
+  constructor
+  · -- Show support is closed (it's a closure, so this is immediate)
+    exact isClosed_closure
+  · -- Show support is open (this is the hard part)
+    -- The support is clopen because ordinals are zero-dimensional
+    -- and the non-fixed-point set has specific structure in ordinal topology
+    sorry -- This requires deep analysis of ordinal topology
 
 end Support
 
