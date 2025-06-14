@@ -71,6 +71,12 @@ This helps avoid repeated failed attempts and guides future proof strategies.
 
 ## Behavior to Avoid
 - Introducing new axioms
-- Spending too much time on a single issue
+- Spending too much time on a single issue and spinning your wheels
 - Taking actions that would require approval from the user
 - Exploiting bugs and/or manipulating lean to obtain a proof certificate when you have not actually written a proof (rare)
+
+
+## Behavior to Adopt
+- Leveraging existing mathlib libraries
+- Clearly documenting code
+- all ethical standards surrounding and defining the culture of research mathematics

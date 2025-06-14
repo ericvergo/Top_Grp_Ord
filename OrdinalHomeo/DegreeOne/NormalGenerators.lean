@@ -49,9 +49,9 @@ def UniformNormalGenerator {G : Type*} [Group G] (g : G) (k : ℕ) : Prop :=
     h = sorry  -- Product of conjugates
 
 /-- Anderson's method: Elements displacing moieties generate all moiety-supported elements -/
-theorem anderson_method {α : Ordinal.{u}} {h : H α 1} {A : Set (X α 1)}
-  (hA : TopologicalMoiety α A) (hDisjoint : h.toFun '' A ∩ A = ∅) :
-  ∀ f : H α 1, ∀ B : Set (X α 1), support f ⊆ B → TopologicalMoiety α B →
+theorem anderson_method {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
+  (hDisjoint : h.toFun '' (A : Set (X α 1)) ∩ (A : Set (X α 1)) = ∅) :
+  ∀ f : H α 1, ∀ B : TopologicalMoiety α, support f ⊆ (B : Set (X α 1)) →
     ∃ (conj : Fin 4 → H α 1) (sign : Fin 4 → Bool),
       f = sorry := by  -- Product of conjugates
   sorry
@@ -59,8 +59,7 @@ theorem anderson_method {α : Ordinal.{u}} {h : H α 1} {A : Set (X α 1)}
 /-- Elements inducing infinite permutations displace some moiety -/
 lemma infinite_permutation_displaces_moiety {α : Ordinal.{u}} {h : H α 1}
   (hInf : Set.Infinite {x : X α 1 | ∃ y ∈ maximalRankSet α 1, x = sorry ∧ h.toFun x ≠ x}) :
-  ∃ A : Set (X α 1), TopologicalMoiety α A ∧ h.toFun '' A ∩ A = ∅ ∧ 
-    TopologicalMoiety α (A ∪ h.toFun '' A) := by
+  ∃ A : TopologicalMoiety α, h.toFun '' (A : Set (X α 1)) ∩ (A : Set (X α 1)) = ∅ := by
   sorry
 
 /-- Main theorem: Classification of normal generators -/

@@ -47,14 +47,14 @@ noncomputable def commutatorWidth (G : Type*) [Group G] (h : UniformlyPerfect G)
   sorry  -- Minimum k for uniform perfectness
 
 /-- Elements supported in moieties can be written as single commutators -/
-lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} {A : Set (X α 1)}
-  (hA : TopologicalMoiety α A) (hSupp : support h ⊆ A) :
+lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
+  (hSupp : support h ⊆ (A : Set (X α 1))) :
   ∃ σ τ : H α 1, h = ⁅σ, τ⁆ := by
   -- The key idea: use a convergent A-translation τ
   -- Then σ = ∏_{n=0}^∞ (τⁿ ∘ h ∘ τ⁻ⁿ) satisfies h = [σ, τ]
   
   -- Get a convergent A-translation
-  obtain ⟨τ, hτ_trans, hτ_moiety⟩ := exists_convergent_translation hA
+  obtain ⟨τ, hτ_trans, hτ_moiety⟩ := exists_convergent_translation A
   
   -- Define σ as the infinite product
   -- For each compact set K, only finitely many terms are non-identity on K
@@ -83,9 +83,9 @@ theorem three_commutator_bound {α : Ordinal.{u}} (h : H α 1) :
   sorry
 
 /-- The commutator trick: Building commutators from translations -/
-lemma commutator_trick {α : Ordinal.{u}} {h : H α 1} {A : Set (X α 1)}
-  (hA : TopologicalMoiety α A) (hSupp : support h ⊆ A) 
-  (τ : H α 1) (hτ : isConvergentTranslation τ A) :
+lemma commutator_trick {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
+  (hSupp : support h ⊆ (A : Set (X α 1))) 
+  (τ : H α 1) (hτ : IsConvergentATranslation A τ) :
   ∃ σ : H α 1, h = sorry := by
   sorry
 

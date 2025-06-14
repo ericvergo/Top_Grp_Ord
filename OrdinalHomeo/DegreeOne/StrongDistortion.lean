@@ -53,11 +53,10 @@ def StronglyBounded (G : Type*) [Group G] : Prop :=
 
 /-- The Calegari-Freedman construction for proving strong distortion -/
 lemma calegari_freedman_construction {α : Ordinal.{u}} 
-  {A : Set (X α 1)} (hA : TopologicalMoiety α A)
-  {B : Set (X α 1)} (hB : TopologicalMoiety α B)
-  (σ : H α 1) (hσ : isConvergentTranslation σ A ∧ support σ ⊆ B)
-  (τ : H α 1) (hτ : isConvergentTranslation τ B) :
-  ∀ (h : ℕ → H α 1), (∀ n, support (h n) ⊆ A) →
+  (A B : TopologicalMoiety α)
+  (σ : H α 1) (hσ : IsConvergentATranslation A σ ∧ support σ ⊆ (B : Set (X α 1)))
+  (τ : H α 1) (hτ : IsConvergentATranslation B τ) :
+  ∀ (h : ℕ → H α 1), (∀ n, support (h n) ⊆ (A : Set (X α 1))) →
     ∃ φ : H α 1, ∀ n, h n = sorry := by
   sorry
 

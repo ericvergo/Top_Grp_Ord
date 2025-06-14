@@ -57,7 +57,7 @@ lemma mem_derivedSet {A : Set X} {x : X} : x ∈ derivedSet A ↔ ∀ U ∈ 𝓝
 lemma derivedSet_eq_mathlib (A : Set X) : derivedSet A = {x | AccPt x (𝓟 A)} := by
   ext x
   simp only [mem_derivedSet, Set.mem_setOf_eq]
-  exact @accPt_iff_nhds X _ x A
+  exact (@accPt_iff_nhds X _ x A).symm
 
 /-- The derived set operator is monotone with respect to set inclusion -/
 lemma derivedSet_mono {A B : Set X} (h : A ⊆ B) : derivedSet A ⊆ derivedSet B := by
@@ -69,7 +69,7 @@ lemma derivedSet_mono {A B : Set X} (h : A ⊆ B) : derivedSet A ⊆ derivedSet 
   exact ⟨⟨hy_mem.1, h hy_mem.2⟩, hy_ne⟩
 
 /-- The derived set of a closed set is closed in a T1 space -/
-lemma derivedSet_closed [T1Space X] {A : Set X} (hA : IsClosed A) : IsClosed (derivedSet A) := by
+lemma derivedSet_closed [T1Space X] {A : Set X} : IsClosed (derivedSet A) := by
   -- Use Mathlib's result
   rw [derivedSet_eq_mathlib]
   exact isClosed_derivedSet A
@@ -110,7 +110,7 @@ lemma derivedSet_empty : derivedSet (∅ : Set X) = ∅ := by
 
 /-- A point not in A cannot be in the derived set of A if it has an open neighborhood disjoint from A -/
 lemma not_mem_derivedSet_of_disjoint_neighborhood {A : Set X} {x : X} 
-  (hx : x ∉ A) (U : Set X) (hU : U ∈ 𝓝 x) (hDisj : U ∩ A = ∅) : 
+  (U : Set X) (hU : U ∈ 𝓝 x) (hDisj : U ∩ A = ∅) : 
   x ∉ derivedSet A := by
   intro h
   -- h says: ∀ V ∈ 𝓝 x, ∃ y ∈ V ∩ A, y ≠ x
@@ -140,9 +140,13 @@ lemma CB_derivative_closed [T1Space X] (α : Ordinal) (A : Set X) (hA : IsClosed
         -- The derived set of a closed set is closed in T1 spaces
         -- We need to show that A^(Order.succ γ) is closed
         -- A^(Order.succ γ) = derivedSet (A^(γ)) by definition
-        -- For successor ordinals, A^(Order.succ γ) = derivedSet (A^(γ))
-        -- Since A^(γ) is closed by IH, derivedSet (A^(γ)) is closed
-        exact derivedSet_closed h_closed
+        unfold CantorBendixsonDerivative
+        rw [if_neg (Ordinal.succ_ne_zero _)]
+        have : ∃ β, Order.succ γ = Order.succ β := ⟨γ, rfl⟩
+        rw [dif_pos this]
+        -- The expression is `have this := ...; derivedSet A^(choose this)`
+        -- We need to show that it's closed
+        exact derivedSet_closed
       · -- Limit case: CB^β(A) = ⋂_{γ<β} CB^γ(A)
         push_neg at hsucc
         -- Intersection of closed sets is closed
@@ -150,9 +154,13 @@ lemma CB_derivative_closed [T1Space X] (α : Ordinal) (A : Set X) (hA : IsClosed
         -- A^(β) = ⋂_{γ<β} A^(γ) by definition (since β is limit)
         -- For limit ordinals, A^(β) = ⋂ γ < β, A^(γ)
         -- Each A^(γ) is closed by IH, so their intersection is closed
-        apply isClosed_biInter
-        intro γ hγ
-        exact ih γ hγ
+        unfold CantorBendixsonDerivative
+        rw [if_neg h0]
+        have h_neg : ¬∃ β_1, β = Order.succ β_1 := by
+          push_neg
+          exact hsucc
+        rw [dif_neg h_neg]
+        exact isClosed_iInter fun γ => isClosed_iInter fun hγ => ih γ hγ
 
 lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : Set X) (hA : IsClosed A) :
   A^(β) ⊆ A^(α) := by
@@ -178,20 +186,52 @@ lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : 
           rw [hαδ]
           -- By definition of Cantor-Bendixson derivative, derivedSet only removes points
           -- This is a standard fact about derived sets
-          -- First, rewrite using our derivedSet definition
-          rw [derivedSet_eq_mathlib]
-          -- Apply Mathlib's result about closed sets
+          -- First, show that derivedSet S ⊆ S for closed sets S
+          intro x hx
+          -- hx : x ∈ A^(Order.succ δ) = derivedSet (A^(δ))
+          -- Goal: x ∈ A^(δ)
           have hclosed : IsClosed (A^(δ)) := CB_derivative_closed δ A hA
-          rw [derivedSet_eq_mathlib] at *
-          exact (isClosed_iff_derivedSet_subset _).mp hclosed
+          -- Use the fact that for closed sets, derivedSet subset the set
+          have h_sub : derivedSet (A^(δ)) ⊆ A^(δ) := by
+            rw [derivedSet_eq_mathlib]
+            exact (isClosed_iff_derivedSet_subset _).mp hclosed
+          -- Now unfold A^(Order.succ δ) to show it equals derivedSet (A^(δ))
+          -- By definition, A^(Order.succ δ) = derivedSet (A^(δ))
+          apply h_sub
+          -- Need to show x ∈ derivedSet (A^(δ))
+          unfold CantorBendixsonDerivative at hx
+          rw [if_neg (Ordinal.succ_ne_zero _)] at hx
+          have hex : ∃ β, Order.succ δ = Order.succ β := ⟨δ, rfl⟩
+          rw [dif_pos hex] at hx
+          convert hx
+          have : Classical.choose hex = δ := by
+            have : Order.succ δ = Order.succ (Classical.choose hex) := Classical.choose_spec hex
+            have : Order.succ (Classical.choose hex) = Order.succ δ := this.symm
+            exact Order.succ_eq_succ_iff.mp this
+          exact this.symm
         · -- Case α < δ: use IH
           have hα_lt_δ : α < δ := lt_of_le_of_ne hδ hαδ
-          have h_sub : A^(δ) ⊆ A^(α) := ih δ (Order.lt_succ δ) (le_of_lt hα_lt_δ) hA
+          have h_sub : A^(δ) ⊆ A^(α) := ih δ (Order.lt_succ δ) (le_of_lt hα_lt_δ)
           -- Need to show A^(Order.succ δ) ⊆ A^(α), i.e., derivedSet (A^(δ)) ⊆ A^(α)
           -- We have A^(δ) ⊆ A^(α), so derivedSet (A^(δ)) ⊆ derivedSet (A^(α))
           -- Since derivedSet is monotone
           trans derivedSet (A^(α))
-          · exact derivedSet_mono h_sub
+          · -- Need to show: A^(Order.succ δ) ⊆ derivedSet (A^(α))
+            -- First show A^(Order.succ δ) = derivedSet (A^(δ))
+            intro x hx
+            unfold CantorBendixsonDerivative at hx
+            rw [if_neg (Ordinal.succ_ne_zero _)] at hx
+            have hex : ∃ β, Order.succ δ = Order.succ β := ⟨δ, rfl⟩
+            rw [dif_pos hex] at hx
+            have heq : Classical.choose hex = δ := by
+              have : Order.succ δ = Order.succ (Classical.choose hex) := Classical.choose_spec hex
+              have : Order.succ (Classical.choose hex) = Order.succ δ := this.symm
+              exact Order.succ_eq_succ_iff.mp this
+            -- hx is of the form x ∈ (have this := ...; derivedSet A^(choose hex))
+            -- We need to show x ∈ derivedSet (A^(α))
+            apply derivedSet_mono h_sub
+            convert hx
+            exact heq.symm
           · -- Need: derivedSet (A^(α)) ⊆ A^(α)
             have hclosed_α : IsClosed (A^(α)) := CB_derivative_closed α A hA
             rw [derivedSet_eq_mathlib]
@@ -206,13 +246,29 @@ lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : 
         -- So ⋂ δ < γ, A^(δ) ⊆ A^(α)
         -- For limit ordinals, A^(γ) = ⋂ β < γ, A^(β) by definition
         -- Since α < γ, the intersection is over a set containing α
-        apply Set.biInter_subset_of_mem
-        exact hlt
+        intro x hx
+        -- hx : x ∈ A^(γ)
+        -- By definition of limit case
+        unfold CantorBendixsonDerivative at hx
+        by_cases h0' : γ = 0
+        · -- γ can't be 0 since it's a limit ordinal with γ > α
+          exfalso
+          rw [h0'] at hlt
+          exact absurd hlt (Ordinal.not_lt_zero α)
+        rw [if_neg h0'] at hx
+        have h_neg : ¬∃ β, γ = Order.succ β := by
+          push_neg
+          exact hsucc
+        rw [dif_neg h_neg] at hx
+        -- hx : x ∈ ⋂ β < γ, A^(β)
+        -- Since α < γ, we have x ∈ A^(α)
+        simp only [Set.mem_iInter] at hx
+        exact hx α hlt
 
 /-- The Cantor-Bendixson rank of a set (∞ if no derivative is empty) -/
-noncomputable def CantorBendixsonRank (A : Set X) : WithTop Ordinal :=
-  if h : ∃ α : Ordinal, CantorBendixsonDerivative A α = ∅ then
-    ↑(Ordinal.sInf {α : Ordinal | CantorBendixsonDerivative A α = ∅})
+noncomputable def CantorBendixsonRank (A : Set X) : WithTop Ordinal.{v} :=
+  if ∃ α : Ordinal.{v}, CantorBendixsonDerivative A α = ∅ then
+    ↑(sInf {α : Ordinal.{v} | CantorBendixsonDerivative A α = ∅})
   else 
     ⊤
 
@@ -221,17 +277,20 @@ noncomputable def CantorBendixsonDegree (A : Set X) [CompactSpace X]
   (h : CantorBendixsonRank A < ⊤) : ℕ :=
   -- The degree is the cardinality of A^(α-1) where α is the rank
   -- Since the rank is finite (not ∞), we can extract it
-  let α := (CantorBendixsonRank A).toOrdinal
-  -- For successor ordinals, the degree is the finite cardinality of the last non-empty derivative
-  if hα : α = 0 then 0
-  else
-    -- The previous derivative A^(α-1) is finite and non-empty
-    -- Its cardinality is the Cantor-Bendixson degree
-    0 -- Placeholder: need to prove finiteness and extract cardinality
+  match CantorBendixsonRank A, h with
+  | some α, _ => 
+    -- α is the CB rank
+    -- For successor ordinals, the degree is the finite cardinality of the last non-empty derivative
+    if α = 0 then 0
+    else
+      -- The previous derivative A^(α-1) is finite and non-empty
+      -- Its cardinality is the Cantor-Bendixson degree
+      0 -- Placeholder: need to prove finiteness and extract cardinality
+  | none, h => absurd h (lt_irrefl ⊤)
 
 /-- The rank of a point x is the least α such that x ∉ X^(α) -/
-noncomputable def rank (x : X) : Ordinal :=
-  sInf {α | x ∉ (univ : Set X)^(α)}
+noncomputable def rank (x : X) : Ordinal.{v} :=
+  sInf {α : Ordinal.{v} | x ∉ (univ : Set X)^(α)}
 
 end CantorBendixson
 
@@ -245,8 +304,9 @@ theorem CB_rank_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0)
 
 /-- The CB degree of ω^(α+1)·d + 1 is d -/
 theorem CB_degree_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0) 
-  [CompactSpace (X α d)] :
-  CantorBendixsonDegree (univ : Set (X α d)) = d := by
+  [CompactSpace (X α d)] 
+  (h_rank : CantorBendixsonRank (univ : Set (X α d)) < ⊤) :
+  CantorBendixsonDegree (univ : Set (X α d)) h_rank = d := by
   sorry
 
 /-- Elements of rank α+1 in ω^(α+1) are exactly the multiples of ω^α -/

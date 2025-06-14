@@ -63,58 +63,38 @@ noncomputable def F_A {α : Ordinal.{u}} (A : Set (X α 1)) : Subgroup (H α 1) 
       exact f.symm_apply_apply a  }
 
 /-- Galvin's lemma: Uniform fragmentation using moieties -/
-theorem galvin_lemma {α : Ordinal.{u}} {A B : Set (X α 1)}
-  (hA : TopologicalMoiety α A) (hB : TopologicalMoiety α B)
-  (hAB : A ∩ B = ∅) (hUnion : TopologicalMoiety α (A ∪ B)) :
-  ∀ h : H α 1, h ∈ {f * g * h | (f ∈ (F_A A).carrier) (g ∈ (F_A B).carrier) (h ∈ (F_A A).carrier)} ∪
-                    {f * g * h | (f ∈ (F_A B).carrier) (g ∈ (F_A A).carrier) (h ∈ (F_A B).carrier)} := by
+theorem galvin_lemma {α : Ordinal.{u}} (A B : TopologicalMoiety α)
+  (hAB : (A : Set (X α 1)) ∩ (B : Set (X α 1)) = ∅) :
+  ∀ h : H α 1, h ∈ {f * g * h | (f ∈ (F_A (A : Set (X α 1))).carrier) (g ∈ (F_A (B : Set (X α 1))).carrier) (h ∈ (F_A (A : Set (X α 1))).carrier)} ∪
+                    {f * g * h | (f ∈ (F_A (B : Set (X α 1))).carrier) (g ∈ (F_A (A : Set (X α 1))).carrier) (h ∈ (F_A (B : Set (X α 1))).carrier)} := by
   intro h
   -- Let C be the complement of A ∪ B
-  let C := (A ∪ B)ᶜ
+  let C := ((A : Set (X α 1)) ∪ (B : Set (X α 1)))ᶜ
   -- The key insight: at least one of C \ h(A) or C \ h(B) is a moiety
   -- This is because C = (C \ h(A)) ∪ (C \ h(B)) ∪ (C ∩ h(A ∪ B))
   -- and C is a moiety (complement of a moiety)
   
   -- Case 1: C \ h(A) is a moiety
   -- In this case, we can find homeomorphisms as required
-  by_cases h_case : TopologicalMoiety α (C \ h.toFun '' A)
-  · -- Case 1: C \ h(A) is a moiety
-    -- We need to construct f₁ ∈ F_A, g ∈ F_B, f₂ ∈ F_A such that h = f₁ * g * f₂
-    
-    -- Step 1: Partition C into two moieties M₁ and M₂
-    -- such that h(A) ∩ C ⊆ M₁
-    -- This uses the fact that C \ h(A) is a moiety and h(A) ∩ C has specific properties
-    
-    -- Step 2: Choose f₁ ∈ F_A such that f₁(B ∪ M₁) = C and f₁(M₂) = B
-    -- This is possible by change of coordinates lemma for moieties
-    
-    -- Step 3: Show that (f₁ ∘ h)(A) is contained in A ∪ C and disjoint from 
-    -- a moiety in C, allowing us to find f₂ ∈ F_B with f₂(f₁(h(A))) = A
-    
-    -- Step 4: Express h in the required form
-    
-    -- For now, we use sorry as this requires the change of coordinates lemma
-    -- and other results about moieties that aren't yet proven
-    sorry
-  · -- Case 2: C \ h(A) is not a moiety, so C \ h(B) must be a moiety
-    -- Similar argument with roles of A and B switched
-    sorry
+  -- First check if C \ h.toFun '' (A : Set (X α 1)) forms a moiety
+  -- For now we use sorry to avoid issues with the condition
+  sorry
 
 /-- Corollary: Any homeomorphism is a product of at most 3 moiety-supported homeomorphisms -/
 lemma fragmentation_bound {α : Ordinal.{u}} (h : H α 1) :
-  ∃ (A B : Set (X α 1)) (hA : TopologicalMoiety α A) (hB : TopologicalMoiety α B)
-    (f₁ f₂ f₃ : H α 1),
-    (support f₁ ⊆ A ∨ support f₁ ⊆ B) ∧
-    (support f₂ ⊆ A ∨ support f₂ ⊆ B) ∧
-    (support f₃ ⊆ A ∨ support f₃ ⊆ B) ∧
+  ∃ (A B : TopologicalMoiety α) (f₁ f₂ f₃ : H α 1),
+    (support f₁ ⊆ (A : Set (X α 1)) ∨ support f₁ ⊆ (B : Set (X α 1))) ∧
+    (support f₂ ⊆ (A : Set (X α 1)) ∨ support f₂ ⊆ (B : Set (X α 1))) ∧
+    (support f₃ ⊆ (A : Set (X α 1)) ∨ support f₃ ⊆ (B : Set (X α 1))) ∧
     h = f₁ * f₂ * f₃ := by
   sorry
 
 /-- Key step in Galvin's proof: constructing the appropriate partition -/
-lemma galvin_partition {α : Ordinal.{u}} (h : H α 1) {A B C : Set (X α 1)}
-  (hC : C = (A ∪ B)ᶜ) (hAB : A ∩ B = ∅) :
-  (∃ M : Set (X α 1), TopologicalMoiety α M ∧ M ⊆ C ∧ (h.toFun '' A) ∩ C ⊆ M) ∨
-  (∃ M : Set (X α 1), TopologicalMoiety α M ∧ M ⊆ C ∧ (h.toFun '' B) ∩ C ⊆ M) := by
+lemma galvin_partition {α : Ordinal.{u}} (h : H α 1) (A B : TopologicalMoiety α)
+  (hAB : (A : Set (X α 1)) ∩ (B : Set (X α 1)) = ∅) :
+  let C := ((A : Set (X α 1)) ∪ (B : Set (X α 1)))ᶜ
+  (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (h.toFun '' (A : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) ∨
+  (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (h.toFun '' (B : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) := by
   sorry
 
 end Galvin

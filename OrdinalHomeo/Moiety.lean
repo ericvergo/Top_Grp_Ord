@@ -9,21 +9,21 @@ import OrdinalHomeo.CantorBendixson
 /-!
 # Topological Moieties
 
-This file defines topological moieties in ordinals and establishes their key properties.
-A topological moiety is a clopen subset that contains infinitely many maximal rank points,
-as does its complement.
+This file defines topological moieties for ordinals of the form ω^(α+1) and proves their
+key properties used in the proofs about homeomorphism groups.
 
 ## Main definitions
 
-* `TopologicalMoiety`: A clopen subset with infinitely many rank α+1 points in both it and its complement
-* `convergentTranslation`: A homeomorphism that translates a moiety off itself with local finiteness
-* `StableNeighborhood`: A clopen neighborhood where a point has unique maximal rank
+* `TopologicalMoiety`: A clopen subset of ω^(α+1) that contains infinitely many rank α+1 points
+  and whose complement also contains infinitely many rank α+1 points
+* `ATranslation`: A homeomorphism φ such that φⁿ(A) are pairwise disjoint for all n ∈ ℤ
+* `ConvergentATranslation`: An A-translation where {φⁿ(A)} is locally finite
 
 ## Main results
 
 * Every topological moiety is homeomorphic to ω^(α+1)
-* Change of coordinates principle for moieties
-* Existence of convergent translations
+* For any two disjoint moieties, there exists an involution swapping them
+* Every moiety admits a convergent translation
 
 ## References
 
@@ -32,77 +32,202 @@ as does its complement.
 
 namespace OrdinalHomeo
 
-open Ordinal Topology Set
+open Ordinal Topology Set Filter Classical Homeomorph
 
-universe u
+universe u v
 
-section TopologicalMoieties
+section Moiety
 
-/-- A topological moiety in ω^(α+1) -/
-def TopologicalMoiety (α : Ordinal.{u}) (A : Set (X α 1)) : Prop :=
-  IsClopen A ∧ 
-  (∃ S : Set (X α 1), Set.Infinite S ∧ S ⊆ A ∧ ∀ x ∈ S, rank x = α + 1) ∧
-  (∃ S : Set (X α 1), Set.Infinite S ∧ S ⊆ Aᶜ ∧ ∀ x ∈ S, rank x = α + 1)
+
+/-- The set of rank α+1 points in X α 1 = ω^(α+1) -/
+def MaximalRankPoints (α : Ordinal.{u}) : Set (X α 1) :=
+  {x | @rank.{u, u} (X α 1) _ x = α + 1}
+
+/-- A topological moiety is a clopen set containing infinitely many maximal rank points
+    with complement also containing infinitely many maximal rank points -/
+structure TopologicalMoiety (α : Ordinal.{u}) where
+  carrier : Set (X α 1)
+  is_clopen : IsClopen carrier
+  inf_maximal : (carrier ∩ MaximalRankPoints α).Infinite
+  inf_compl_maximal : ((carrierᶜ) ∩ MaximalRankPoints α).Infinite
+
+instance {α : Ordinal.{u}} : SetLike (TopologicalMoiety α) (X α 1) where
+  coe := TopologicalMoiety.carrier
+  coe_injective' := fun A B h => by
+    cases A; cases B; congr
+
+@[simp]
+lemma mem_topologicalMoiety {α : Ordinal.{u}} (A : TopologicalMoiety α) (x : X α 1) :
+  x ∈ A ↔ x ∈ A.carrier := Iff.rfl
 
 /-- Every topological moiety is homeomorphic to ω^(α+1) -/
-theorem moiety_homeomorphic_to_ordinal {α : Ordinal.{u}} {A : Set (X α 1)} 
-  (hA : TopologicalMoiety α A) : 
-  Nonempty (A ≃ₜ X α 1) := by
+theorem moiety_homeomorphic_to_omega_power (α : Ordinal.{u}) (A : TopologicalMoiety α) :
+  Nonempty ((A : Set (X α 1)) ≃ₜ X α 1) := by
+  -- The proof follows from the fact that A contains infinitely many rank α+1 points
+  -- and can be decomposed as a disjoint union of clopen neighborhoods of these points
+  -- Each neighborhood is homeomorphic to ω^α + 1
+  
+  -- Extract the set of maximal rank points in A
+  let maximal_in_A := A.carrier ∩ MaximalRankPoints α
+  
+  -- By inf_maximal, this set is infinite
+  have h_inf : maximal_in_A.Infinite := A.inf_maximal
+  
+  -- Since A is a subset of a well-ordered set (ordinal), we can enumerate the maximal points
+  -- in increasing order. Use the fact that any infinite subset of an ordinal has order type ω
+  have : ∃ (enum : ℕ → X α 1), StrictMono enum ∧ range enum = maximal_in_A := by
+    -- This follows from the well-ordering of ordinals and infinitude
+    sorry
+  
+  obtain ⟨enum, h_mono, h_range⟩ := this
+  
+  -- Define intervals: U₁ = [0, enum 1] ∩ A, Uₙ = [enum (n-1) + 1, enum n] ∩ A
+  let U : ℕ → Set (X α 1) := fun n =>
+    if n = 0 then ∅  -- dummy value, we start from n = 1
+    else if n = 1 then {x ∈ A.carrier | x ≤ enum 1}
+    else {x ∈ A.carrier | enum (n-1) < x ∧ x ≤ enum n}
+  
+  -- Show that A is the disjoint union of the Uₙ for n ≥ 1
+  have h_union : A.carrier = ⋃ n ∈ Ici 1, U n := by
+    sorry
+  
+  -- Show that the Uₙ are pairwise disjoint clopen sets
+  have h_disj : Pairwise fun i j => Disjoint (U i) (U j) := by
+    sorry
+  
+  have h_clopen : ∀ n ≥ 1, IsClopen (U n) := by
+    sorry
+  
+  -- Each Uₙ is homeomorphic to ω^α + 1 by the classification theorem
+  have h_homeo : ∀ n ≥ 1, Nonempty ((U n) ≃ₜ X α 1) := by
+    intro n hn
+    -- U n contains exactly one maximal rank point (enum n)
+    -- and is a clopen subset, so by classification it's homeomorphic to a successor ordinal
+    -- with CB rank α+1 and degree 1, which is ω^α + 1 ≃ X α 1
+    sorry
+  
+  -- Therefore A ≃ ⨆ₙ Uₙ ≃ ℕ × (ω^α + 1) ≃ ω^(α+1)
+  -- Use that a disjoint union of copies of X α 1 is homeomorphic to ℕ × (X α 1) ≃ X α 1
   sorry
 
-/-- Change of coordinates: Any two moieties are related by a homeomorphism -/
-lemma change_of_coordinates {α : Ordinal.{u}} {A B : Set (X α 1)}
-  (hA : TopologicalMoiety α A) (hB : TopologicalMoiety α B) :
-  ∃ σ : H α 1, σ.toFun '' A = B := by
+/-- Two disjoint moieties can be swapped by an involution -/
+theorem exists_involution_swapping_moieties {α : Ordinal.{u}} 
+  (A B : TopologicalMoiety α) (h_disj : Disjoint (A : Set (X α 1)) (B : Set (X α 1))) :
+  ∃ σ : X α 1 ≃ₜ X α 1, Function.Involutive σ ∧ σ '' A.carrier = B.carrier ∧ 
+    ∀ x, x ∉ A.carrier ∪ B.carrier → σ x = x := by
+  -- Use the homeomorphisms from each moiety to ω^(α+1) to construct the involution
+  -- The involution swaps elements of A with elements of B and fixes everything else
   sorry
 
-/-- If two moieties are disjoint, there's an involution swapping them -/
-lemma disjoint_moiety_involution {α : Ordinal.{u}} {A B : Set (X α 1)}
-  (hA : TopologicalMoiety α A) (hB : TopologicalMoiety α B) (hAB : A ∩ B = ∅) :
-  ∃ ι : H α 1, ι.toFun '' A = B ∧ ι.trans ι = Homeomorph.refl _ ∧ support ι ⊆ A ∪ B := by
-  sorry
-
-end TopologicalMoieties
-
-section Translations
-
-/-- An A-translation is a homeomorphism with pairwise disjoint iterates of A -/
-def isTranslation {α : Ordinal.{u}} (φ : H α 1) (A : Set (X α 1)) : Prop :=
+/-- An A-translation is a homeomorphism φ such that all iterates of A under φ are disjoint -/
+def IsATranslation {α : Ordinal.{u}} (A : TopologicalMoiety α) (φ : X α 1 ≃ₜ X α 1) : Prop :=
   ∀ n m : ℤ, n ≠ m → 
-    (if n ≥ 0 then φ.toFun^[n.toNat] else φ.symm.toFun^[(-n).toNat]) '' A ∩ 
-    (if m ≥ 0 then φ.toFun^[m.toNat] else φ.symm.toFun^[(-m).toNat]) '' A = ∅
+    Disjoint ((if n ≥ 0 then (φ.toFun)^[n.toNat] else (φ.symm.toFun)^[(-n).toNat]) '' A.carrier) 
+             ((if m ≥ 0 then (φ.toFun)^[m.toNat] else (φ.symm.toFun)^[(-m).toNat]) '' A.carrier)
 
-/-- A convergent A-translation has locally finite iterates -/
-def isConvergentTranslation {α : Ordinal.{u}} (φ : H α 1) (A : Set (X α 1)) : Prop :=
-  isTranslation φ A ∧ 
-  ∀ K : Set (X α 1), IsCompact K → 
-    Set.Finite {n : ℤ | 
-      (if n ≥ 0 then φ.toFun^[n.toNat] else φ.symm.toFun^[(-n).toNat]) '' A ∩ K ≠ ∅}
+/-- A convergent A-translation has locally finite orbit of A -/
+def IsConvergentATranslation {α : Ordinal.{u}} (A : TopologicalMoiety α) (φ : X α 1 ≃ₜ X α 1) : Prop :=
+  IsATranslation A φ ∧ LocallyFinite (fun n : ℤ => 
+    (if n ≥ 0 then (φ.toFun)^[n.toNat] else (φ.symm.toFun)^[(-n).toNat]) '' A.carrier)
 
-/-- Existence of convergent translations for moieties -/
-theorem exists_convergent_translation {α : Ordinal.{u}} {A : Set (X α 1)}
-  (hA : TopologicalMoiety α A) :
-  ∃ φ : H α 1, isConvergentTranslation φ A ∧ 
-    TopologicalMoiety α (support φ) := by
+/-- Every topological moiety admits a convergent translation -/
+theorem exists_convergent_translation {α : Ordinal.{u}} (A : TopologicalMoiety α) :
+  ∃ φ : X α 1 ≃ₜ X α 1, IsConvergentATranslation A φ ∧ 
+    ∃ B : TopologicalMoiety α, ∀ x, x ∈ support φ → x ∈ B := by
+  -- The proof constructs φ by first establishing a homeomorphism between
+  -- ω^(α+1) and ℤ × ℕ² × (ω^α + 1), then defining a shift on the ℤ component
+  
+  -- Step 1: Use that X α 1 ≃ ℕ × (X α 0) by Prop 3.13 in the paper
+  -- Actually X α 1 = ω^(α+1) ≃ ℕ × (ω^α + 1)
+  -- We can further decompose as ℤ × ℕ² × (ω^α + 1)
+  
+  -- For the construction, we use change of coordinates to assume A has a specific form
+  -- Consider A' = {0} × {1} × ℕ × (ω^α + 1) in the space ℤ × ℕ² × (ω^α + 1)
+  
+  -- Define τ' on ℤ × ℕ² × (ω^α + 1) by:
+  -- τ'(ℓ, 1, n, x) = (ℓ+1, 1, n, x)
+  -- τ'(ℓ, m, n, x) = (ℓ, m, n, x) when m > 1
+  
+  -- This shifts the ℤ-coordinate only for elements with second coordinate 1
+  -- The iterates τ'^n(A') are disjoint and locally finite
+  
+  -- Using the homeomorphism between X α 1 and ℤ × ℕ² × (ω^α + 1),
+  -- we transport this construction back to get the desired φ
+  
   sorry
 
-end Translations
+/-- The complement of a topological moiety is also a topological moiety -/
+theorem complement_is_moiety {α : Ordinal.{u}} (A : TopologicalMoiety α) :
+  ∃ B : TopologicalMoiety α, (B : Set (X α 1)) = (A : Set (X α 1))ᶜ := by
+  use {
+    carrier := (A : Set (X α 1))ᶜ
+    is_clopen := A.is_clopen.compl
+    inf_maximal := A.inf_compl_maximal
+    inf_compl_maximal := by
+      simp only [compl_compl]
+      exact A.inf_maximal
+  }
+  rfl
+
+/-- Any clopen neighborhood of infinitely many maximal rank points extends to a moiety -/
+theorem extend_to_moiety {α : Ordinal.{u}} (U : Set (X α 1)) (hU : IsClopen U)
+  (h_inf : (U ∩ MaximalRankPoints α).Infinite) :
+  ∃ A : TopologicalMoiety α, U ⊆ (A : Set (X α 1)) := by
+  -- We can decompose X α 1 into clopen sets containing maximal rank points
+  -- and arrange them so that both U and its complement get infinitely many
+  sorry
+
+/-- Change of coordinates: any two moieties are related by a homeomorphism -/
+theorem change_of_coordinates {α : Ordinal.{u}} (A B : TopologicalMoiety α) :
+  ∃ σ : X α 1 ≃ₜ X α 1, σ '' A.carrier = B.carrier := by
+  -- Both A and B are homeomorphic to ω^(α+1), so we can compose these homeomorphisms
+  obtain ⟨f⟩ := moiety_homeomorphic_to_omega_power α A
+  obtain ⟨g⟩ := moiety_homeomorphic_to_omega_power α B
+  
+  -- f : A ≃ₜ X α 1 and g : B ≃ₜ X α 1
+  -- We need a global homeomorphism σ : X α 1 ≃ₜ X α 1 with σ(A) = B
+  
+  -- The complement of a moiety is also a moiety
+  have hAc : ∃ Ac : TopologicalMoiety α, (Ac : Set (X α 1)) = (A : Set (X α 1))ᶜ := complement_is_moiety A
+  have hBc : ∃ Bc : TopologicalMoiety α, (Bc : Set (X α 1)) = (B : Set (X α 1))ᶜ := complement_is_moiety B
+  
+  obtain ⟨Ac, hAc_eq⟩ := hAc
+  obtain ⟨Bc, hBc_eq⟩ := hBc
+  
+  -- Get homeomorphisms for the complements
+  obtain ⟨fc⟩ := moiety_homeomorphic_to_omega_power α Ac
+  obtain ⟨gc⟩ := moiety_homeomorphic_to_omega_power α Bc
+  
+  -- Now we can define σ by cases:
+  -- On A, use f followed by g⁻¹
+  -- On Aᶜ, use fc followed by gc⁻¹
+  -- This works because A and Aᶜ partition X α 1
+  
+  -- First establish that f can be viewed as A → X α 1 and similarly for others
+  -- Then compose to get the desired global homeomorphism
+  sorry
+
+end Moiety
 
 section StableNeighborhoods
 
-/-- A stable neighborhood has a unique element of maximal rank -/
-def StableNeighborhood {α : Ordinal.{u}} (U : Set (X α 1)) (b : X α 1) : Prop :=
-  IsClopen U ∧ b ∈ U ∧ ∀ x ∈ U, x ≠ b → rank.{u, u} x < rank.{u, u} b
+/-- A stable neighborhood is a clopen neighborhood of a point that is the unique
+    highest rank element in that neighborhood -/
+def IsStableNeighborhood {α : Ordinal.{u}} (U : Set (X α 1)) (b : X α 1) : Prop :=
+  IsClopen U ∧ b ∈ U ∧ ∀ x ∈ U, x ≠ b → @rank.{u, u} (X α 1) _ x < @rank.{u, u} (X α 1) _ b
 
-/-- Every point has arbitrarily small stable neighborhoods -/
-lemma exists_stable_neighborhood {α : Ordinal.{u}} (b : X α 1) :
-  ∀ V ∈ 𝓝 b, ∃ U ⊆ V, StableNeighborhood U b := by
+/-- Every element has arbitrarily small stable neighborhoods -/
+theorem has_stable_neighborhood_basis {α : Ordinal.{u}} (b : X α 1) :
+  (𝓝 b).HasBasis (IsStableNeighborhood · b) id := by
+  -- Use the fact that ordinals have a basis of clopen neighborhoods
+  -- and that rank is locally constant on small enough neighborhoods
   sorry
 
-/-- Stable neighborhoods of points of rank β+1 are homeomorphic to ω^β + 1 -/
-theorem stable_neighborhood_homeomorphism {α β : Ordinal.{u}} {U : Set (X α 1)} 
-  {b : X α 1} (hU : StableNeighborhood U b) (hb : rank b = β + 1) :
+/-- Stable neighborhoods of rank β+1 elements are homeomorphic to ω^β + 1 -/
+theorem stable_neighborhood_homeomorphic {α β : Ordinal.{u}} {b : X α 1} 
+  {U : Set (X α 1)} (hU : IsStableNeighborhood U b) (h_rank : @rank.{u, u} (X α 1) _ b = β + 1) :
   Nonempty (U ≃ₜ X β 1) := by
+  -- The proof uses the classification of successor ordinals by CB rank and degree
   sorry
 
 end StableNeighborhoods
