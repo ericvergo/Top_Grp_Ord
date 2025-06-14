@@ -281,16 +281,85 @@ noncomputable def CantorBendixsonDegree (A : Set X) [CompactSpace X]
   | some α, _ => 
     -- α is the CB rank
     -- For successor ordinals, the degree is the finite cardinality of the last non-empty derivative
-    if α = 0 then 0
+    if α = 0 then 
+      -- If rank is 0, then A itself is finite
+      -- The degree is the cardinality of A
+      if hfin : A.Finite then hfin.toFinset.card else 0
+    else if h : ∃ β, α = Order.succ β then
+      -- α = β + 1 for some β
+      -- The degree is the cardinality of A^(β)
+      let β := Classical.choose h
+      have : α = Order.succ β := Classical.choose_spec h
+      -- A^(β) is finite and non-empty (since A^(α) = ∅ but A^(β) ≠ ∅)
+      if hfin : (A^(β)).Finite then hfin.toFinset.card else 0
     else
-      -- The previous derivative A^(α-1) is finite and non-empty
-      -- Its cardinality is the Cantor-Bendixson degree
-      0 -- Placeholder: need to prove finiteness and extract cardinality
+      -- α is a limit ordinal
+      -- This shouldn't happen for finite rank in typical spaces
+      0
   | none, h => absurd h (lt_irrefl ⊤)
 
 /-- The rank of a point x is the least α such that x ∉ X^(α) -/
 noncomputable def rank (x : X) : Ordinal.{v} :=
   sInf {α : Ordinal.{v} | x ∉ (univ : Set X)^(α)}
+
+-- Additional lemmas about CB derivatives
+
+/-- The CB derivative is empty iff the original set is empty (for 0th derivative) -/
+lemma CB_derivative_zero (A : Set X) : A^(0) = A := by
+  unfold CantorBendixsonDerivative
+  simp
+
+/-- For finite sets in T1 spaces, the derived set is empty -/
+lemma derivedSet_of_finite [T1Space X] {A : Set X} (h : A.Finite) : 
+  derivedSet A = ∅ := by
+  -- In a T1 space, finite sets have no accumulation points
+  -- This is because we can isolate each point from the others
+  
+  -- First, show that finite sets are closed in T1 spaces
+  have hclosed : IsClosed A := h.isClosed
+  
+  -- We'll show that no point can be an accumulation point of A
+  ext x
+  simp only [mem_derivedSet, Set.mem_empty_iff_false, iff_false]
+  -- We need to show: not (∀ U ∈ 𝓝 x, ∃ y ∈ U ∩ A, y ≠ x)
+  -- i.e., ∃ U ∈ 𝓝 x, ∀ y ∈ U ∩ A, y = x
+  intro h_acc
+  
+  -- For any x, we'll find a neighborhood that contains at most x from A
+  by_cases hx : x ∈ A
+  · -- Case 1: x ∈ A
+    -- Since A is finite and closed, A \ {x} is also finite and closed
+    have h_diff : (A \ {x}).Finite := h.subset (diff_subset)
+    have h_diff_closed : IsClosed (A \ {x}) := h_diff.isClosed
+    
+    -- Since A \ {x} is closed and x ∉ A \ {x}, there's an open neighborhood of x
+    -- disjoint from A \ {x}
+    have hx_not_in : x ∉ A \ {x} := by simp
+    
+    -- The complement of A \ {x} is open and contains x
+    have h_compl_open : IsOpen (A \ {x})ᶜ := h_diff_closed.isOpen_compl
+    have hx_in_compl : x ∈ (A \ {x})ᶜ := by simp
+    
+    -- Apply h_acc to this neighborhood
+    obtain ⟨y, ⟨hy_in_compl, hy_in_A⟩, hy_ne_x⟩ := h_acc (A \ {x})ᶜ (h_compl_open.mem_nhds hx_in_compl)
+    
+    -- Now we have y ∈ (A \ {x})ᶜ ∩ A with y ≠ x
+    -- This means y ∈ A and y ≠ x, so y ∈ A \ {x}
+    have hy_diff : y ∈ A \ {x} := ⟨hy_in_A, hy_ne_x⟩
+    -- But y ∈ (A \ {x})ᶜ, so y ∉ A \ {x}
+    have : y ∉ A \ {x} := hy_in_compl
+    exact absurd hy_diff this
+      
+  · -- Case 2: x ∉ A
+    -- Since A is closed and x ∉ A, the complement of A is open and contains x
+    have h_compl_open : IsOpen Aᶜ := hclosed.isOpen_compl
+    have hx_in_compl : x ∈ Aᶜ := hx
+    
+    -- Apply h_acc to this neighborhood
+    obtain ⟨y, ⟨hy_in_compl, hy_in_A⟩, _⟩ := h_acc Aᶜ (h_compl_open.mem_nhds hx_in_compl)
+    
+    -- This is impossible since Aᶜ is disjoint from A
+    exact absurd hy_in_A hy_in_compl
 
 end CantorBendixson
 
@@ -300,6 +369,22 @@ section OrdinalCantorBendixson
 theorem CB_rank_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0) 
   [CompactSpace (X α d)] :
   CantorBendixsonRank (univ : Set (X α d)) = ↑(α + 2) := by
+  -- X α d = ω^(α+1)·d + 1 is a successor ordinal
+  -- By Proposition in the paper: CB rank = successor of limit capacity
+  -- Limit capacity of ω^(α+1)·d + 1 is α+1
+  -- So CB rank = (α+1) + 1 = α + 2
+  
+  -- This is a deep theorem about ordinal topology
+  -- The proof requires:
+  -- 1. Computing CB derivatives explicitly
+  -- 2. Showing (univ)^(α+2) = ∅
+  -- 3. Showing (univ)^(α+1) ≠ ∅
+  
+  -- The paper states this as an exercise using Cantor normal form
+  -- and transfinite induction
+  
+  -- MISSING: Full development of CB derivatives for ordinals
+  -- This requires substantial theory about ordinal arithmetic and topology
   sorry
 
 /-- The CB degree of ω^(α+1)·d + 1 is d -/
@@ -307,24 +392,59 @@ theorem CB_degree_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0)
   [CompactSpace (X α d)] 
   (h_rank : CantorBendixsonRank (univ : Set (X α d)) < ⊤) :
   CantorBendixsonDegree (univ : Set (X α d)) h_rank = d := by
+  -- By the paper: CB degree = coefficient
+  -- For X α d = ω^(α+1)·d + 1, the coefficient is d
+  
+  -- By definition, CB degree is the cardinality of (univ)^(α+1)
+  -- when CB rank is α+2
+  
+  -- The points in (univ)^(α+1) are exactly the d maximal points:
+  -- ω^(α+1)·1, ω^(α+1)·2, ..., ω^(α+1)·d
+  
+  -- MISSING: Same as above - requires explicit CB derivative calculations
   sorry
 
 /-- Elements of rank α+1 in ω^(α+1) are exactly the multiples of ω^α -/
 lemma rank_classification (α : Ordinal.{u}) (x : X α 1) :
   rank x = α + 1 ↔ ∃ k : ℕ, k ≥ 1 := by
-  sorry
+  -- X α 1 = ω^(α+1) + 1
+  -- Points of the form k·ω^α where k ≥ 1 have rank α+1
+  -- This is because they are isolated in the (α+1)-th derivative
+  
+  -- The characterization depends on understanding the Cantor normal form
+  -- of elements in X α 1
+  
+  constructor
+  · intro h_rank
+    -- If rank x = α + 1, then x is of the form k·ω^α for some k ≥ 1
+    -- This requires understanding the structure of ordinals
+    
+    -- MISSING: Need explicit computation of CB derivatives for ordinals
+    -- This requires developing the theory of ordinal arithmetic and topology
+    sorry
+  · intro ⟨k, hk⟩
+    -- If x = k·ω^α for k ≥ 1, then rank x = α + 1
+    -- This is because such points are exactly those that survive
+    -- α derivatives but not α+1 derivatives
+    
+    -- MISSING: Same as above - requires ordinal arithmetic
+    sorry
 
 /-- The rank of a point determines its Cantor normal form structure -/
 theorem rank_determines_structure (α : Ordinal.{u}) (x : X α 1) :
   rank x ≤ α + 1 := by
   -- The space X α 1 = ω^(α+1) + 1 has Cantor-Bendixson rank α + 2
   -- So every point has rank at most α + 1
-  -- This follows from the fact that (univ)^(α+2) = ∅
   
-  -- We need to show x ∈ (univ)^(α+1), which means rank x ≤ α + 1
-  -- Since X α 1 = ω^(α+1) + 1, and this space has CB rank α + 2,
-  -- all points disappear by the (α+2)-th derivative
-  sorry -- Requires showing that ordinals have the expected CB rank
+  -- This theorem requires knowing that the CB rank of X α 1 is α + 2
+  -- which is stated in CB_rank_successor_ordinal
+  
+  -- The proof would show that (univ)^(α+2) = ∅, which implies
+  -- no point can have rank > α + 1
+  
+  -- MISSING: Requires CB_rank_successor_ordinal or direct computation
+  -- of CB derivatives for ordinals
+  sorry
 
 end OrdinalCantorBendixson
 
@@ -340,6 +460,20 @@ theorem homeomorphic_iff_same_CB (α β : Ordinal.{u})
      (hβ_fin : CantorBendixsonRank (univ : Set (OrdinalSpace β)) < ⊤),
      CantorBendixsonDegree (univ : Set (OrdinalSpace α)) hα_fin = 
      CantorBendixsonDegree (univ : Set (OrdinalSpace β)) hβ_fin) := by
+  -- This is the classification theorem from the paper
+  -- Two successor ordinals are homeomorphic iff:
+  -- 1. They have the same limit capacity (equivalently, same CB rank)
+  -- 2. They have the same coefficient (equivalently, same CB degree)
+  
+  -- The proof requires showing:
+  -- (→) If homeomorphic, then same CB invariants
+  -- (←) If same CB invariants, then homeomorphic
+  
+  -- The forward direction uses that CB rank and degree are topological invariants
+  -- The reverse direction uses explicit construction of homeomorphisms
+  
+  -- MISSING: This is the main classification theorem and requires
+  -- developing the full theory of ordinal homeomorphisms
   sorry
 
 end Classification

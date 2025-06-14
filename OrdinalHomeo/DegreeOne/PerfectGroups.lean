@@ -40,11 +40,11 @@ section PerfectGroups
 structure UniformlyPerfect (G : Type*) [Group G] where
   k : ℕ
   uniform_bound : ∀ g : G, ∃ (pairs : Fin k → G × G), 
-    g = sorry  -- Product of commutators
+    g = (List.ofFn (fun i : Fin k => ⁅(pairs i).1, (pairs i).2⁆)).prod  -- Product of commutators
 
 /-- The commutator width of a uniformly perfect group -/
-noncomputable def commutatorWidth (G : Type*) [Group G] (h : UniformlyPerfect G) : ℕ :=
-  sorry  -- Minimum k for uniform perfectness
+noncomputable def commutatorWidth (G : Type*) [Group G] (up : UniformlyPerfect G) : ℕ :=
+  sInf {k : ℕ | ∃ (up' : UniformlyPerfect G), up'.k = k}  -- Minimum k for uniform perfectness
 
 /-- Elements supported in moieties can be written as single commutators -/
 lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
@@ -73,20 +73,20 @@ lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} (A : Topolo
 
 /-- Main theorem: Homeo(ω^(α+1)) is uniformly perfect with width ≤ 3 -/
 theorem homeo_uniformly_perfect (α : Ordinal.{u}) : 
-  Nonempty (UniformlyPerfect (H α 1)) := by
+  ∃ (up : UniformlyPerfect (H α 1)), up.k ≤ 3 := by
   sorry
 
 /-- Corollary: Every element can be written as at most 3 commutators -/
 theorem three_commutator_bound {α : Ordinal.{u}} (h : H α 1) :
   ∃ (c₁ c₂ c₃ : (H α 1) × (H α 1)), 
-    h = sorry := by
+    h = ⁅c₁.1, c₁.2⁆ * ⁅c₂.1, c₂.2⁆ * ⁅c₃.1, c₃.2⁆ := by
   sorry
 
 /-- The commutator trick: Building commutators from translations -/
 lemma commutator_trick {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
   (hSupp : support h ⊆ (A : Set (X α 1))) 
   (τ : H α 1) (hτ : IsConvergentATranslation A τ) :
-  ∃ σ : H α 1, h = sorry := by
+  ∃ σ : H α 1, h = ⁅σ, τ⁆ := by
   sorry
 
 end PerfectGroups

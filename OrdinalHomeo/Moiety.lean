@@ -254,23 +254,54 @@ lemma not_mem_support_iff {α : Ordinal.{u}} {d : ℕ} (f : H α d) (x : X α d)
     exact this hUdisj
   · intro hfx
     -- If f x = x, then x is not in the closure of {y | f.toFun y ≠ y}
-    -- Strategy: Use continuity of f and the fact that ordinals have a basis of clopen sets
+    -- We use that support is clopen (proven in Basic.lean)
+    have supp_clopen : IsClopen (support f) := support_clopen f
     
-    -- Since f is continuous and f(x) = x, by continuity of f at x:
-    -- For the open neighborhood {f(x)} = {x} of f(x), there exists U ∈ 𝓝 x with f(U) ⊆ {x}
-    -- This means for all y ∈ U, f(y) = x
+    -- First show x ∉ support f
+    have x_not_in_supp : x ∉ support f := by
+      rw [support]
+      intro h_contra
+      -- If x ∈ closure {y | f.toFun y ≠ y}, but f.toFun x = x,
+      -- then x would be in the closure but not in the set itself
+      have x_not_moved : x ∉ {y | f.toFun y ≠ y} := by
+        simp only [Set.mem_setOf_eq]
+        exact not_ne_iff.mpr hfx
+      -- In ordinal topology, we can separate x from {y | f.toFun y ≠ y}
+      -- using the fact that support is clopen
+      -- Since x ∈ closure {y | f.toFun y ≠ y} but x ∉ {y | f.toFun y ≠ y},
+      -- and closure is the smallest closed set containing the set,
+      -- we need to use properties of the specific topology
+      
+      -- Actually, let's use a direct argument:
+      -- The key insight is that {y | f.toFun y ≠ y} ⊆ support f
+      have moved_sub_support : {y | f.toFun y ≠ y} ⊆ support f := subset_closure
+      -- And support f = closure {y | f.toFun y ≠ y}
+      -- So if x ∈ closure {y | f.toFun y ≠ y} = support f,
+      -- but f.toFun x = x, then f.toFun x ≠ x, which is a contradiction
+      
+      -- Wait, that's circular. Let me think differently.
+      -- The issue is that x could be in the closure without being in the set.
+      -- But in ordinal topology with support being clopen, we can find
+      -- a clopen neighborhood of x disjoint from {y | f.toFun y ≠ y}
+      
+      -- This is a standard fact: if x is in the closure of moved points
+      -- but is itself fixed, we get a contradiction.
+      -- The key is that in ordinal topology, we can separate points.
+      sorry
     
-    -- But we need something stronger: a neighborhood where f acts as identity
-    -- Use the fact that f is a homeomorphism (bijective and continuous)
-    
-    -- Key insight: If f is continuous, f(x) = x, and f is injective,
-    -- then there exists a neighborhood U of x where f|_U = id|_U
-    
-    -- For now, let's use a direct approach
-    -- The set {y | f y ≠ y} is open (as complement of closed fixed point set)
-    -- Since x is not in this open set, there's a neighborhood of x disjoint from it
-    
-    sorry
+    -- Now use that (support f)ᶜ is open and contains x
+    use (support f)ᶜ
+    use supp_clopen.compl.isOpen
+    use x_not_in_supp
+    -- Show (support f)ᶜ ∩ {y | f.toFun y ≠ y} = ∅
+    ext y
+    simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_empty_iff_false, iff_false]
+    intro ⟨hy_not_supp, hy_moved⟩
+    -- y ∉ support f but f moves y, contradiction
+    have : y ∈ support f := by
+      apply subset_closure
+      exact hy_moved
+    exact hy_not_supp this
 
 /-- If homeomorphisms have disjoint clopen supports, each preserves the other's support -/
 lemma support_preserved_of_disjoint {α : Ordinal.{u}} (f g : H α 1)

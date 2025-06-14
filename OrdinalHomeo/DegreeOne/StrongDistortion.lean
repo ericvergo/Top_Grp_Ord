@@ -43,7 +43,7 @@ class StronglyDistorted (G : Type*) [Group G] where
   m : ℕ
   width : ℕ → ℕ
   generation : ∀ (g : ℕ → G), ∃ S : Finset G, S.card ≤ m ∧ 
-    ∀ n, g n ∈ {x | ∃ (f : Fin (width n) → S), x = sorry}
+    ∀ n, g n ∈ {x | ∃ (f : Fin (width n) → G) (hf : ∀ i, f i ∈ S), x = (List.ofFn f).prod}
 
 /-- A group is strongly bounded if every left-invariant metric has bounded diameter -/
 def StronglyBounded (G : Type*) [Group G] : Prop :=
@@ -57,7 +57,7 @@ lemma calegari_freedman_construction {α : Ordinal.{u}}
   (σ : H α 1) (hσ : IsConvergentATranslation A σ ∧ support σ ⊆ (B : Set (X α 1)))
   (τ : H α 1) (hτ : IsConvergentATranslation B τ) :
   ∀ (h : ℕ → H α 1), (∀ n, support (h n) ⊆ (A : Set (X α 1))) →
-    ∃ φ : H α 1, ∀ n, h n = sorry := by
+    ∃ φ ψ : H α 1, ∀ n, h n = φ * (τ^n) * ψ * (τ^n)⁻¹ * φ⁻¹ := by
   sorry
 
 /-- Main theorem: Homeo(ω^(α+1)) is strongly distorted -/

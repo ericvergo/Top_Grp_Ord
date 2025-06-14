@@ -58,13 +58,13 @@ theorem anderson_method {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety �
 
 /-- Elements inducing infinite permutations displace some moiety -/
 lemma infinite_permutation_displaces_moiety {α : Ordinal.{u}} {h : H α 1}
-  (hInf : Set.Infinite {x : X α 1 | ∃ y ∈ maximalRankSet α 1, x = sorry ∧ h.toFun x ≠ x}) :
+  (hInf : Set.Infinite {x ∈ maximalRankElements α 1 | h.toFun x ≠ x}) :
   ∃ A : TopologicalMoiety α, h.toFun '' (A : Set (X α 1)) ∩ (A : Set (X α 1)) = ∅ := by
   sorry
 
 /-- Main theorem: Classification of normal generators -/
 theorem normal_generator_classification {α : Ordinal.{u}} (h : H α 1) :
-  (NormalGenerator h ↔ Set.Infinite {x : X α 1 | ∃ y ∈ maximalRankSet α 1, x = sorry ∧ h.toFun x ≠ x}) ∧
+  (NormalGenerator h ↔ Set.Infinite {x ∈ maximalRankElements α 1 | h.toFun x ≠ x}) ∧
   (NormalGenerator h ↔ ∃ k, UniformNormalGenerator h k) := by
   sorry
 
@@ -75,24 +75,27 @@ theorem normal_generator_width_bound {α : Ordinal.{u}} {h : H α 1}
 
 /-- The subgroup of finite permutations -/
 noncomputable def Fin_subgroup (α : Ordinal.{u}) : Subgroup (H α 1) :=
-  { carrier := {f | Set.Finite {x : X α 1 | ∃ y ∈ maximalRankSet α 1, x = sorry ∧ f.toFun x ≠ x}}
+  { carrier := {f | Set.Finite {x ∈ maximalRankElements α 1 | f.toFun x ≠ x}}
     mul_mem' := by sorry
     one_mem' := by 
       simp only [Set.mem_setOf_eq]
       -- The identity doesn't move any points
       convert Set.finite_empty
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_exists]
-      intro y hy
-      -- hy is a conjunction: y ∈ maximalRankSet α 1 ∧ x = sorry ∧ 1.toFun x ≠ x
+      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      intro ⟨hx_max, hx_moved⟩
+      -- hx_max : x ∈ maximalRankElements α 1
+      -- hx_moved : 1.toFun x ≠ x
       -- For the identity homeomorphism, 1.toFun x = x for all x
-      exact hy.2.2 rfl
+      exact hx_moved rfl
     inv_mem' := by 
       intro f hf
       simp only [Set.mem_setOf_eq] at hf ⊢
       -- The points moved by f⁻¹ are exactly those moved by f
-      -- ATTEMPT 1: Direct proof with explicit construction failed due to complex type issues
-      -- ATTEMPT 2: We know mathematically that f⁻¹ moves x iff f moves x
+      -- For a homeomorphism f, we have f(x) = x iff f⁻¹(x) = x
+      -- This is a standard fact about bijections
+      -- MISSING: Full proof requires showing that for homeomorphisms,
+      -- the set of moved points is preserved under taking inverses
       sorry }
 
 /-- Fin(ω^(α+1)) is the maximal proper normal subgroup -/
