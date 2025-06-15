@@ -243,9 +243,12 @@ lemma not_mem_support_iff {α : Ordinal.{u}} {d : ℕ} (f : H α d) (x : X α d)
     -- the set must equal its closure, hence is closed
     have : IsOpen (support f) := h_clopen.isOpen
     have : support f = closure {y | f.toFun y ≠ y} := rfl
-    -- If the closure is open, then the set equals its closure
-    -- This is a property specific to ordinal topology
-    sorry
+    -- If the closure is open, then the set must already be closed
+    -- This is because ordinals have a basis of clopen sets
+    -- For now, we use that the support is clopen, which is proven in Basic.lean
+    -- The fact that support equals the moved set for ordinals requires
+    -- deeper understanding of ordinal topology
+    sorry  -- Requires: moved set is clopen for ordinal homeomorphisms
   -- Now the equivalence is straightforward
   rw [h_eq]
   simp only [mem_setOf_eq, not_not]

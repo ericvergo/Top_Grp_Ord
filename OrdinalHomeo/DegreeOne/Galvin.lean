@@ -81,13 +81,20 @@ theorem galvin_lemma {α : Ordinal.{u}} (A B : TopologicalMoiety α)
   sorry -- Requires: detailed case analysis and moiety manipulations
 
 /-- Corollary: Any homeomorphism is a product of at most 3 moiety-supported homeomorphisms -/
-lemma fragmentation_bound {α : Ordinal.{u}} (_h : H α 1) :
+lemma fragmentation_bound {α : Ordinal.{u}} (h : H α 1) :
   ∃ (A B : TopologicalMoiety α) (f₁ f₂ f₃ : H α 1),
     (support f₁ ⊆ (A : Set (X α 1)) ∨ support f₁ ⊆ (B : Set (X α 1))) ∧
     (support f₂ ⊆ (A : Set (X α 1)) ∨ support f₂ ⊆ (B : Set (X α 1))) ∧
     (support f₃ ⊆ (A : Set (X α 1)) ∨ support f₃ ⊆ (B : Set (X α 1))) ∧
-    _h = f₁ * f₂ * f₃ := by
-  sorry
+    h = f₁ * f₂ * f₃ := by
+  -- First, we need to find suitable moieties A and B
+  -- The idea is to take any moiety A and its complement B (which is also a moiety)
+  -- For the existence of a moiety, we need to use that X α 1 has infinitely many
+  -- maximal rank points, and we can partition them appropriately
+  
+  -- This requires constructing an initial moiety, which depends on
+  -- understanding the structure of maximal rank points in X α 1
+  sorry  -- Requires: existence of moieties and application of galvin_lemma
 
 /-- Key step in Galvin's proof: constructing the appropriate partition -/
 lemma galvin_partition {α : Ordinal.{u}} (_h : H α 1) (_A _B : TopologicalMoiety α)

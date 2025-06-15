@@ -533,26 +533,30 @@ theorem rank_determines_structure (α : Ordinal.{u}) (x : X α 1) :
   
   -- The rank of any point is less than the space's CB rank
   have h_bound : rank x < β := by
-    -- By definition, rank x is when x disappears from derivatives
-    -- Since (univ)^β = ∅, all points have disappeared by then
-    -- Use that if S^β = ∅, then for any x ∈ S, x ∉ S^β
-    -- This means x disappeared at some stage γ < β
-    -- Hence rank x ≤ γ < β
+    -- By definition of CB rank, we have (univ)^[β] = ∅
+    -- From hβ_eq: CantorBendixsonRank univ = ↑β
+    -- This means β is the least ordinal such that (univ)^[β] = ∅
     
-    -- The space has CB rank β means eventually the derivatives are empty
-    -- But we can't directly iterate CantorBendixsonDerivative β times for ordinal β
-    -- This requires understanding how CB rank works for ordinals
-    -- Since x ∈ univ, and (univ)^β = ∅, x must have disappeared before stage β
-    -- This means rank x < β
-    sorry -- Need proper handling of transfinite CB derivatives and connection between rank and derivatives
+    -- The rank of x is the least ordinal γ such that x ∉ (univ)^[γ]
+    -- Since (univ)^[β] = ∅, we have x ∉ (univ)^[β]
+    -- Therefore rank x ≤ β
+    
+    -- We need to show it's strictly less than β
+    -- This follows because if rank x = β, then x ∈ (univ)^[γ] for all γ < β
+    -- But then x would be in the intersection ⋂_{γ<β} (univ)^[γ]
+    -- For limit ordinals this would mean x ∈ (univ)^[β], contradicting (univ)^[β] = ∅
+    
+    -- The detailed proof requires understanding the connection between
+    -- CantorBendixsonRank and the individual ranks of points
+    sorry -- Requires proper connection between space rank and point ranks
     
   -- Therefore rank x ≤ α + 1
   rw [hβ_val] at h_bound
   -- h_bound : rank x < α + 2
-  -- Since α + 2 is the successor of α + 1 for ordinals
-  -- and rank is an ordinal, rank x < α + 2 means rank x ≤ α + 1
-  -- This is a standard ordinal arithmetic fact
-  sorry -- rank x < α + 2 implies rank x ≤ α + 1
+  -- We need to show rank x ≤ α + 1
+  -- Since α + 2 = (α + 1) + 1, and for ordinals γ < δ + 1 ↔ γ ≤ δ
+  -- We use that rank is an ordinal and ordinals are well-ordered
+  sorry -- Requires ordinal arithmetic: rank x < α + 2 implies rank x ≤ α + 1
 
 -- Helper lemmas for understanding ordinal structure
 
@@ -569,10 +573,11 @@ lemma point_characterization {α : Ordinal.{u}} {d : ℕ} (_ : X α d) :
 /-- The maximal rank elements are exactly those of the form ω^(α+1)·k -/
 lemma maximal_rank_characterization {α : Ordinal.{u}} {d : ℕ} (x : X α d) :
   x ∈ maximalRankElements α d ↔ 
-  ∃ k : ℕ, k ∈ Icc 1 d := by
-  -- This characterization says x is maximal rank iff it corresponds to some k ∈ [1,d]
-  -- But we need to understand what maximalRankElements actually contains
-  -- Without the full definition, we can't prove this equivalence
+  ∃ k : ℕ, k ∈ Icc 1 d ∧ 
+    ∃ (h : ω^(α+1) * (k : Ordinal) < ω^(α+1) * (d : Ordinal) + 1), 
+    x = toX (ω^(α+1) * (k : Ordinal)) h := by
+  -- This should follow from the definition of maximalRankElements
+  -- but the proof terms need to match exactly
   sorry
 
 /-- CB derivative removes isolated points -/

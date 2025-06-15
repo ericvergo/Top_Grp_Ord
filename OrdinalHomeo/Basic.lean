@@ -344,68 +344,24 @@ def support {α : Ordinal.{u}} {d : ℕ} (f : H α d) : Set (X α d) :=
 /-- Support is clopen for homeomorphisms of ordinals -/
 lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) : 
   IsClopen (support f) := by
-  constructor
-  · -- Show support is closed (it's a closure, so this is immediate)
-    exact isClosed_closure
-  · -- Show support is open
-    -- For ordinals with order topology, we use a key fact:
-    -- The space has a basis of clopen sets, making it zero-dimensional
-    
-    -- First, let's establish that the moved set is clopen
-    have moved_clopen : IsClopen {x | f.toFun x ≠ x} := by
-      -- The key insight: For ordinals, we can use the well-ordering structure
-      -- combined with continuity of the homeomorphism
-      
-      -- Step 1: The fixed point set is closed (standard result)
-      have fixed_closed : IsClosed {x | f.toFun x = x} := by
-        have hf : Continuous f.toFun := f.continuous_toFun
-        show IsClosed (fixedPoints f.toFun)
-        exact isClosed_fixedPoints hf
-      
-      -- Step 2: The moved set is open (complement of closed)
-      have moved_open : IsOpen {x | f.toFun x ≠ x} := by
-        rw [← compl_setOf]
-        exact isOpen_compl_iff.mpr fixed_closed
-      
-      -- Step 3: For the moved set to be closed, we need to use special properties
-      -- For homeomorphisms of compact Hausdorff spaces (like successor ordinals),
-      -- we can use the fact that the graph is closed and work from there
-      
-      -- The moved set is the projection of {(x,y) : x ≠ y ∧ f x = y}
-      -- For a homeomorphism of a compact Hausdorff space, this analysis works well
-      
-      -- Using compactness and the Hausdorff property of X α d
-      have moved_closed : IsClosed {x | f.toFun x ≠ x} := by
-        -- The set of moved points is closed in a compact Hausdorff space
-        -- This uses that f is a homeomorphism, not just continuous
-        
-        -- Key: In a compact Hausdorff space, for a homeomorphism f,
-        -- the diagonal Δ = {(x,x) : x ∈ X} is closed in X × X
-        -- and the graph of f is closed, so their complement's projection is open
-        
-        -- But actually, we need the moved set to be closed, not open
-        -- So we use a different approach
-        
-        -- For a homeomorphism of a compact Hausdorff space,
-        -- {x : f x ≠ x} = {x : d(x, f x) > 0} for any compatible metric
-        -- But ordinals might not be metrizable in general
-        
-        -- Actually, let's use the fact that for homeomorphisms,
-        -- being a fixed point is a closed condition (which we have)
-        -- so its complement (moved points) might not be closed in general
-        
-        -- For ordinals specifically, we need to use their special structure
-        -- The key is that ordinals with order topology have nice local properties
-        
-        sorry  -- This step requires deeper analysis of ordinal homeomorphisms
-      
-      exact ⟨moved_closed, moved_open⟩
-    
-    -- Since the moved set is clopen, it equals its closure (the support)
-    have : closure {x | f.toFun x ≠ x} = {x | f.toFun x ≠ x} := by
-      exact IsClosed.closure_eq moved_clopen.isClosed
-    rw [support, this]
-    exact moved_clopen.isOpen
+  -- For this result, we'll use a different strategy
+  -- We'll show that the support (as defined) has the properties we need
+  -- without necessarily proving the moved set is clopen
+  
+  -- Key insight: For ordinals, we can use the well-ordering to analyze the support
+  -- The support is the closure of the moved set
+  unfold support
+  
+  -- Since we're dealing with ordinals, let's use their specific properties
+  -- In particular, X α d is homeomorphic to a successor ordinal with order topology
+  
+  -- For now, we'll admit this as it requires deeper analysis of ordinal topology
+  -- The key facts needed are:
+  -- 1. Successor ordinals are compact Hausdorff spaces
+  -- 2. They have a basis of clopen sets (being zero-dimensional)
+  -- 3. For homeomorphisms of such spaces, the moved set has nice properties
+  
+  sorry
 
 end Support
 
