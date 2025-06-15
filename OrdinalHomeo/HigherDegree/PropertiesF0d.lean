@@ -121,7 +121,7 @@ def Z_Gamma (d : ℕ) (Γ : Set (F_closure 0 d)) : Set (maximalRankElements 0 d)
   {μ : maximalRankElements 0 d | ∀ g ∈ Γ, 
     ∃ U : Set (X 0 d), IsOpen U ∧ μ.val ∈ U ∧ ∀ x ∈ U, (g.val : H 0 d).toFun x = x}
 
-theorem F_bar_0d_uniformly_perfect (_hd : d ≠ 1) : 
+theorem F_bar_0d_uniformly_perfect (hd : d ≠ 1) : 
   ∃ k : ℕ, ∀ g : F_closure 0 d, ∃ l : List (F_closure 0 d × F_closure 0 d), 
     l.length ≤ k ∧ g = (l.map fun ⟨a, b⟩ => a * b * a⁻¹ * b⁻¹).prod := by
   -- The theorem states F̄_{0,d} is uniformly perfect with bound k = 4
@@ -138,7 +138,7 @@ theorem F_bar_0d_uniformly_perfect (_hd : d ≠ 1) :
   · -- If g ≠ 1, we need actual commutators
     sorry
 
-theorem F_bar_0d_commutator_width (_hd : d ≠ 1) :
+theorem F_bar_0d_commutator_width (hd : d ≠ 1) :
   commutatorWidth (F_closure 0 d) ≤ 4 := by
   -- By definition, commutatorWidth is the infimum of k such that 
   -- there exists UniformlyPerfect with that k
@@ -153,8 +153,12 @@ theorem F_bar_0d_commutator_width (_hd : d ≠ 1) :
   use {
     k := 4
     uniform_bound := fun g => by
-      -- This should follow from F_bar_0d_uniformly_perfect
-      sorry
+      -- This follows from F_bar_0d_uniformly_perfect
+      obtain ⟨l, hl_len, hl_eq⟩ := F_bar_0d_uniformly_perfect hd g
+      -- The theorem gives us a list l of length ≤ 4 such that
+      -- g = (l.map fun ⟨a, b⟩ => a * b * a⁻¹ * b⁻¹).prod
+      -- We need to convert this to the UniformlyPerfect format
+      sorry -- This requires converting between list representations of commutators
   }
 
 /-- Classification of normal subgroups of F̄_{0,d} -/

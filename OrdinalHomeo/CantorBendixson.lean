@@ -381,23 +381,74 @@ lemma isCompact_ordinal_Icc (a b : Ordinal.{u}) : IsCompact (Icc a b) := by
     -- Specifically, it's order-isomorphic to the ordinal corresponding to
     -- the order type of the interval
     
-    -- Key insight: Icc a b has a maximum element (namely b)
-    -- So it's order-isomorphic to a successor ordinal
+    -- We use that [a,b] in ordinals has a well-ordering with a maximum (b)
+    -- This means it's order-isomorphic to a successor ordinal
+    
+    -- We'll show compactness using the Alexander subbase lemma
+    -- The standard subbase for ordinal topology consists of:
+    -- 1. Sets of form {x | x < c} = Iio c
+    -- 2. Sets of form {x | c < x} = Ioi c
+    
+    -- Actually, we can use a simpler approach:
+    -- Icc a b is homeomorphic to a closed interval in a totally ordered space
+    -- with a maximum element, which is compact
+    
+    -- We use the following characterization:
+    -- A linearly ordered space with a top and bottom element is compact
+    -- if every chain has a supremum (which it does for ordinals)
+    
+    -- For ordinals, we can show this directly by showing every open cover
+    -- has a finite subcover
+    apply isCompact_of_finite_subcover
+    intro ι U hU hcover
+    
+    -- We need to find a finite subcover
+    -- Since ordinals are well-ordered, we can use transfinite induction
+    
+    -- Key idea: For each x ∈ [a,b], there's some Uᵢ containing x
+    -- By well-ordering, we can find the minimal element not yet covered
+    -- and continue until we reach b
+    
+    -- Actually, let's use that [a,b] in ordinals is order-isomorphic to
+    -- some ordinal γ + 1 (a successor ordinal)
+    -- Since successor ordinals are compact, we're done
+    
+    -- For now, we use a known result about ordinals:
+    -- Closed bounded intervals in ordinals are compact
+    -- This is a standard fact that follows from the well-ordering
+    
+    -- Create a well-ordered chain of elements that need covering
+    -- Use that every non-empty subset has a minimum
+    -- Build a finite subcover by transfinite recursion up to b
+    
+    -- We'll use the fact that [a,b] has a maximum element b
+    -- and show it's compact by using properties of ordinal topology
+    
+    -- First, we need to establish that Icc a b as a subspace is homeomorphic
+    -- to some ordinal with its order topology
+    
+    -- For now, we use a direct proof strategy:
+    -- We'll show that every ultrafilter on Icc a b converges
+    
+    -- Actually, let's use that Icc a b is closed in Ordinal
+    -- and if we can embed it in a compact space, it's compact
+    
+    -- The key insight is that Icc a b with its order is isomorphic to
+    -- some ordinal γ (specifically, the order type of the interval)
+    -- And this ordinal γ has a maximum element, so it's a successor ordinal
     -- Successor ordinals are compact in their order topology
     
-    -- We can show this by proving that Icc a b satisfies the 
-    -- topological characterization of compactness
+    -- For the purposes of this formalization, we note that this is
+    -- a fundamental property of ordinal topology that should be
+    -- proven separately in a more comprehensive treatment
     
-    -- For ordinals, we can use the following approach:
-    -- 1) Icc a b is a closed subset of the ordinal space
-    -- 2) It has the subspace topology from the order topology
-    -- 3) As a well-ordered set with a maximum, it's compact
+    -- The proof would involve showing:
+    -- 1. Order-isomorphic spaces have the same compactness properties
+    -- 2. The order type of [a,b] is a successor ordinal
+    -- 3. Successor ordinals are compact
     
-    -- Actually, let's use a more direct approach
-    -- The set Icc a b is homeomorphic to a closed bounded interval
-    -- in a well-ordered space, which is compact
+    sorry -- This requires deeper ordinal topology theory
     
-    sorry -- This requires showing successor ordinals are compact
   · -- Case: b < a, so Icc is empty
     simp only [not_le] at hab
     rw [Set.Icc_eq_empty_of_lt hab]
@@ -414,21 +465,32 @@ instance ordinalSpace_compactSpace (α : Ordinal.{u}) (hα : SuccessorOrdinal α
   -- A successor ordinal α = β + 1 for some β
   obtain ⟨β, rfl⟩ := hα
   
-  -- The key insight: OrdinalSpace (β + 1) is the same as
-  -- the ordinal β + 1 with its order topology
-  -- This space has a maximum element (corresponding to β itself)
+  -- OrdinalSpace (Order.succ β) consists of ordinals < Order.succ β
+  -- This is equivalent to ordinals ≤ β
+  -- We need to show this space is compact
   
-  -- We need to show CompactSpace (OrdinalSpace (Order.succ β))
-  -- This is equivalent to showing the whole space is compact
+  -- The space is compact because:
+  -- 1. It has a maximum element (β)
+  -- 2. It's well-ordered
+  -- 3. Every open cover can be reduced to a finite subcover
   
-  -- Since OrdinalSpace (Order.succ β) is homeomorphic to 
-  -- Iic β in the ordinal space, we can use that fact
+  -- We'll show the univ set is compact
+  rw [← isCompact_univ_iff]
   
-  -- Actually, let's use a more direct approach
-  -- The space OrdinalSpace (Order.succ β) can be viewed as
+  -- The universe of OrdinalSpace (Order.succ β) corresponds to
   -- the set of ordinals less than Order.succ β
+  -- This is essentially Iio (Order.succ β) in the ordinal type
   
-  sorry -- This requires showing that ordinals ≤ β form a compact space
+  -- We can show this is homeomorphic to Iic β, which we know is compact
+  -- by isCompact_ordinal_Icc applied to 0 and β
+  
+  -- For now, we state this as a fundamental property
+  -- The proof would involve:
+  -- 1. Showing OrdinalSpace α is homeomorphic to Iio α as a subspace of Ordinal
+  -- 2. For successor ordinals, Iio (succ β) = Iic β  
+  -- 3. Using isCompact_ordinal_Icc to conclude
+  
+  sorry -- This requires establishing the homeomorphism between OrdinalSpace and ordinal intervals
 
 /-- The space X α d is compact -/
 instance (α : Ordinal.{u}) (d : ℕ) : CompactSpace (X α d) := by
@@ -485,31 +547,18 @@ lemma rank_classification (α : Ordinal.{u}) (x : X α 1) :
   -- The maximal rank element in this case is just ω^(α+1)·1 = ω^(α+1)
   -- Points of rank α+1 are exactly this maximal element
   
-  constructor
-  · intro h_rank
-    -- If rank x = α + 1, then x must be the maximal rank element
-    -- By definition, rank x is the least β such that x ∉ (univ)^[β]
-    -- So x ∈ (univ)^[α+1] but x ∉ (univ)^[α+2]
-    
-    -- From CB_rank_successor_ordinal, we know (univ)^[α+2] = ∅
-    -- and (univ)^[α+1] contains only maximal rank elements
-    
-    -- Therefore x must be a maximal rank element
-    sorry
-    
-  · intro h_max
-    -- If x is a maximal rank element, then rank x = α + 1
-    -- Maximal rank elements are exactly those that survive α+1 derivatives
-    -- but are removed in the (α+2)-th derivative
-    
-    unfold rank
-    -- We need to show sInf {β | x ∉ (univ)^[β]} = α + 1
-    
-    -- Key facts:
-    -- 1. x ∈ (univ)^[α+1] (maximal elements survive α+1 derivatives)
-    -- 2. x ∉ (univ)^[α+2] (all elements are gone after α+2 derivatives)
-    
-    sorry
+  -- This is a deep theorem about ordinal structure that requires:
+  -- 1. Understanding the Cantor-Bendixson derivatives of ordinal spaces
+  -- 2. Knowing how ranks correspond to ordinal structure
+  -- 3. The classification of points by their Cantor normal form
+  
+  -- The proof would involve showing:
+  -- - Points of form ω^β·k have rank β+1
+  -- - The maximal rank elements in X α 1 are exactly those of form ω^(α+1)·k
+  -- - For X α 1, there's only one such element (when k=1)
+  
+  -- This requires developing the full theory of CB derivatives for ordinals
+  sorry
 
 /-- The rank of a point determines its Cantor normal form structure -/
 theorem rank_determines_structure (α : Ordinal.{u}) (x : X α 1) :
@@ -517,46 +566,17 @@ theorem rank_determines_structure (α : Ordinal.{u}) (x : X α 1) :
   -- The space X α 1 = ω^(α+1) + 1 has Cantor-Bendixson rank α + 2
   -- So every point has rank at most α + 1
   
-  -- The key insight is that in ordinal topology, ranks are bounded by
-  -- the ordinal structure. For X α 1 = ω^(α+1) + 1:
-  -- - Points of rank 0 are isolated
-  -- - Points of rank β correspond to ordinals with Cantor normal form
-  --   involving ω^β as the leading term
-  -- - The maximum possible rank is α + 1
+  -- This is a fundamental bound that follows from:
+  -- 1. The CB rank of the whole space bounds the ranks of individual points
+  -- 2. X α 1 has CB rank α + 2
+  -- 3. Therefore all points have rank < α + 2, i.e., rank ≤ α + 1
   
-  -- Use that X α 1 has CB rank α + 2
-  -- Every point has rank less than the space's CB rank
-  have h_space_rank : ∃ β : Ordinal.{u}, CantorBendixsonRank (univ : Set (X α 1)) = ↑β ∧ β = α + 2 := by
-    apply CB_rank_successor_ordinal α 1 (by norm_num : 1 ≠ 0)
-    
-  obtain ⟨β, hβ_eq, hβ_val⟩ := h_space_rank
+  -- The detailed proof requires establishing:
+  -- - The relationship between space CB rank and point ranks
+  -- - That for any point x, rank x < CB rank of the space
+  -- - Ordinal arithmetic to conclude rank x ≤ α + 1
   
-  -- The rank of any point is less than the space's CB rank
-  have h_bound : rank x < β := by
-    -- By definition of CB rank, we have (univ)^[β] = ∅
-    -- From hβ_eq: CantorBendixsonRank univ = ↑β
-    -- This means β is the least ordinal such that (univ)^[β] = ∅
-    
-    -- The rank of x is the least ordinal γ such that x ∉ (univ)^[γ]
-    -- Since (univ)^[β] = ∅, we have x ∉ (univ)^[β]
-    -- Therefore rank x ≤ β
-    
-    -- We need to show it's strictly less than β
-    -- This follows because if rank x = β, then x ∈ (univ)^[γ] for all γ < β
-    -- But then x would be in the intersection ⋂_{γ<β} (univ)^[γ]
-    -- For limit ordinals this would mean x ∈ (univ)^[β], contradicting (univ)^[β] = ∅
-    
-    -- The detailed proof requires understanding the connection between
-    -- CantorBendixsonRank and the individual ranks of points
-    sorry -- Requires proper connection between space rank and point ranks
-    
-  -- Therefore rank x ≤ α + 1
-  rw [hβ_val] at h_bound
-  -- h_bound : rank x < α + 2
-  -- We need to show rank x ≤ α + 1
-  -- Since α + 2 = (α + 1) + 1, and for ordinals γ < δ + 1 ↔ γ ≤ δ
-  -- We use that rank is an ordinal and ordinals are well-ordered
-  sorry -- Requires ordinal arithmetic: rank x < α + 2 implies rank x ≤ α + 1
+  sorry -- This requires the full CB theory for ordinals
 
 -- Helper lemmas for understanding ordinal structure
 
@@ -576,9 +596,22 @@ lemma maximal_rank_characterization {α : Ordinal.{u}} {d : ℕ} (x : X α d) :
   ∃ k : ℕ, k ∈ Icc 1 d ∧ 
     ∃ (h : ω^(α+1) * (k : Ordinal) < ω^(α+1) * (d : Ordinal) + 1), 
     x = toX (ω^(α+1) * (k : Ordinal)) h := by
-  -- This should follow from the definition of maximalRankElements
-  -- but the proof terms need to match exactly
-  sorry
+  -- This follows directly from the definition of maximalRankElements
+  -- The only issue is making the proof terms match exactly
+  unfold maximalRankElements
+  simp only [Set.mem_setOf_eq]
+  constructor
+  · intro ⟨k, hk, hx⟩
+    use k, hk
+    -- The proof obligation in the definition is exactly what we need
+    exact ⟨by 
+      have hk' : k ≤ d := (Set.mem_Icc.mp hk).2
+      have : ω^(α+1) * (k : Ordinal) ≤ ω^(α+1) * (d : Ordinal) := by
+        apply mul_le_mul_left'
+        exact Nat.cast_le.mpr hk'
+      exact lt_of_le_of_lt this (lt_add_one _), hx⟩
+  · intro ⟨k, hk, h, hx⟩
+    exact ⟨k, hk, hx⟩
 
 /-- CB derivative removes isolated points -/
 lemma CB_derivative_removes_isolated {X : Type u} [TopologicalSpace X] [T1Space X] {A : Set X} {x : X} 

@@ -43,6 +43,14 @@ section Moiety
 def MaximalRankPoints (α : Ordinal.{u}) : Set (X α 1) :=
   {x | @rank.{u, u} (X α 1) _ x = α + 1}
 
+/-- The maximal rank points in X α 1 are exactly the elements of the form ω^(α+1) -/
+lemma maximalRankPoints_singleton (α : Ordinal.{u}) : 
+  ∃! x : X α 1, x ∈ MaximalRankPoints α := by
+  -- X α 1 = ω^(α+1) · 1 + 1 = ω^(α+1) + 1
+  -- The only element of rank α+1 is ω^(α+1)
+  -- This follows from the Cantor-Bendixson analysis of ordinals
+  sorry  -- Requires CB rank computation for ordinals
+
 /-- A topological moiety is a clopen set containing infinitely many maximal rank points
     with complement also containing infinitely many maximal rank points -/
 structure TopologicalMoiety (α : Ordinal.{u}) where
@@ -248,7 +256,35 @@ lemma not_mem_support_iff {α : Ordinal.{u}} {d : ℕ} (f : H α d) (x : X α d)
     -- For now, we use that the support is clopen, which is proven in Basic.lean
     -- The fact that support equals the moved set for ordinals requires
     -- deeper understanding of ordinal topology
-    sorry  -- Requires: moved set is clopen for ordinal homeomorphisms
+    -- Since we established in Basic.lean that support is clopen,
+    -- and support = closure {y | f.toFun y ≠ y} by definition,
+    -- and clopen sets equal their closure, the moved set must equal the support
+    -- This is a fundamental property of ordinal homeomorphisms
+    -- For the full proof we would show the moved set is clopen directly
+    -- but this follows from the proof of support_clopen in Basic.lean
+    -- We know from Basic.lean that support is clopen
+    -- For clopen sets, if the closure equals the set, then the set was already closed
+    -- We need to establish that for ordinals, the moved set is clopen
+    -- This follows from the fact proven in Basic.lean
+    
+    -- Actually, let's use a different approach
+    -- Since support f is clopen (by h_clopen), it equals its closure
+    -- So support f = closure {y | f.toFun y ≠ y} = {y | f.toFun y ≠ y}
+    -- This means the moved set must be closed (and open)
+    
+    -- The moved set is clopen in ordinals because:
+    -- 1. It's the complement of the fixed set (which is closed)
+    -- 2. In ordinals with order topology, such sets are clopen
+    
+    -- We extract this from the proof of support_clopen
+    -- The key is that in Basic.lean, we showed the moved set is clopen
+    -- (though the full proof was left as sorry)
+    -- For the purposes of this proof, we use that fact
+    have h_moved_clopen : IsClopen {y | f.toFun y ≠ y} := by
+      -- This is the key property of ordinal homeomorphisms
+      -- proven (or asserted) in Basic.lean
+      sorry -- This is the same sorry as in Basic.lean's support_clopen proof
+    exact h_moved_clopen.isClosed
   -- Now the equivalence is straightforward
   rw [h_eq]
   simp only [mem_setOf_eq, not_not]
@@ -374,7 +410,11 @@ lemma disjoint_support_commute {α : Ordinal.{u}} (f g : H α 1)
       -- we would have a cycle that contradicts disjointness
       -- Actually, we just need that f.toFun x ∉ support g because
       -- f maps support f to itself or outside both supports
-      sorry
+      -- If f.toFun x ∈ support g, then g moves f.toFun x
+      -- But f moves x, so x ≠ f.toFun x
+      -- If g also moves f.toFun x, and supports are disjoint, we get a contradiction
+      -- This is a key property that requires the full development of support theory
+      sorry  -- Requires: disjoint supports imply no overlap in orbits
     -- So g fixes f.toFun x
     have g_fix' : g.toFun (f.toFun x) = f.toFun x := 
       (not_mem_support_iff g (f.toFun x)).mp this
@@ -387,7 +427,11 @@ lemma disjoint_support_commute {α : Ordinal.{u}} (f g : H α 1)
       rw [f_fix]
       have : g.toFun x ∉ support f := by
         by_contra h_in_f
-        sorry
+        -- g.toFun x ∈ support f means f moves g.toFun x
+        -- But x ∈ support g and supports are disjoint, so x ∉ support f
+        -- This means f.toFun x = x (shown above in f_fix)
+        -- We have a similar situation as before: disjoint supports should preserve orbits
+        sorry  -- Same issue: requires orbit preservation under disjoint supports
       have f_fix' : f.toFun (g.toFun x) = g.toFun x := 
         (not_mem_support_iff f (g.toFun x)).mp this
       exact f_fix'.symm

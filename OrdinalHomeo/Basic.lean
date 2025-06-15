@@ -344,24 +344,69 @@ def support {α : Ordinal.{u}} {d : ℕ} (f : H α d) : Set (X α d) :=
 /-- Support is clopen for homeomorphisms of ordinals -/
 lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) : 
   IsClopen (support f) := by
-  -- For this result, we'll use a different strategy
-  -- We'll show that the support (as defined) has the properties we need
-  -- without necessarily proving the moved set is clopen
-  
-  -- Key insight: For ordinals, we can use the well-ordering to analyze the support
   -- The support is the closure of the moved set
   unfold support
+  -- support f = closure {x | f.toFun x ≠ x}
   
-  -- Since we're dealing with ordinals, let's use their specific properties
-  -- In particular, X α d is homeomorphic to a successor ordinal with order topology
+  -- For ordinals with order topology, we use the following approach:
+  -- 1. The space X α d is a successor ordinal, hence compact
+  -- 2. It has the order topology, making it Hausdorff
+  -- 3. Ordinals are totally disconnected (zero-dimensional)
   
-  -- For now, we'll admit this as it requires deeper analysis of ordinal topology
-  -- The key facts needed are:
-  -- 1. Successor ordinals are compact Hausdorff spaces
-  -- 2. They have a basis of clopen sets (being zero-dimensional)
-  -- 3. For homeomorphisms of such spaces, the moved set has nice properties
+  -- In a compact Hausdorff space, a set is clopen iff it's both open and closed
+  -- We'll show the moved set is already closed (hence equals its closure)
   
-  sorry
+  -- First, show that the fixed point set is closed
+  have h_fixed_closed : IsClosed {x : X α d | f.toFun x = x} := by
+    -- The fixed point set is the equalizer of f and id
+    -- This is the preimage of the diagonal under the map (id, f)
+    have : {x : X α d | f.toFun x = x} = {x | (x, f.toFun x) ∈ diagonal (X α d)} := by
+      ext x
+      simp only [diagonal, Set.mem_setOf_eq, Prod.ext_iff]
+      tauto
+    rw [this]
+    -- The diagonal is closed in a Hausdorff space
+    have h_diag : IsClosed (diagonal (X α d)) := isClosed_diagonal
+    -- The map x ↦ (x, f.toFun x) is continuous
+    have h_cont : Continuous (fun x => (x, f.toFun x)) := by
+      apply Continuous.prodMk
+      · exact continuous_id
+      · exact f.continuous_toFun
+    -- Preimage of closed set under continuous map is closed
+    exact IsClosed.preimage h_cont h_diag
+  
+  -- The moved set is the complement of the fixed set, so it's open
+  have h_moved_open : IsOpen {x : X α d | f.toFun x ≠ x} := by
+    have : {x : X α d | f.toFun x ≠ x} = {x : X α d | f.toFun x = x}ᶜ := by
+      ext x
+      simp
+    rw [this]
+    exact h_fixed_closed.isOpen_compl
+  
+  -- In a compact space, an open set equals its closure iff it's clopen
+  -- For ordinals (totally disconnected), open sets have clopen closure
+  -- But we need a stronger result: the moved set itself is clopen
+  
+  -- Use that ordinals are zero-dimensional: every point has a neighborhood basis of clopen sets
+  -- This means open sets can be written as unions of clopen sets
+  -- In a compact space, finite unions of clopen sets have clopen closure
+  
+  -- For the purposes of this formalization, we take this as a fundamental
+  -- property of ordinal spaces that should be proven separately
+  have h_moved_clopen : IsClopen {x : X α d | f.toFun x ≠ x} := by
+    -- The key insight: for ordinals with order topology, we can use the fact that
+    -- they are totally disconnected (every connected component is a singleton)
+    -- In such spaces, for a continuous function f, the set {x | f x ≠ x} has special properties
+    -- For now, we assert this as a key property of ordinal homeomorphisms
+    sorry  -- This requires proving ordinals are totally disconnected
+  
+  -- Since the moved set is clopen, it equals its closure
+  have h_eq : closure {x : X α d | f.toFun x ≠ x} = {x : X α d | f.toFun x ≠ x} := by
+    exact IsClosed.closure_eq h_moved_clopen.isClosed
+  -- support f = closure {x | f.toFun x ≠ x} = {x | f.toFun x ≠ x} (by h_eq)
+  -- So we need to show IsClopen {x | f.toFun x ≠ x}
+  rw [h_eq]
+  exact h_moved_clopen
 
 end Support
 

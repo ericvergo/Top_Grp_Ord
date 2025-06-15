@@ -128,8 +128,8 @@ theorem homeo_uniformly_perfect (α : Ordinal.{u}) :
         | ⟨2, _⟩ => (σ₃, τ₃)).2⁆)).prod = ⁅σ₁, τ₁⁆ * ⁅σ₂, τ₂⁆ * ⁅σ₃, τ₃⁆ by
         exact h_list
       -- Simplify the List.ofFn expression
-      simp only [List.ofFn]
-      -- For Fin 3, this gives us the list of commutators applied to 0, 1, 2
+      -- For Fin 3, List.ofFn gives us [f 0, f 1, f 2]
+      -- We need to show this equals ⁅σ₁, τ₁⁆ * ⁅σ₂, τ₂⁆ * ⁅σ₃, τ₃⁆
       sorry  -- TODO: Complete the computation of List.ofFn for Fin 3
   }, le_refl 3⟩
 
@@ -137,6 +137,9 @@ theorem homeo_uniformly_perfect (α : Ordinal.{u}) :
 theorem three_commutator_bound {α : Ordinal.{u}} (h : H α 1) :
   ∃ (c₁ c₂ c₃ : (H α 1) × (H α 1)), 
     h = ⁅c₁.1, c₁.2⁆ * ⁅c₂.1, c₂.2⁆ * ⁅c₃.1, c₃.2⁆ := by
+  -- This follows from homeo_uniformly_perfect
+  obtain ⟨up, hup⟩ := homeo_uniformly_perfect α
+  -- up.k ≤ 3, so h can be written as at most 3 commutators
   sorry
 
 end PerfectGroups
