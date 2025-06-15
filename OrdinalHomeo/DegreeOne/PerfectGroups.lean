@@ -43,8 +43,8 @@ structure UniformlyPerfect (G : Type*) [Group G] where
     g = (List.ofFn (fun i : Fin k => ⁅(pairs i).1, (pairs i).2⁆)).prod  -- Product of commutators
 
 /-- The commutator width of a uniformly perfect group -/
-noncomputable def commutatorWidth (G : Type*) [Group G] (up : UniformlyPerfect G) : ℕ :=
-  sInf {k : ℕ | ∃ (up' : UniformlyPerfect G), up'.k = k}  -- Minimum k for uniform perfectness
+noncomputable def commutatorWidth (G : Type*) [Group G] : ℕ :=
+  sInf {k : ℕ | ∃ (up : UniformlyPerfect G), up.k = k}  -- Minimum k for uniform perfectness
 
 /-- Elements supported in moieties can be written as single commutators -/
 lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
@@ -87,6 +87,22 @@ lemma commutator_trick {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α
   (hSupp : support h ⊆ (A : Set (X α 1))) 
   (τ : H α 1) (hτ : IsConvergentATranslation A τ) :
   ∃ σ : H α 1, h = ⁅σ, τ⁆ := by
+  -- Define σ as the infinite product ∏_{n=0}^∞ (τⁿ ∘ h ∘ τ⁻ⁿ)
+  -- This is well-defined because the translations are locally finite
+  
+  -- First, we need to show that the infinite product converges
+  -- The key is that for any compact set K, only finitely many terms are non-identity on K
+  -- This follows from the convergent translation property
+  
+  -- The standard commutator trick verification:
+  -- σ = h · (τhτ⁻¹) · (τ²hτ⁻²) · ...
+  -- τστ⁻¹ = (τhτ⁻¹) · (τ²hτ⁻²) · (τ³hτ⁻³) · ...
+  -- So: στσ⁻¹τ⁻¹ = h · (τhτ⁻¹) · (τ²hτ⁻²) · ... · ((τhτ⁻¹) · (τ²hτ⁻²) · ...)⁻¹
+  --                = h
+  
+  -- This construction requires proper handling of infinite products in topological groups
+  -- For now, we leave this as sorry since it requires developing the theory of
+  -- convergent infinite products in the homeomorphism group
   sorry
 
 end PerfectGroups

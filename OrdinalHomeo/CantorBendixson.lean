@@ -341,13 +341,13 @@ lemma derivedSet_of_finite [T1Space X] {A : Set X} (h : A.Finite) :
     have hx_in_compl : x ∈ (A \ {x})ᶜ := by simp
     
     -- Apply h_acc to this neighborhood
-    obtain ⟨y, ⟨hy_in_compl, hy_in_A⟩, hy_ne_x⟩ := h_acc (A \ {x})ᶜ (h_compl_open.mem_nhds hx_in_compl)
+    obtain ⟨y, hy_mem, hy_ne_x⟩ := h_acc (A \ {x})ᶜ (h_compl_open.mem_nhds hx_in_compl)
     
-    -- Now we have y ∈ (A \ {x})ᶜ ∩ A with y ≠ x
+    -- Now we have y ∈ ((A \ {x})ᶜ) ∩ A with y ≠ x
     -- This means y ∈ A and y ≠ x, so y ∈ A \ {x}
-    have hy_diff : y ∈ A \ {x} := ⟨hy_in_A, hy_ne_x⟩
+    have hy_diff : y ∈ A \ {x} := ⟨hy_mem.2, hy_ne_x⟩
     -- But y ∈ (A \ {x})ᶜ, so y ∉ A \ {x}
-    have : y ∉ A \ {x} := hy_in_compl
+    have : y ∉ A \ {x} := hy_mem.1
     exact absurd hy_diff this
       
   · -- Case 2: x ∉ A
@@ -356,10 +356,10 @@ lemma derivedSet_of_finite [T1Space X] {A : Set X} (h : A.Finite) :
     have hx_in_compl : x ∈ Aᶜ := hx
     
     -- Apply h_acc to this neighborhood
-    obtain ⟨y, ⟨hy_in_compl, hy_in_A⟩, _⟩ := h_acc Aᶜ (h_compl_open.mem_nhds hx_in_compl)
+    obtain ⟨y, hy_mem, _⟩ := h_acc Aᶜ (h_compl_open.mem_nhds hx_in_compl)
     
     -- This is impossible since Aᶜ is disjoint from A
-    exact absurd hy_in_A hy_in_compl
+    exact absurd hy_mem.2 hy_mem.1
 
 end CantorBendixson
 

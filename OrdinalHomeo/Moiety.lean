@@ -76,8 +76,11 @@ theorem moiety_homeomorphic_to_omega_power (α : Ordinal.{u}) (A : TopologicalMo
   -- Since A is a subset of a well-ordered set (ordinal), we can enumerate the maximal points
   -- in increasing order. Use the fact that any infinite subset of an ordinal has order type ω
   have : ∃ (enum : ℕ → X α 1), StrictMono enum ∧ range enum = maximal_in_A := by
-    -- This follows from the well-ordering of ordinals and infinitude
-    sorry
+    -- maximal_in_A is an infinite subset of X α 1, which is well-ordered
+    -- Any infinite subset of a well-ordered set contains a copy of ω
+    -- This gives us a strictly increasing enumeration
+    -- The key fact: infinite subsets of ordinals can be order-isomorphic to ω
+    sorry  -- Requires: theory of order types and well-ordered sets
   
   obtain ⟨enum, h_mono, h_range⟩ := this
   
@@ -266,28 +269,29 @@ lemma not_mem_support_iff {α : Ordinal.{u}} {d : ℕ} (f : H α d) (x : X α d)
       have x_not_moved : x ∉ {y | f.toFun y ≠ y} := by
         simp only [Set.mem_setOf_eq]
         exact not_ne_iff.mpr hfx
-      -- In ordinal topology, we can separate x from {y | f.toFun y ≠ y}
-      -- using the fact that support is clopen
-      -- Since x ∈ closure {y | f.toFun y ≠ y} but x ∉ {y | f.toFun y ≠ y},
-      -- and closure is the smallest closed set containing the set,
-      -- we need to use properties of the specific topology
+      -- Key insight: support is clopen, so if x ∈ support = closure(moved),
+      -- but x ∉ moved, we need to use that the moved set itself is clopen
       
-      -- Actually, let's use a direct argument:
-      -- The key insight is that {y | f.toFun y ≠ y} ⊆ support f
-      have moved_sub_support : {y | f.toFun y ≠ y} ⊆ support f := subset_closure
-      -- And support f = closure {y | f.toFun y ≠ y}
-      -- So if x ∈ closure {y | f.toFun y ≠ y} = support f,
-      -- but f.toFun x = x, then f.toFun x ≠ x, which is a contradiction
+      -- Since support is clopen (by support_clopen), it equals the closure
+      -- of moved points only if the moved points form a clopen set
+      -- For ordinals, the moved points of a homeomorphism form a clopen set
       
-      -- Wait, that's circular. Let me think differently.
-      -- The issue is that x could be in the closure without being in the set.
-      -- But in ordinal topology with support being clopen, we can find
-      -- a clopen neighborhood of x disjoint from {y | f.toFun y ≠ y}
+      -- Actually, let's use a different approach:
+      -- If x is fixed by f, then there's a neighborhood of x where all points
+      -- are either fixed or their image is far from x
       
-      -- This is a standard fact: if x is in the closure of moved points
-      -- but is itself fixed, we get a contradiction.
-      -- The key is that in ordinal topology, we can separate points.
-      sorry
+      -- Since f.toFun x = x and f is continuous, for any neighborhood V of x,
+      -- f⁻¹(V) is a neighborhood of x
+      -- In particular, if we take V small enough, f acts locally near x
+      
+      -- For ordinals with order topology, we can use the basis of clopen intervals
+      -- Since x is fixed and support is clopen, if x were in support,
+      -- then x would be in the interior of support (as support is open)
+      -- But x ∉ {y | f.toFun y ≠ y}, so x is isolated from moved points
+      
+      -- This requires the fact that for homeomorphisms of ordinals,
+      -- the set of moved points is clopen, which we haven't established
+      sorry  -- Requires: moved points form clopen set for ordinal homeomorphisms
     
     -- Now use that (support f)ᶜ is open and contains x
     use (support f)ᶜ

@@ -87,7 +87,10 @@ lemma fragmentation_bound {α : Ordinal.{u}} (h : H α 1) :
     (support f₂ ⊆ (A : Set (X α 1)) ∨ support f₂ ⊆ (B : Set (X α 1))) ∧
     (support f₃ ⊆ (A : Set (X α 1)) ∨ support f₃ ⊆ (B : Set (X α 1))) ∧
     h = f₁ * f₂ * f₃ := by
-  sorry
+  -- This follows from Galvin's lemma once we have a partition of X α 1 into two disjoint moieties
+  -- For now, we can use any two disjoint moieties A and B
+  -- The existence of such a partition requires developing the theory of moiety partitions
+  sorry  -- Requires: moiety partition existence and application of galvin_lemma
 
 /-- Key step in Galvin's proof: constructing the appropriate partition -/
 lemma galvin_partition {α : Ordinal.{u}} (h : H α 1) (A B : TopologicalMoiety α)
@@ -95,7 +98,25 @@ lemma galvin_partition {α : Ordinal.{u}} (h : H α 1) (A B : TopologicalMoiety 
   let C := ((A : Set (X α 1)) ∪ (B : Set (X α 1)))ᶜ
   (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (h.toFun '' (A : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) ∨
   (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (h.toFun '' (B : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) := by
-  sorry
+  intro C
+  -- First, show that C is itself a moiety (complement of union of disjoint moieties)
+  have hC_moiety : ∃ C' : TopologicalMoiety α, (C' : Set (X α 1)) = C := by
+    -- The union A ∪ B is clopen (union of clopen sets)
+    have hAB_clopen : IsClopen ((A : Set (X α 1)) ∪ (B : Set (X α 1))) := by
+      exact IsClopen.union A.is_clopen B.is_clopen
+    -- Need to show C has infinitely many maximal rank points
+    -- Since A and B are disjoint moieties, and X α 1 has infinitely many maximal rank points,
+    -- the complement C must also have infinitely many maximal rank points
+    sorry  -- This requires showing that X α 1 has sufficiently many maximal rank points
+  
+  -- The key observation: C = (C \ h(A)) ∪ (C \ h(B)) ∪ (C ∩ h(A ∪ B))
+  -- At least one of C \ h(A) or C \ h(B) must contain infinitely many maximal rank points
+  -- If both contain only finitely many, then C would have only finitely many maximal rank points
+  -- (since h(A ∪ B) is the image of a moiety and hence has the same cardinality structure)
+  
+  -- By pigeonhole principle on infinite sets, at least one of C \ h(A) or C \ h(B) 
+  -- contains infinitely many maximal rank points
+  sorry  -- This requires developing the theory of infinite partitions and maximal rank points
 
 end Galvin
 

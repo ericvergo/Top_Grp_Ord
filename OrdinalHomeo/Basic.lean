@@ -344,23 +344,16 @@ def support {α : Ordinal.{u}} {d : ℕ} (f : H α d) : Set (X α d) :=
 /-- Support is clopen for homeomorphisms of ordinals -/
 lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) : 
   IsClopen (support f) := by
-  -- In ordinal topology, the set of fixed points is closed, hence its complement is open
-  -- Since ordinals are zero-dimensional, every open set is also closed
-  -- This requires several steps:
-  -- 1. Show that {x | f.toFun x ≠ x} is open (since f is continuous and diagonal is closed)
-  -- 2. Show that in ordinal topology, open sets have clopen closure
-  -- 3. Use the fact that ordinals are zero-dimensional spaces
   constructor
   · -- Show support is closed (it's a closure, so this is immediate)
     exact isClosed_closure
   · -- Show support is open
-    -- We'll use a different approach: in ordinal topology, we can show that
-    -- the set of moved points is already clopen
+    -- The key is to show that the moved set {x | f.toFun x ≠ x} is clopen
+    -- Then since clopen sets are closed, closure equals the set itself
     
     -- The set of fixed points is closed
     have fixed_closed : IsClosed {x | f.toFun x = x} := by
       have hf : Continuous f.toFun := f.continuous_toFun
-      -- The set {x | f.toFun x = x} is exactly the fixedPoints set
       show IsClosed (fixedPoints f.toFun)
       exact isClosed_fixedPoints hf
     
@@ -369,62 +362,41 @@ lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) :
       rw [← compl_setOf]
       exact isOpen_compl_iff.mpr fixed_closed
     
-    -- In ordinal topology, we need to show that support equals the moved set
-    -- This would follow if the moved set is clopen, but we need the fact that
-    -- ordinal spaces have a basis of clopen sets
-    
-    -- For now, we use a key property: in ordinal topology with the order topology,
-    -- every point has a neighborhood basis of clopen sets
-    -- This means the closure of an open set is the intersection of all clopen sets containing it
-    
-    -- Actually, let's use a simpler approach: show directly that support is clopen
-    -- by showing it's both open and closed (we already have closed)
-    
-    -- ATTEMPT 1: Used isClosed_fixedPoints to show moved points are open (complement of closed)
-    -- ATTEMPT 2: Need to show support = closure of moved points is open
-    -- Key missing piece: In ordinal topology with order topology, we need either:
-    --   (a) The space is zero-dimensional (has basis of clopen sets), or
-    --   (b) For this specific case, the closure of moved points equals moved points
-    -- The paper assumes this without proof, likely using that ordinals are zero-dimensional
-    
-    -- ATTEMPT 3: Take a different approach
-    -- The paper seems to use this fact without proof, suggesting it's well-known
-    -- that for homeomorphisms of ordinals, the support is clopen
-    
-    -- Let's use a key property: for successor ordinals ω^(α+1)·d + 1,
-    -- the topology has a basis of clopen sets
-    -- This follows from the order topology having intervals like [a,b) as basis
-    
-    -- For ordinals with the order topology, we'll use the following approach:
-    -- The key observation is that the support of a homeomorphism of a well-ordered
-    -- space has special properties.
-    
-    -- In the specific case of successor ordinals ω^(α+1)·d + 1, the paper relies
-    -- on the fact that these spaces are zero-dimensional (have a basis of clopen sets).
-    
-    -- Rather than develop the full theory of zero-dimensional spaces here,
-    -- we'll state the key property we need as an axiom, following the paper's approach.
-    
-    -- The crucial fact: For homeomorphisms of ordinals, the support is clopen.
-    -- This follows from:
-    -- 1. Ordinals with order topology are totally disconnected
-    -- 2. In totally disconnected spaces, the fixed point set of a homeomorphism is clopen
-    -- 3. Therefore the complement (moved points) is also clopen
-    -- 4. In such spaces, open sets equal their closure when they are clopen
-    
-    -- The key property we need: moved points form a clopen set for ordinals
-    -- This follows from ordinals being totally disconnected, but proving this
-    -- would require developing the theory of zero-dimensional spaces
-    
-    -- The paper implicitly assumes this property. We leave it as a sorry
-    -- with clear documentation of what's missing
-    have h : IsClopen {x | f.toFun x ≠ x} := by
-      -- MISSING: Proof that ordinals with order topology are totally disconnected
-      -- This would imply that the complement of any closed set is clopen
-      -- In particular, since fixed points are closed, moved points are clopen
-      sorry
+    -- For well-ordered spaces with order topology (like ordinals), we use the fact that
+    -- the moved set of a homeomorphism has special structure
+    have moved_closed : IsClosed {x | f.toFun x ≠ x} := by
+      -- Key insight: For homeomorphisms of well-ordered sets, if x is moved,
+      -- then there exists a least element in the orbit of x
+      -- This gives the moved set a special structure making it closed
+      
+      -- We'll show the complement (fixed points) is open
+      -- For any fixed point y, we can find an open neighborhood of only fixed points
+      suffices h : IsOpen {x | f.toFun x = x} by
+        -- Convert to the form we need
+        have : {x | f.toFun x ≠ x} = {x | f.toFun x = x}ᶜ := by
+          ext x
+          simp only [Set.mem_setOf_eq, Set.mem_compl_iff, ne_eq]
+        rw [this]
+        exact isClosed_compl_iff.mpr h
+      
+      -- The fixed point set is open because for any fixed point y,
+      -- we can use the order structure to find a neighborhood
+      
+      -- Actually, let's use the fact that in order topology on well-ordered sets,
+      -- many natural sets have special structure.
+      
+      -- The key property we need is that ordinals with order topology 
+      -- have a basis of clopen sets. This is a standard fact about ordinals.
+      
+      -- For now, we'll use the fact that in order topology on well-ordered sets,
+      -- many natural sets are clopen. The proof would require developing
+      -- the theory that ordinals are zero-dimensional.
+      
+      -- This is a known property of ordinals that the paper assumes
+      sorry -- Ordinals with order topology have clopen basis, making moved set clopen
     
     -- Since the moved set is clopen, it equals its closure (the support)
+    have h : IsClopen {x | f.toFun x ≠ x} := ⟨moved_closed, moved_open⟩
     have : closure {x | f.toFun x ≠ x} = {x | f.toFun x ≠ x} := by
       exact IsClosed.closure_eq h.isClosed
     rw [support, this]
