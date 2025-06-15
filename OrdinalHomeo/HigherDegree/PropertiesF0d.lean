@@ -138,7 +138,7 @@ theorem F_bar_0d_uniformly_perfect (hd : d ≠ 1) :
   · -- If g ≠ 1, we need actual commutators
     sorry
 
-theorem F_bar_0d_commutator_width (hd : d ≠ 1) :
+theorem F_bar_0d_commutator_width {d : ℕ} (hd : d ≠ 1) :
   commutatorWidth (F_closure 0 d) ≤ 4 := by
   -- By definition, commutatorWidth is the infimum of k such that 
   -- there exists UniformlyPerfect with that k
@@ -154,7 +154,8 @@ theorem F_bar_0d_commutator_width (hd : d ≠ 1) :
     k := 4
     uniform_bound := fun g => by
       -- This follows from F_bar_0d_uniformly_perfect
-      obtain ⟨l, hl_len, hl_eq⟩ := F_bar_0d_uniformly_perfect hd g
+      obtain ⟨k, hk⟩ := F_bar_0d_uniformly_perfect d hd
+      obtain ⟨l, hl_len, hl_eq⟩ := hk g
       -- The theorem gives us a list l of length ≤ 4 such that
       -- g = (l.map fun ⟨a, b⟩ => a * b * a⁻¹ * b⁻¹).prod
       -- We need to convert this to the UniformlyPerfect format

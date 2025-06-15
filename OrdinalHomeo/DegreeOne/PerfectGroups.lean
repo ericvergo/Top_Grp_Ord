@@ -130,7 +130,11 @@ theorem homeo_uniformly_perfect (α : Ordinal.{u}) :
       -- Simplify the List.ofFn expression
       -- For Fin 3, List.ofFn gives us [f 0, f 1, f 2]
       -- We need to show this equals ⁅σ₁, τ₁⁆ * ⁅σ₂, τ₂⁆ * ⁅σ₃, τ₃⁆
-      sorry  -- TODO: Complete the computation of List.ofFn for Fin 3
+      -- The list is [⁅σ₁, τ₁⁆, ⁅σ₂, τ₂⁆, ⁅σ₃, τ₃⁆]
+      -- and its product is ⁅σ₁, τ₁⁆ * ⁅σ₂, τ₂⁆ * ⁅σ₃, τ₃⁆
+      simp only [List.ofFn]
+      -- List.ofFn for Fin 3 creates [f ⟨0, _⟩, f ⟨1, _⟩, f ⟨2, _⟩]
+      sorry  -- TODO: Show the list product equals the desired expression
   }, le_refl 3⟩
 
 /-- Corollary: Every element can be written as at most 3 commutators -/
@@ -140,7 +144,15 @@ theorem three_commutator_bound {α : Ordinal.{u}} (h : H α 1) :
   -- This follows from homeo_uniformly_perfect
   obtain ⟨up, hup⟩ := homeo_uniformly_perfect α
   -- up.k ≤ 3, so h can be written as at most 3 commutators
-  sorry
+  -- We have up.k = 3 and up.uniform_bound says any h can be written as product of up.k commutators
+  obtain ⟨pairs, h_eq⟩ := up.uniform_bound h
+  -- pairs : Fin up.k → (H α 1) × (H α 1)
+  -- and h = (List.ofFn (fun i => ⁅(pairs i).1, (pairs i).2⁆)).prod
+  -- Since up.k ≤ 3 and actually up.k = 3, we have Fin 3
+  -- So we can extract the three pairs
+  use pairs ⟨0, by norm_num⟩, pairs ⟨1, by norm_num⟩, pairs ⟨2, by norm_num⟩
+  -- Now we need to show h equals the product of these three commutators
+  sorry  -- This requires showing List.prod for a 3-element list
 
 end PerfectGroups
 

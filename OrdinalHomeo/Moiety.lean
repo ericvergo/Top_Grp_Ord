@@ -43,11 +43,12 @@ section Moiety
 def MaximalRankPoints (α : Ordinal.{u}) : Set (X α 1) :=
   {x | @rank.{u, u} (X α 1) _ x = α + 1}
 
-/-- The maximal rank points in X α 1 are exactly the elements of the form ω^(α+1) -/
-lemma maximalRankPoints_singleton (α : Ordinal.{u}) : 
-  ∃! x : X α 1, x ∈ MaximalRankPoints α := by
+/-- The maximal rank points in X α 1 are infinite -/
+lemma maximalRankPoints_infinite (α : Ordinal.{u}) : 
+  (MaximalRankPoints α).Infinite := by
   -- X α 1 = ω^(α+1) · 1 + 1 = ω^(α+1) + 1
-  -- The only element of rank α+1 is ω^(α+1)
+  -- Elements of the form ω^α · k for k ∈ ℕ\{0} have rank α+1
+  -- There are infinitely many such elements
   -- This follows from the Cantor-Bendixson analysis of ordinals
   sorry  -- Requires CB rank computation for ordinals
 
@@ -170,6 +171,22 @@ theorem change_of_coordinates {α : Ordinal.{u}} (A B : TopologicalMoiety α) :
   -- We need a homeomorphism from the whole space that maps A to B
   -- This requires extending the partial homeomorphisms
   sorry
+
+/-- We can partition the maximal rank points into two infinite sets -/
+lemma exists_partition_maximal_rank_points (α : Ordinal.{u}) :
+  ∃ (S T : Set (X α 1)), S ∩ T = ∅ ∧ S ∪ T = MaximalRankPoints α ∧ S.Infinite ∧ T.Infinite := by
+  -- Since MaximalRankPoints α is infinite, we can partition it into two infinite sets
+  -- A standard way is to take even/odd indexed elements after some enumeration
+  sorry -- Requires: partition of infinite sets
+
+/-- There exists at least one topological moiety -/
+lemma exists_moiety (α : Ordinal.{u}) : ∃ A : TopologicalMoiety α, True := by
+  -- We construct a moiety by taking a clopen set containing half of the maximal rank points
+  -- Use the partition from exists_partition_maximal_rank_points
+  obtain ⟨S, T, h_disj, h_union, h_S_inf, h_T_inf⟩ := exists_partition_maximal_rank_points α
+  -- For each point in S, take a clopen neighborhood disjoint from other maximal rank points
+  -- The union of these neighborhoods forms a moiety
+  sorry -- Requires: construction of clopen neighborhoods
 
 end Moiety
 
