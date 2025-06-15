@@ -388,12 +388,21 @@ lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) :
       -- The key property we need is that ordinals with order topology 
       -- have a basis of clopen sets. This is a standard fact about ordinals.
       
-      -- For now, we'll use the fact that in order topology on well-ordered sets,
-      -- many natural sets are clopen. The proof would require developing
-      -- the theory that ordinals are zero-dimensional.
+      -- For ordinals, we use that the topology has a basis of clopen sets
+      -- This is because ordinals with order topology are zero-dimensional
+      -- (their topology has a basis consisting of sets that are both open and closed)
       
-      -- This is a known property of ordinals that the paper assumes
-      sorry -- Ordinals with order topology have clopen basis, making moved set clopen
+      -- For now, we establish this key property directly for the fixed point set
+      
+      -- For ordinals, basic open sets have the form (a, b] or [0, b) 
+      -- We show that around any fixed point, we can find such a neighborhood
+      
+      -- If y is fixed by f, we want to find a clopen neighborhood of fixed points
+      -- Key insight: Use the well-ordering to find appropriate intervals
+      
+      -- Actually, let's use a more direct approach
+      -- The set of moved points for a homeomorphism of ordinals has special structure
+      sorry -- TODO: Prove ordinals have clopen basis or establish moved set structure directly
     
     -- Since the moved set is clopen, it equals its closure (the support)
     have h : IsClopen {x | f.toFun x ≠ x} := ⟨moved_closed, moved_open⟩

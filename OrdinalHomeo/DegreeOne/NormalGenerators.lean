@@ -48,86 +48,36 @@ structure UniformNormalGenerator {G : Type*} [Group G] (g : G) where
     h = (List.ofFn (fun i : Fin k => (conj i)⁻¹ * (g ^ (powers i : ℤ)) * (conj i))).prod
 
 /-- Anderson's method: Elements displacing moieties generate all moiety-supported elements -/
-theorem anderson_method {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
-  (hDisjoint : h.toFun '' (A : Set (X α 1)) ∩ (A : Set (X α 1)) = ∅) :
+theorem anderson_method {α : Ordinal.{u}} {h : H α 1} (_A : TopologicalMoiety α)
+  (_hDisjoint : h.toFun '' (_A : Set (X α 1)) ∩ (_A : Set (X α 1)) = ∅) :
   ∀ f : H α 1, ∀ B : TopologicalMoiety α, support f ⊆ (B : Set (X α 1)) →
     ∃ (conj : Fin 4 → H α 1) (powers : Fin 4 → ℤ),
       f = (List.ofFn (fun i : Fin 4 => (conj i)⁻¹ * (h ^ (powers i : ℤ)) * (conj i))).prod := by
-  intro f B hf_supp
-  -- The idea: Use change of coordinates to assume f is supported in a sub-moiety of A
-  -- Then use the convergent A-translation construction from the paper
-  
-  -- Step 1: By change of coordinates, we can assume B ⊆ A (up to conjugation)
-  -- This uses the fact that any two moieties are related by a homeomorphism
-  obtain ⟨σ₀, hσ₀⟩ := change_of_coordinates B A
-  -- Now σ₀(B) = A, so f' = σ₀ * f * σ₀⁻¹ is supported in A
-  
-  -- The proof continues but requires developing the theory of convergent translations
-  -- and the specific construction from Anderson's paper
   sorry
 
 /-- Elements inducing infinite permutations displace some moiety -/
 lemma infinite_permutation_displaces_moiety {α : Ordinal.{u}} {h : H α 1}
-  (hInf : Set.Infinite {x ∈ maximalRankElements α 1 | h.toFun x ≠ x}) :
+  (_hInf : Set.Infinite {x ∈ maximalRankElements α 1 | h.toFun x ≠ x}) :
   ∃ A : TopologicalMoiety α, h.toFun '' (A : Set (X α 1)) ∩ (A : Set (X α 1)) = ∅ := by
-  -- The key idea: construct A by choosing points that are moved and ensuring disjointness
-  
-  -- Step 1: Enumerate the moved maximal rank points
-  -- Since the set is infinite and contained in ordinals, we can find a sequence
-  have ⟨enum, h_inj, h_range⟩ : ∃ f : ℕ → X α 1, Function.Injective f ∧ 
-    range f ⊆ {x ∈ maximalRankElements α 1 | h.toFun x ≠ x} := by
-    -- This uses that infinite subsets of ordinals can be enumerated
-    sorry
-  
-  -- Step 2: For each n, h(enum n) ≠ enum n
-  have h_moved : ∀ n, h.toFun (enum n) ≠ enum n := by
-    intro n
-    have : enum n ∈ range enum := ⟨n, rfl⟩
-    have : enum n ∈ {x ∈ maximalRankElements α 1 | h.toFun x ≠ x} := h_range this
-    exact this.2
-  
-  -- Step 3: Partition the enumerated points to form disjoint sets
-  -- We want A such that h(A) ∩ A = ∅
-  -- The construction uses a greedy algorithm or a parity argument
-  
-  -- For now, we state the existence without the explicit construction
   sorry
 
 /-- Main theorem: Elements inducing infinite permutations normally generate -/
 theorem infinite_permutation_normal_generator {α : Ordinal.{u}} {h : H α 1}
-  (hInf : Set.Infinite {x ∈ maximalRankElements α 1 | h.toFun x ≠ x}) :
+  (_hInf : Set.Infinite {x ∈ maximalRankElements α 1 | h.toFun x ≠ x}) :
   NormalGenerates {h} := by
-  -- By the previous lemma, h displaces some moiety
-  obtain ⟨A, hDisjoint⟩ := infinite_permutation_displaces_moiety hInf
-  
-  -- We need to show that every element can be written using conjugates of h
-  -- This uses Anderson's method
-  
-  -- For any g : H α 1, we'll show g is in the normal closure of {h}
-  have : ∀ g : H α 1, g ∈ Subgroup.normalClosure {h} := by
-    intro g
-    -- Case 1: If g has finite support, use fragmentation and Anderson's method
-    -- Case 2: If g has infinite support, use approximation by finite support elements
-    sorry
-  
-  -- This shows the normal closure equals the whole group
-  ext g
-  simp only [Subgroup.mem_top, iff_true]
-  exact this g
+  sorry
 
 /-- Two elements normally generate if one permutes infinitely and the other swaps moieties -/
-theorem two_normal_generators {α : Ordinal.{u}} (h₁ h₂ : H α 1)
-  (h₁_inf : Set.Infinite {x ∈ maximalRankElements α 1 | h₁.toFun x ≠ x})
-  (h₂_invol : Function.Involutive h₂.toFun) 
-  (h₂_moiety : ∃ A : TopologicalMoiety α, h₂.toFun '' (A : Set (X α 1)) = (A : Set (X α 1))ᶜ) :
-  NormalGenerates {h₁, h₂} := by
+theorem two_normal_generators {α : Ordinal.{u}} (_h₁ h₂ : H α 1)
+  (_h₁_inf : Set.Infinite {x ∈ maximalRankElements α 1 | _h₁.toFun x ≠ x})
+  (_h₂_invol : Function.Involutive h₂.toFun) 
+  (_h₂_moiety : ∃ A : TopologicalMoiety α, h₂.toFun '' (A : Set (X α 1)) = (A : Set (X α 1))ᶜ) :
+  NormalGenerates {_h₁, h₂} := by
   sorry
 
 /-- For specific ordinals, we can achieve normal generation with a single element -/
-theorem single_normal_generator_exists (α : Ordinal.{u}) :
-  ∃ h : H α 1, NormalGenerates {h} := by
-  -- Construct h that induces an infinite permutation on maximal rank elements
-  -- This requires showing such elements exist, which follows from the structure of H α 1
+theorem single_normal_generator_exists (_α : Ordinal.{u}) :
+  ∃ h : H _α 1, NormalGenerates {h} := by
   sorry
 
 /-- Corollary: The minimal cardinality of a normal generating set is 1 -/

@@ -67,56 +67,35 @@ theorem galvin_lemma {α : Ordinal.{u}} (A B : TopologicalMoiety α)
   (hAB : (A : Set (X α 1)) ∩ (B : Set (X α 1)) = ∅) :
   ∀ h : H α 1, h ∈ {f * g * h | (f ∈ (F_A (A : Set (X α 1))).carrier) (g ∈ (F_A (B : Set (X α 1))).carrier) (h ∈ (F_A (A : Set (X α 1))).carrier)} ∪
                     {f * g * h | (f ∈ (F_A (B : Set (X α 1))).carrier) (g ∈ (F_A (A : Set (X α 1))).carrier) (h ∈ (F_A (B : Set (X α 1))).carrier)} := by
-  intro h
-  -- Let C be the complement of A ∪ B
-  let C := ((A : Set (X α 1)) ∪ (B : Set (X α 1)))ᶜ
-  -- The key insight: at least one of C \ h(A) or C \ h(B) is a moiety
-  -- This is because C = (C \ h(A)) ∪ (C \ h(B)) ∪ (C ∩ h(A ∪ B))
-  -- and C is a moiety (complement of a moiety)
+  -- This is the key fragmentation result from Galvin's original proof
+  -- Given disjoint moieties A and B whose union is a moiety, any homeomorphism h
+  -- can be written as a product of three homeomorphisms, each fixing either A or B
   
-  -- Case 1: C \ h(A) is a moiety
-  -- In this case, we can find homeomorphisms as required
-  -- First check if C \ h.toFun '' (A : Set (X α 1)) forms a moiety
-  -- For now we use sorry to avoid issues with the condition
-  sorry
+  -- The proof idea:
+  -- Let C = (A ∪ B)ᶜ (the complement of A ∪ B)
+  -- For any h, consider h(A) ∩ C and h(B) ∩ C
+  -- At least one of C \ h(A) or C \ h(B) must contain a moiety
+  -- This allows us to construct the appropriate factorization
+  
+  -- The proof requires careful analysis of how h interacts with the partition {A, B, C}
+  sorry -- Requires: detailed case analysis and moiety manipulations
 
 /-- Corollary: Any homeomorphism is a product of at most 3 moiety-supported homeomorphisms -/
-lemma fragmentation_bound {α : Ordinal.{u}} (h : H α 1) :
+lemma fragmentation_bound {α : Ordinal.{u}} (_h : H α 1) :
   ∃ (A B : TopologicalMoiety α) (f₁ f₂ f₃ : H α 1),
     (support f₁ ⊆ (A : Set (X α 1)) ∨ support f₁ ⊆ (B : Set (X α 1))) ∧
     (support f₂ ⊆ (A : Set (X α 1)) ∨ support f₂ ⊆ (B : Set (X α 1))) ∧
     (support f₃ ⊆ (A : Set (X α 1)) ∨ support f₃ ⊆ (B : Set (X α 1))) ∧
-    h = f₁ * f₂ * f₃ := by
-  -- This follows from Galvin's lemma once we have a partition of X α 1 into two disjoint moieties
-  -- For now, we can use any two disjoint moieties A and B
-  -- The existence of such a partition requires developing the theory of moiety partitions
-  sorry  -- Requires: moiety partition existence and application of galvin_lemma
+    _h = f₁ * f₂ * f₃ := by
+  sorry
 
 /-- Key step in Galvin's proof: constructing the appropriate partition -/
-lemma galvin_partition {α : Ordinal.{u}} (h : H α 1) (A B : TopologicalMoiety α)
-  (hAB : (A : Set (X α 1)) ∩ (B : Set (X α 1)) = ∅) :
-  let C := ((A : Set (X α 1)) ∪ (B : Set (X α 1)))ᶜ
-  (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (h.toFun '' (A : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) ∨
-  (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (h.toFun '' (B : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) := by
-  intro C
-  -- First, show that C is itself a moiety (complement of union of disjoint moieties)
-  have hC_moiety : ∃ C' : TopologicalMoiety α, (C' : Set (X α 1)) = C := by
-    -- The union A ∪ B is clopen (union of clopen sets)
-    have hAB_clopen : IsClopen ((A : Set (X α 1)) ∪ (B : Set (X α 1))) := by
-      exact IsClopen.union A.is_clopen B.is_clopen
-    -- Need to show C has infinitely many maximal rank points
-    -- Since A and B are disjoint moieties, and X α 1 has infinitely many maximal rank points,
-    -- the complement C must also have infinitely many maximal rank points
-    sorry  -- This requires showing that X α 1 has sufficiently many maximal rank points
-  
-  -- The key observation: C = (C \ h(A)) ∪ (C \ h(B)) ∪ (C ∩ h(A ∪ B))
-  -- At least one of C \ h(A) or C \ h(B) must contain infinitely many maximal rank points
-  -- If both contain only finitely many, then C would have only finitely many maximal rank points
-  -- (since h(A ∪ B) is the image of a moiety and hence has the same cardinality structure)
-  
-  -- By pigeonhole principle on infinite sets, at least one of C \ h(A) or C \ h(B) 
-  -- contains infinitely many maximal rank points
-  sorry  -- This requires developing the theory of infinite partitions and maximal rank points
+lemma galvin_partition {α : Ordinal.{u}} (_h : H α 1) (_A _B : TopologicalMoiety α)
+  (_hAB : (_A : Set (X α 1)) ∩ (_B : Set (X α 1)) = ∅) :
+  let C := ((_A : Set (X α 1)) ∪ (_B : Set (X α 1)))ᶜ
+  (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (_h.toFun '' (_A : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) ∨
+  (∃ M : TopologicalMoiety α, (M : Set (X α 1)) ⊆ C ∧ (_h.toFun '' (_B : Set (X α 1))) ∩ C ⊆ (M : Set (X α 1))) := by
+  sorry
 
 end Galvin
 

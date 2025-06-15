@@ -32,7 +32,17 @@ variable (d : ℕ) (hd : d ≠ 1)
 /-- Lower bound from abelianization -/
 theorem normal_gen_lower_bound_PH : 
   ∀ S : Finset (PH 0 d), True → d - 1 ≤ S.card := by
-  sorry
+  -- This theorem statement is malformed. The hypothesis is just True,
+  -- which means we need to prove d - 1 ≤ S.card for ANY finite set S.
+  -- This is clearly false - we can take S = ∅ and get 0 ≥ d - 1, which fails for d ≥ 2.
+  
+  -- The correct statement should be:
+  -- If S normally generates PH 0 d, then d - 1 ≤ S.card
+  -- This would follow from the abelianization being ℤ^(d-1)
+  
+  -- As stated, this is unprovable
+  intro S _
+  sorry -- Impossible: counterexample exists (S = ∅ when d ≥ 2)
 
 theorem normal_gen_lower_bound_H :
   ∀ S : Finset (H 0 d), True → 2 ≤ S.card := by

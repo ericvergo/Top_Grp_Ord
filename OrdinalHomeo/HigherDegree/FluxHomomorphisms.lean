@@ -55,26 +55,27 @@ theorem O_k_finite (k : Fin (d - 1)) (Ω : Fin (d - 1) → Set (X α d))
   -- The key is that h is continuous and nextToMaximalRankElements is discrete
   -- This means h can only move finitely many elements of nextToMaximalRankElements
   
-  -- The set O_k is a subset of nextToMaximalRankElements ∩ Ω k
+  -- The set O_k is a subset of nextToMaximalRankElements
   have h_sub : O_k k Ω h ⊆ nextToMaximalRankElements α d := by
     intro x hx
     simp only [O_k, Set.mem_setOf_eq] at hx
     exact hx.1.2
   
-  -- In ordinal topology, nextToMaximalRankElements forms a discrete set
-  -- whose closure adds only the maximal rank elements
-  -- Since h is continuous and fixes maximal rank elements,
-  -- it can only move finitely many next-to-maximal rank elements
+  -- Key insight: In ordinal topology, nextToMaximalRankElements is discrete
+  -- Each point n ∈ nextToMaximalRankElements has a clopen neighborhood containing only n
+  -- from nextToMaximalRankElements (though it may contain lower rank points)
   
-  -- ATTEMPT 1: Direct proof using discreteness failed - need more topology setup
-  -- ATTEMPT 2: Use that continuous maps from discrete subspaces have locally constant behavior
-  -- ATTEMPT 3: The key insight from the paper - h can only move finitely many elements
-  -- because of continuity and the fact that nextToMaximalRankElements accumulates only at
-  -- maximal rank points, which h fixes
+  -- Since h is continuous and fixes all maximal rank elements,
+  -- for each maximal rank element μ, h maps some neighborhood of μ to a neighborhood of μ
+  -- The only elements of nextToMaximalRankElements that can be moved by h
+  -- are those in a bounded region near the maximal rank elements
   
-  -- This requires developing the topology of ordinals more carefully
-  -- In particular, showing that nextToMaximalRankElements is discrete in its subspace topology
-  sorry
+  -- Proof sketch:
+  -- 1. Show nextToMaximalRankElements has discrete subspace topology
+  -- 2. Use continuity of h at maximal rank points (which are fixed)
+  -- 3. Conclude only finitely many next-to-maximal rank elements can be moved
+  
+  sorry -- Requires: ordinal topology theory and analysis of discrete subspaces
 
 theorem I_k_finite (k : Fin (d - 1)) (Ω : Fin (d - 1) → Set (X α d))
   (h : PH α d) : (I_k k Ω h).Finite := by

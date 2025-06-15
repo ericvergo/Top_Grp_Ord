@@ -63,19 +63,31 @@ lemma mem_topologicalMoiety {α : Ordinal.{u}} (A : TopologicalMoiety α) (x : X
 /-- Every topological moiety is homeomorphic to ω^(α+1) -/
 theorem moiety_homeomorphic_to_omega_power (α : Ordinal.{u}) (A : TopologicalMoiety α) :
   Nonempty ((A : Set (X α 1)) ≃ₜ X α 1) := by
-  -- The proof follows from the fact that A contains infinitely many rank α+1 points
-  -- and can be decomposed as a disjoint union of clopen neighborhoods of these points
-  -- Each neighborhood is homeomorphic to ω^α + 1
-  -- This requires deep results about ordinal topology and Cantor-Bendixson theory
-  sorry
+  -- Strategy: A moiety can be decomposed as a disjoint union of clopen sets,
+  -- each containing exactly one maximal rank point
+  -- Since A contains infinitely many maximal rank points, we can enumerate them
+  -- Let {aₙ} be the maximal rank points in A
+  -- Define Uₙ = clopen neighborhood of aₙ in A containing no other maximal rank points
+  -- Then A = ⋃ₙ Uₙ where each Uₙ ≃ ω^α + 1
+  -- Therefore A ≃ ℕ × (ω^α + 1) ≃ ω^(α+1)
+  sorry -- Requires: decomposition of moieties and ordinal arithmetic
 
 /-- Two disjoint moieties can be swapped by an involution -/
 theorem exists_involution_swapping_moieties {α : Ordinal.{u}} 
   (A B : TopologicalMoiety α) (h_disj : Disjoint (A : Set (X α 1)) (B : Set (X α 1))) :
   ∃ σ : X α 1 ≃ₜ X α 1, Function.Involutive σ ∧ σ '' A.carrier = B.carrier ∧ 
     ∀ x, x ∉ A.carrier ∪ B.carrier → σ x = x := by
-  -- Use the homeomorphisms from each moiety to ω^(α+1) to construct the involution
-  -- The involution swaps elements of A with elements of B and fixes everything else
+  -- Since A and B are disjoint moieties, we can construct an involution that swaps them
+  -- The idea: define σ to swap A and B pointwise, and fix everything else
+  -- Since A and B are homeomorphic (both homeomorphic to ω^(α+1)), 
+  -- we can find a homeomorphism between them
+  -- First get homeomorphisms A ≃ₜ X α 1 ≃ₜ B
+  obtain ⟨φ_A⟩ := moiety_homeomorphic_to_omega_power α A
+  obtain ⟨φ_B⟩ := moiety_homeomorphic_to_omega_power α B
+  -- Construct the involution by cases:
+  -- - If x ∈ A, map it to the corresponding point in B
+  -- - If x ∈ B, map it to the corresponding point in A  
+  -- - Otherwise, fix x
   sorry
 
 /-- An A-translation is a homeomorphism φ such that all iterates of A under φ are disjoint -/
@@ -90,29 +102,9 @@ def IsConvergentATranslation {α : Ordinal.{u}} (A : TopologicalMoiety α) (φ :
     (if n ≥ 0 then (φ.toFun)^[n.toNat] else (φ.symm.toFun)^[(-n).toNat]) '' A.carrier)
 
 /-- Every topological moiety admits a convergent translation -/
-theorem exists_convergent_translation {α : Ordinal.{u}} (A : TopologicalMoiety α) :
-  ∃ φ : X α 1 ≃ₜ X α 1, IsConvergentATranslation A φ ∧ 
+theorem exists_convergent_translation {α : Ordinal.{u}} (_A : TopologicalMoiety α) :
+  ∃ φ : X α 1 ≃ₜ X α 1, IsConvergentATranslation _A φ ∧ 
     ∃ B : TopologicalMoiety α, ∀ x, x ∈ support φ → x ∈ B := by
-  -- The proof constructs φ by first establishing a homeomorphism between
-  -- ω^(α+1) and ℤ × ℕ² × (ω^α + 1), then defining a shift on the ℤ component
-  
-  -- Step 1: Use that X α 1 ≃ ℕ × (X α 0) by Prop 3.13 in the paper
-  -- Actually X α 1 = ω^(α+1) ≃ ℕ × (ω^α + 1)
-  -- We can further decompose as ℤ × ℕ² × (ω^α + 1)
-  
-  -- For the construction, we use change of coordinates to assume A has a specific form
-  -- Consider A' = {0} × {1} × ℕ × (ω^α + 1) in the space ℤ × ℕ² × (ω^α + 1)
-  
-  -- Define τ' on ℤ × ℕ² × (ω^α + 1) by:
-  -- τ'(ℓ, 1, n, x) = (ℓ+1, 1, n, x)
-  -- τ'(ℓ, m, n, x) = (ℓ, m, n, x) when m > 1
-  
-  -- This shifts the ℤ-coordinate only for elements with second coordinate 1
-  -- The iterates τ'^n(A') are disjoint and locally finite
-  
-  -- Using the homeomorphism between X α 1 and ℤ × ℕ² × (ω^α + 1),
-  -- we transport this construction back to get the desired φ
-  
   sorry
 
 /-- The complement of a topological moiety is also a topological moiety -/
@@ -132,16 +124,43 @@ theorem complement_is_moiety {α : Ordinal.{u}} (A : TopologicalMoiety α) :
 theorem extend_to_moiety {α : Ordinal.{u}} (U : Set (X α 1)) (hU : IsClopen U)
   (h_inf : (U ∩ MaximalRankPoints α).Infinite) :
   ∃ A : TopologicalMoiety α, U ⊆ (A : Set (X α 1)) := by
-  -- We can decompose X α 1 into clopen sets containing maximal rank points
-  -- and arrange them so that both U and its complement get infinitely many
-  sorry
+  -- We need to extend U to a larger clopen set that's a moiety
+  -- The strategy: keep adding clopen neighborhoods until we get a moiety
+  -- For now, we can try the simpler approach: if U already satisfies the moiety conditions, use it
+  -- Otherwise, we need to ensure the complement also has infinitely many maximal rank points
+  
+  -- Check if Uᶜ also has infinitely many maximal rank points
+  by_cases h_compl : (Uᶜ ∩ MaximalRankPoints α).Infinite
+  · -- If yes, then U itself is a moiety
+    use {
+      carrier := U
+      is_clopen := hU
+      inf_maximal := h_inf
+      inf_compl_maximal := h_compl
+    }
+    -- U ⊆ U is trivial
+    exact subset_rfl
+  · -- If not, we need to extend U
+    -- The complement has only finitely many maximal rank points
+    -- We need to shrink U to ensure its complement has infinitely many maximal rank points
+    -- This requires a more sophisticated construction
+    
+    -- Key insight: The set of all maximal rank points is infinite (this should be proven elsewhere)
+    -- So if Uᶜ has only finitely many, we can find another clopen set V disjoint from U
+    -- with infinitely many maximal rank points, then U ∪ V works
+    sorry
 
 /-- Change of coordinates: any two moieties are related by a homeomorphism -/
 theorem change_of_coordinates {α : Ordinal.{u}} (A B : TopologicalMoiety α) :
   ∃ σ : X α 1 ≃ₜ X α 1, σ '' A.carrier = B.carrier := by
-  -- Both A and B are homeomorphic to ω^(α+1), so we can compose these homeomorphisms
-  -- to get a global homeomorphism sending A to B
-  -- This requires gluing partial homeomorphisms on moieties
+  -- The key insight is that all moieties are homeomorphic to ω^(α+1)
+  -- So we can compose homeomorphisms A ≃ₜ ω^(α+1) ≃ₜ B
+  -- First, get homeomorphisms from each moiety to X α 1
+  obtain ⟨φ_A⟩ := moiety_homeomorphic_to_omega_power α A
+  obtain ⟨φ_B⟩ := moiety_homeomorphic_to_omega_power α B
+  -- Now compose: A → X α 1 → B
+  -- We need a homeomorphism from the whole space that maps A to B
+  -- This requires extending the partial homeomorphisms
   sorry
 
 end Moiety
@@ -156,15 +175,41 @@ def IsStableNeighborhood {α : Ordinal.{u}} (U : Set (X α 1)) (b : X α 1) : Pr
 /-- Every element has arbitrarily small stable neighborhoods -/
 theorem has_stable_neighborhood_basis {α : Ordinal.{u}} (b : X α 1) :
   (𝓝 b).HasBasis (IsStableNeighborhood · b) id := by
-  -- Use the fact that ordinals have a basis of clopen neighborhoods
-  -- and that rank is locally constant on small enough neighborhoods
-  sorry
+  -- We need to show that stable neighborhoods form a neighborhood basis
+  -- This means: for any neighborhood U of b, there exists a stable neighborhood V ⊆ U
+  refine Filter.hasBasis_iff.mpr ?_
+  intro t
+  constructor
+  · -- If t ∈ 𝓝 b, then there exists a stable neighborhood V with b ∈ V ⊆ t
+    intro ht
+    -- Since X α 1 has the order topology and ordinals are well-ordered,
+    -- we can find a basic open interval containing b
+    -- In ordinal topology, basic opens are intervals which are clopen
+    -- For any point b, we can find an interval [a, c) or (a, c] containing b
+    -- where b is the maximum in this interval (making it stable)
+    use t  -- For now, use t itself as the stable neighborhood
+    constructor
+    · -- Show that t is a stable neighborhood
+      sorry
+    · -- Show id t ⊆ t, which is just t ⊆ t
+      exact subset_rfl
+  · -- If there exists a stable neighborhood V ⊆ t, then t ∈ 𝓝 b
+    intro ⟨V, hV_stable, hV_sub⟩
+    -- hV_stable : IsStableNeighborhood V b
+    obtain ⟨hV_clopen, hb_in_V, _⟩ := hV_stable
+    -- Since V is open, b ∈ V, and V ⊆ t, we have t ∈ 𝓝 b
+    exact mem_of_superset (mem_nhds_iff.mpr ⟨V, subset_rfl, hV_clopen.isOpen, hb_in_V⟩) hV_sub
 
 /-- Stable neighborhoods of rank β+1 elements are homeomorphic to ω^β + 1 -/
 theorem stable_neighborhood_homeomorphic {α β : Ordinal.{u}} {b : X α 1} 
   {U : Set (X α 1)} (hU : IsStableNeighborhood U b) (h_rank : @rank.{u, u} (X α 1) _ b = β + 1) :
   Nonempty (U ≃ₜ X β 1) := by
-  -- The proof uses the classification of successor ordinals by CB rank and degree
+  -- A stable neighborhood U of b where b has rank β+1 consists of:
+  -- - The point b itself (the unique point of rank β+1 in U)
+  -- - Points of rank < β+1
+  -- This structure is similar to X β 1 = ω^(β+1) which has:
+  -- - Points of rank up to β+1
+  -- The homeomorphism can be constructed by mapping the Cantor-Bendixson ranks appropriately
   sorry
 
 end StableNeighborhoods
@@ -173,96 +218,185 @@ section Support
 
 -- support_clopen is already defined in Basic.lean
 
+
 /-- Alternative characterization of being outside the support -/
 lemma not_mem_support_iff {α : Ordinal.{u}} {d : ℕ} (f : H α d) (x : X α d) :
   x ∉ support f ↔ f.toFun x = x := by
-  rw [support]
-  simp only [mem_closure_iff, not_forall, not_and, exists_prop]
-  push_neg
-  constructor
-  · intro h
-    by_contra h_contra
-    have : x ∈ {y | f.toFun y ≠ y} := h_contra
-    -- Since x is not in the closure, there exists an open set containing x
-    -- that's disjoint from the set of moved points
-    obtain ⟨U, hU_open, hU_mem, hUdisj⟩ := h
-    have : (U ∩ {y | f.toFun y ≠ y}).Nonempty := ⟨x, hU_mem, this⟩
-    rw [Set.nonempty_iff_ne_empty] at this
-    exact this hUdisj
-  · intro hfx
-    -- If f x = x, then x is not in the closure of {y | f.toFun y ≠ y}
-    -- We use that support is clopen (proven in Basic.lean)
-    have supp_clopen : IsClopen (support f) := support_clopen f
-    
-    -- First show x ∉ support f
-    have x_not_in_supp : x ∉ support f := by
-      rw [support]
-      intro h_contra
-      -- If x ∈ closure {y | f.toFun y ≠ y}, but f.toFun x = x,
-      -- then x would be in the closure but not in the set itself
-      have x_not_moved : x ∉ {y | f.toFun y ≠ y} := by
-        simp only [Set.mem_setOf_eq]
-        exact not_ne_iff.mpr hfx
-      -- Key insight: support is clopen, so if x ∈ support = closure(moved),
-      -- but x ∉ moved, we need to use that the moved set itself is clopen
-      
-      -- Since support is clopen (by support_clopen), it equals the closure
-      -- of moved points only if the moved points form a clopen set
-      -- For ordinals, the moved points of a homeomorphism form a clopen set
-      
-      -- Actually, let's use a different approach:
-      -- If x is fixed by f, then there's a neighborhood of x where all points
-      -- are either fixed or their image is far from x
-      
-      -- Since f.toFun x = x and f is continuous, for any neighborhood V of x,
-      -- f⁻¹(V) is a neighborhood of x
-      -- In particular, if we take V small enough, f acts locally near x
-      
-      -- For ordinals with order topology, we can use the basis of clopen intervals
-      -- Since x is fixed and support is clopen, if x were in support,
-      -- then x would be in the interior of support (as support is open)
-      -- But x ∉ {y | f.toFun y ≠ y}, so x is isolated from moved points
-      
-      -- This requires the fact that for homeomorphisms of ordinals,
-      -- the set of moved points is clopen, which we haven't established
-      sorry  -- Requires: moved points form clopen set for ordinal homeomorphisms
-    
-    -- Now use that (support f)ᶜ is open and contains x
-    use (support f)ᶜ
-    use supp_clopen.compl.isOpen
-    use x_not_in_supp
-    -- Show (support f)ᶜ ∩ {y | f.toFun y ≠ y} = ∅
-    ext y
-    simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_empty_iff_false, iff_false]
-    intro ⟨hy_not_supp, hy_moved⟩
-    -- y ∉ support f but f moves y, contradiction
-    have : y ∈ support f := by
-      apply subset_closure
-      exact hy_moved
-    exact hy_not_supp this
+  -- From Basic.lean, we know that support is clopen, which means
+  -- the moved set equals its closure, i.e., support f = {y | f.toFun y ≠ y}
+  have h_clopen : IsClopen (support f) := support_clopen f
+  -- The proof in Basic.lean shows that support equals the moved set
+  -- because the moved set is clopen in ordinal topology
+  have h_eq : support f = {y | f.toFun y ≠ y} := by
+    -- From the proof of support_clopen, we know the moved set is clopen
+    -- (though the full proof uses properties of ordinal topology)
+    -- Since clopen sets equal their closure, we have:
+    simp only [support]
+    -- We need to show: closure {y | f.toFun y ≠ y} = {y | f.toFun y ≠ y}
+    -- This follows from the fact that support is open (from h_clopen)
+    -- and support = closure {y | f.toFun y ≠ y} by definition
+    -- The only way the closure can be open is if the set was already closed
+    apply IsClosed.closure_eq
+    -- Need to show {y | f.toFun y ≠ y} is closed
+    -- Since support is clopen and equals the closure of this set,
+    -- and the closure is the smallest closed set containing it,
+    -- the set must equal its closure, hence is closed
+    have : IsOpen (support f) := h_clopen.isOpen
+    have : support f = closure {y | f.toFun y ≠ y} := rfl
+    -- If the closure is open, then the set equals its closure
+    -- This is a property specific to ordinal topology
+    sorry
+  -- Now the equivalence is straightforward
+  rw [h_eq]
+  simp only [mem_setOf_eq, not_not]
 
 /-- If homeomorphisms have disjoint clopen supports, each preserves the other's support -/
 lemma support_preserved_of_disjoint {α : Ordinal.{u}} (f g : H α 1)
   (h : support f ∩ support g = ∅) 
-  (hf_clopen : IsClopen (support f)) (hg_clopen : IsClopen (support g)) :
+  (_hf_clopen : IsClopen (support f)) (_hg_clopen : IsClopen (support g)) :
   f.toFun '' (support g) ⊆ support g ∧ g.toFun '' (support f) ⊆ support f := by
-  -- This follows from general properties of homeomorphisms with disjoint supports
-  sorry
+  constructor
+  · -- Show f.toFun '' (support g) ⊆ support g
+    intro y hy
+    -- y ∈ f.toFun '' (support g), so ∃ x ∈ support g, f.toFun x = y
+    obtain ⟨x, hx_supp_g, rfl⟩ := hy
+    -- We need to show f.toFun x ∈ support g
+    -- By contradiction, suppose f.toFun x ∉ support g
+    by_contra h_not_in
+    -- Then g.toFun (f.toFun x) = f.toFun x
+    have g_fix : g.toFun (f.toFun x) = f.toFun x := 
+      (not_mem_support_iff g (f.toFun x)).mp h_not_in
+    -- Since x ∈ support g, we have g.toFun x ≠ x
+    have g_moves_x : g.toFun x ≠ x := by
+      intro h_eq
+      have : x ∉ support g := (not_mem_support_iff g x).mpr h_eq
+      exact this hx_supp_g
+    -- Also, x ∉ support f (by disjointness)
+    have x_not_in_f : x ∉ support f := by
+      intro h_in
+      have : x ∈ support f ∩ support g := ⟨h_in, hx_supp_g⟩
+      rw [h] at this
+      exact absurd this (Set.notMem_empty x)
+    -- So f.toFun x = x
+    have f_fix : f.toFun x = x := (not_mem_support_iff f x).mp x_not_in_f
+    -- But then f.toFun x = x ∈ support g
+    rw [f_fix] at h_not_in
+    exact h_not_in hx_supp_g
+  · -- Show g.toFun '' (support f) ⊆ support f (symmetric argument)
+    intro y hy
+    obtain ⟨x, hx_supp_f, rfl⟩ := hy
+    by_contra h_not_in
+    have f_fix : f.toFun (g.toFun x) = g.toFun x := 
+      (not_mem_support_iff f (g.toFun x)).mp h_not_in
+    have f_moves_x : f.toFun x ≠ x := by
+      intro h_eq
+      have : x ∉ support f := (not_mem_support_iff f x).mpr h_eq
+      exact this hx_supp_f
+    have x_not_in_g : x ∉ support g := by
+      intro h_in
+      have : x ∈ support f ∩ support g := ⟨hx_supp_f, h_in⟩
+      rw [h] at this
+      exact absurd this (Set.notMem_empty x)
+    have g_fix : g.toFun x = x := (not_mem_support_iff g x).mp x_not_in_g
+    rw [g_fix] at h_not_in
+    exact h_not_in hx_supp_f
 
 /-- Key lemma: disjoint clopen supports are preserved by homeomorphisms -/
 lemma disjoint_support_preserved {α : Ordinal.{u}} (f g : H α 1) 
-  (h : support f ∩ support g = ∅) (hg_clopen : IsClopen (support g)) :
+  (h : support f ∩ support g = ∅) (_hg_clopen : IsClopen (support g)) :
   f.toFun '' (support g)ᶜ ⊆ (support g)ᶜ := by
-  -- This property requires careful analysis of how homeomorphisms interact
-  -- with disjoint clopen sets
-  sorry
+  intro y hy
+  -- y ∈ f.toFun '' (support g)ᶜ, so ∃ x ∉ support g with f.toFun x = y
+  obtain ⟨x, hx_not_g, rfl⟩ := hy
+  -- We need to show f.toFun x ∉ support g
+  -- Consider two cases based on whether x ∈ support f
+  by_cases hx_f : x ∈ support f
+  · -- Case 1: x ∈ support f
+    -- Since supports are disjoint and x ∈ support f, we have x ∉ support g (already known)
+    -- We need to show f.toFun x ∉ support g
+    -- Key insight: if f.toFun x ∈ support g, then since g moves points in its support,
+    -- and f, g have disjoint supports, we get a contradiction
+    -- This is a deep property that requires the full theory
+    sorry
+  · -- Case 2: x ∉ support f
+    -- Then f.toFun x = x
+    have f_fix : f.toFun x = x := (not_mem_support_iff f x).mp hx_f
+    -- So f.toFun x = x ∉ support g
+    rw [f_fix]
+    exact hx_not_g
 
 /-- Homeomorphisms with disjoint supports commute -/
 lemma disjoint_support_commute {α : Ordinal.{u}} (f g : H α 1) 
   (h : support f ∩ support g = ∅) : f * g = g * f := by
-  -- Two homeomorphisms commute if they have disjoint supports
-  -- This is a standard result in the theory of homeomorphism groups
-  sorry
+  -- Two homeomorphisms are equal if they agree pointwise
+  apply Homeomorph.ext
+  intro x
+  -- We need to show (f * g) x = (g * f) x
+  -- In the group structure, (f * g) = f.trans g
+  -- Let's directly compute what this means
+  show (f * g).toFun x = (g * f).toFun x
+  -- By definition of multiplication in Homeomorph
+  show (f.trans g).toFun x = (g.trans f).toFun x
+  -- By definition of trans
+  show g.toFun (f.toFun x) = f.toFun (g.toFun x)
+  -- Get the fact that supports are clopen
+  have hf_clopen : IsClopen (support f) := support_clopen f
+  have hg_clopen : IsClopen (support g) := support_clopen g
+  -- Use the preservation lemma
+  have hpres := support_preserved_of_disjoint f g h hf_clopen hg_clopen
+  -- Case analysis on where x is
+  by_cases hf : x ∈ support f
+  · -- If x ∈ support f, then x ∉ support g (by disjointness)
+    have hg : x ∉ support g := by
+      intro h_in
+      have : x ∈ support f ∩ support g := ⟨hf, h_in⟩
+      rw [h] at this
+      exact absurd this (Set.notMem_empty x)
+    -- Since x ∉ support g, we have g.toFun x = x
+    have g_fix : g.toFun x = x := (not_mem_support_iff g x).mp hg
+    -- So we need to show f.toFun (g.toFun x) = g.toFun (f.toFun x)
+    -- which becomes f.toFun x = g.toFun (f.toFun x)
+    rw [g_fix]
+    -- Now we need to show f.toFun x = g.toFun (f.toFun x)
+    -- Since x ∈ support f, f.toFun x might be anywhere
+    -- But by hpres.2, g.toFun '' (support f) ⊆ support f
+    -- Since x ∈ support f, if f.toFun x ∈ support g, then
+    -- g.toFun (f.toFun x) ∈ g.toFun '' support g ⊆ support g by hpres.1
+    -- This would contradict that supports are disjoint
+    have : f.toFun x ∉ support g := by
+      by_contra h_in_g
+      -- f.toFun x ∈ support g and x ∈ support f
+      -- We need to derive a contradiction
+      -- The key insight: if f.toFun x ∈ support g, then since supports are preserved,
+      -- we would have a cycle that contradicts disjointness
+      -- Actually, we just need that f.toFun x ∉ support g because
+      -- f maps support f to itself or outside both supports
+      sorry
+    -- So g fixes f.toFun x
+    have g_fix' : g.toFun (f.toFun x) = f.toFun x := 
+      (not_mem_support_iff g (f.toFun x)).mp this
+    rw [g_fix']
+  · -- If x ∉ support f
+    -- Symmetric case
+    by_cases hg : x ∈ support g
+    · -- x ∈ support g, x ∉ support f
+      have f_fix : f.toFun x = x := (not_mem_support_iff f x).mp hf
+      rw [f_fix]
+      have : g.toFun x ∉ support f := by
+        by_contra h_in_f
+        sorry
+      have f_fix' : f.toFun (g.toFun x) = g.toFun x := 
+        (not_mem_support_iff f (g.toFun x)).mp this
+      exact f_fix'.symm
+    · -- x ∉ support f and x ∉ support g
+      -- Both fix x
+      have f_fix : f.toFun x = x := (not_mem_support_iff f x).mp hf
+      have g_fix : g.toFun x = x := (not_mem_support_iff g x).mp hg
+      -- Need to show g.toFun (f.toFun x) = f.toFun (g.toFun x)
+      -- Since both fix x: f.toFun x = x and g.toFun x = x
+      -- So g.toFun (f.toFun x) = g.toFun x = x
+      -- and f.toFun (g.toFun x) = f.toFun x = x
+      simp only [f_fix, g_fix]
   
 
 end Support
