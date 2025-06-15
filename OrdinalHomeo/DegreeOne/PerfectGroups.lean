@@ -46,6 +46,34 @@ structure UniformlyPerfect (G : Type*) [Group G] where
 noncomputable def commutatorWidth (G : Type*) [Group G] : ℕ :=
   sInf {k : ℕ | ∃ (up : UniformlyPerfect G), up.k = k}  -- Minimum k for uniform perfectness
 
+/-- The commutator trick: Building commutators from translations -/
+lemma commutator_trick {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
+  (hSupp : support h ⊆ (A : Set (X α 1))) 
+  (τ : H α 1) (hτ : IsConvergentATranslation A τ) :
+  ∃ σ : H α 1, h = ⁅σ, τ⁆ := by
+  -- The standard commutator trick: define σ = Σ_{n≥0} τⁿ h τ⁻ⁿ
+  -- Since τ is a convergent A-translation and h is supported in A,
+  -- the conjugates τⁿ h τ⁻ⁿ have disjoint supports and form a locally finite family
+  
+  -- We need to construct σ as an infinite product of conjugates
+  -- For ordinals, we can work directly with the homeomorphism
+  
+  -- Define the sequence of conjugates
+  let conjugates (n : ℕ) : H α 1 := τ^n * h * τ^(-n : ℤ)
+  
+  -- The key properties we need:
+  -- 1. The supports of conjugates are disjoint
+  -- 2. The family of supports is locally finite
+  -- 3. This allows us to define the infinite product
+  
+  -- For now, we assume we can construct such an infinite product
+  -- In the actual formalization, this would require:
+  -- - Showing local finiteness of the conjugate supports
+  -- - Using the compact-open topology to define the limit
+  -- - Verifying that [σ, τ] = h
+  
+  sorry -- This requires formalizing infinite products in the homeomorphism group
+
 /-- Elements supported in moieties can be written as single commutators -/
 lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
   (hSupp : support h ⊆ (A : Set (X α 1))) :
@@ -54,15 +82,13 @@ lemma moiety_supported_is_commutator {α : Ordinal.{u}} {h : H α 1} (A : Topolo
   obtain ⟨τ, hτ_trans, ⟨B, hB_moiety⟩⟩ := exists_convergent_translation A
   -- τ is a convergent A-translation supported in moiety B
   -- Apply commutator_trick to get h = ⁅σ, τ⁆ for some σ
-  obtain ⟨σ, hσ⟩ := commutator_trick A hSupp τ hτ_trans
-  use σ, τ
-  exact hσ
+  sorry -- TODO: Complete using commutator_trick once it's proven
 
 /-- Main theorem: Homeo(ω^(α+1)) is uniformly perfect with width ≤ 3 -/
 theorem homeo_uniformly_perfect (α : Ordinal.{u}) : 
   ∃ (up : UniformlyPerfect (H α 1)), up.k ≤ 3 := by
   -- We'll show every element can be written as at most 3 commutators
-  use {
+  refine ⟨{
     k := 3
     uniform_bound := fun h => by
       -- Apply Galvin's lemma to fragment h into at most 3 pieces
@@ -90,35 +116,28 @@ theorem homeo_uniformly_perfect (α : Ordinal.{u}) :
         | ⟨1, _⟩ => (σ₂, τ₂)
         | ⟨2, _⟩ => (σ₃, τ₃)
       -- Show h equals the product of these commutators
+      rw [h_eq, h₁, h₂, h₃]
+      -- Now we need to show ⁅σ₁, τ₁⁆ * ⁅σ₂, τ₂⁆ * ⁅σ₃, τ₃⁆ equals the product
+      -- First, let's understand what List.ofFn produces for our function
+      suffices h_list : (List.ofFn (fun i : Fin 3 => ⁅(match i with
+        | ⟨0, _⟩ => (σ₁, τ₁)
+        | ⟨1, _⟩ => (σ₂, τ₂)
+        | ⟨2, _⟩ => (σ₃, τ₃)).1, (match i with
+        | ⟨0, _⟩ => (σ₁, τ₁)
+        | ⟨1, _⟩ => (σ₂, τ₂)
+        | ⟨2, _⟩ => (σ₃, τ₃)).2⁆)).prod = ⁅σ₁, τ₁⁆ * ⁅σ₂, τ₂⁆ * ⁅σ₃, τ₃⁆ by
+        exact h_list
+      -- Simplify the List.ofFn expression
       simp only [List.ofFn]
-      rw [h_eq, ← h₁, ← h₂, ← h₃]
-      -- The product of 3 commutators
-      simp [List.prod_cons, List.prod_nil]
-      rfl
-  }
-  -- Show that 3 ≤ 3
-  rfl
+      -- For Fin 3, this gives us the list of commutators applied to 0, 1, 2
+      sorry  -- TODO: Complete the computation of List.ofFn for Fin 3
+  }, le_refl 3⟩
 
 /-- Corollary: Every element can be written as at most 3 commutators -/
 theorem three_commutator_bound {α : Ordinal.{u}} (h : H α 1) :
   ∃ (c₁ c₂ c₃ : (H α 1) × (H α 1)), 
     h = ⁅c₁.1, c₁.2⁆ * ⁅c₂.1, c₂.2⁆ * ⁅c₃.1, c₃.2⁆ := by
   sorry
-
-/-- The commutator trick: Building commutators from translations -/
-lemma commutator_trick {α : Ordinal.{u}} {h : H α 1} (A : TopologicalMoiety α)
-  (hSupp : support h ⊆ (A : Set (X α 1))) 
-  (τ : H α 1) (hτ : IsConvergentATranslation A τ.toHomeomorph) :
-  ∃ σ : H α 1, h = ⁅σ, τ⁆ := by
-  -- The standard commutator trick: define σ = Σ_{n≥0} τⁿ h τ⁻ⁿ
-  -- Since τ is a convergent A-translation and h is supported in A,
-  -- the conjugates τⁿ h τ⁻ⁿ have disjoint supports and form a locally finite family
-  
-  -- First, we need to show that the infinite product converges
-  -- This uses that τ is a convergent translation, so the supports form a locally finite family
-  
-  -- For now, we construct σ directly but need to verify convergence
-  sorry -- Need to formalize infinite products and local finiteness
 
 end PerfectGroups
 

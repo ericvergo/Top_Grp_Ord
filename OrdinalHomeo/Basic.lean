@@ -348,68 +348,64 @@ lemma support_clopen {α : Ordinal.{u}} {d : ℕ} (f : H α d) :
   · -- Show support is closed (it's a closure, so this is immediate)
     exact isClosed_closure
   · -- Show support is open
-    -- The key is to show that the moved set {x | f.toFun x ≠ x} is clopen
-    -- Then since clopen sets are closed, closure equals the set itself
+    -- For ordinals with order topology, we use a key fact:
+    -- The space has a basis of clopen sets, making it zero-dimensional
     
-    -- The set of fixed points is closed
-    have fixed_closed : IsClosed {x | f.toFun x = x} := by
-      have hf : Continuous f.toFun := f.continuous_toFun
-      show IsClosed (fixedPoints f.toFun)
-      exact isClosed_fixedPoints hf
-    
-    -- The set of moved points is open (complement of closed set)
-    have moved_open : IsOpen {x | f.toFun x ≠ x} := by
-      rw [← compl_setOf]
-      exact isOpen_compl_iff.mpr fixed_closed
-    
-    -- For well-ordered spaces with order topology (like ordinals), we use the fact that
-    -- the moved set of a homeomorphism has special structure
-    have moved_closed : IsClosed {x | f.toFun x ≠ x} := by
-      -- Key insight: For homeomorphisms of well-ordered sets, if x is moved,
-      -- then there exists a least element in the orbit of x
-      -- This gives the moved set a special structure making it closed
+    -- First, let's establish that the moved set is clopen
+    have moved_clopen : IsClopen {x | f.toFun x ≠ x} := by
+      -- The key insight: For ordinals, we can use the well-ordering structure
+      -- combined with continuity of the homeomorphism
       
-      -- We'll show the complement (fixed points) is open
-      -- For any fixed point y, we can find an open neighborhood of only fixed points
-      suffices h : IsOpen {x | f.toFun x = x} by
-        -- Convert to the form we need
-        have : {x | f.toFun x ≠ x} = {x | f.toFun x = x}ᶜ := by
-          ext x
-          simp only [Set.mem_setOf_eq, Set.mem_compl_iff, ne_eq]
-        rw [this]
-        exact isClosed_compl_iff.mpr h
+      -- Step 1: The fixed point set is closed (standard result)
+      have fixed_closed : IsClosed {x | f.toFun x = x} := by
+        have hf : Continuous f.toFun := f.continuous_toFun
+        show IsClosed (fixedPoints f.toFun)
+        exact isClosed_fixedPoints hf
       
-      -- The fixed point set is open because for any fixed point y,
-      -- we can use the order structure to find a neighborhood
+      -- Step 2: The moved set is open (complement of closed)
+      have moved_open : IsOpen {x | f.toFun x ≠ x} := by
+        rw [← compl_setOf]
+        exact isOpen_compl_iff.mpr fixed_closed
       
-      -- Actually, let's use the fact that in order topology on well-ordered sets,
-      -- many natural sets have special structure.
+      -- Step 3: For the moved set to be closed, we need to use special properties
+      -- For homeomorphisms of compact Hausdorff spaces (like successor ordinals),
+      -- we can use the fact that the graph is closed and work from there
       
-      -- The key property we need is that ordinals with order topology 
-      -- have a basis of clopen sets. This is a standard fact about ordinals.
+      -- The moved set is the projection of {(x,y) : x ≠ y ∧ f x = y}
+      -- For a homeomorphism of a compact Hausdorff space, this analysis works well
       
-      -- For ordinals, we use that the topology has a basis of clopen sets
-      -- This is because ordinals with order topology are zero-dimensional
-      -- (their topology has a basis consisting of sets that are both open and closed)
+      -- Using compactness and the Hausdorff property of X α d
+      have moved_closed : IsClosed {x | f.toFun x ≠ x} := by
+        -- The set of moved points is closed in a compact Hausdorff space
+        -- This uses that f is a homeomorphism, not just continuous
+        
+        -- Key: In a compact Hausdorff space, for a homeomorphism f,
+        -- the diagonal Δ = {(x,x) : x ∈ X} is closed in X × X
+        -- and the graph of f is closed, so their complement's projection is open
+        
+        -- But actually, we need the moved set to be closed, not open
+        -- So we use a different approach
+        
+        -- For a homeomorphism of a compact Hausdorff space,
+        -- {x : f x ≠ x} = {x : d(x, f x) > 0} for any compatible metric
+        -- But ordinals might not be metrizable in general
+        
+        -- Actually, let's use the fact that for homeomorphisms,
+        -- being a fixed point is a closed condition (which we have)
+        -- so its complement (moved points) might not be closed in general
+        
+        -- For ordinals specifically, we need to use their special structure
+        -- The key is that ordinals with order topology have nice local properties
+        
+        sorry  -- This step requires deeper analysis of ordinal homeomorphisms
       
-      -- For now, we establish this key property directly for the fixed point set
-      
-      -- For ordinals, basic open sets have the form (a, b] or [0, b) 
-      -- We show that around any fixed point, we can find such a neighborhood
-      
-      -- If y is fixed by f, we want to find a clopen neighborhood of fixed points
-      -- Key insight: Use the well-ordering to find appropriate intervals
-      
-      -- Actually, let's use a more direct approach
-      -- The set of moved points for a homeomorphism of ordinals has special structure
-      sorry -- TODO: Prove ordinals have clopen basis or establish moved set structure directly
+      exact ⟨moved_closed, moved_open⟩
     
     -- Since the moved set is clopen, it equals its closure (the support)
-    have h : IsClopen {x | f.toFun x ≠ x} := ⟨moved_closed, moved_open⟩
     have : closure {x | f.toFun x ≠ x} = {x | f.toFun x ≠ x} := by
-      exact IsClosed.closure_eq h.isClosed
+      exact IsClosed.closure_eq moved_clopen.isClosed
     rw [support, this]
-    exact h.isOpen
+    exact moved_clopen.isOpen
 
 end Support
 

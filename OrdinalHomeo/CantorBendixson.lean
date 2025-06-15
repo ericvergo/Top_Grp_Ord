@@ -9,6 +9,8 @@ import Mathlib.Topology.Separation.Basic
 import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Topology.DerivedSet
 import Mathlib.Topology.ClusterPt
+import Mathlib.Topology.Order.Compact
+import Mathlib.Order.SuccPred.Basic
 
 /-!
 # Cantor-Bendixson Rank and Degree
@@ -93,7 +95,7 @@ decreasing_by
   · simp_wf
     assumption
 
-notation:max A "^(" α ")" => CantorBendixsonDerivative A α
+notation:max A "^[" α "]" => CantorBendixsonDerivative A α
 
 /-- The derived set of the empty set is empty -/
 lemma derivedSet_empty : derivedSet (∅ : Set X) = ∅ := by
@@ -121,7 +123,7 @@ lemma not_mem_derivedSet_of_disjoint_neighborhood {A : Set X} {x : X}
   exact hy
 
 lemma CB_derivative_closed [T1Space X] (α : Ordinal) (A : Set X) (hA : IsClosed A) :
-  IsClosed (A^(α)) := by
+  IsClosed (A^[α]) := by
   -- We prove by transfinite induction on α
   induction α using Ordinal.induction with
   | h β ih =>
@@ -135,25 +137,25 @@ lemma CB_derivative_closed [T1Space X] (α : Ordinal) (A : Set X) (hA : IsClosed
     · by_cases hsucc : ∃ γ, β = Order.succ γ
       · -- Successor case: CB^(succ γ)(A) = derivedSet(CB^γ(A))
         obtain ⟨γ, rfl⟩ := hsucc
-        -- By IH, A^(γ) is closed
-        have h_closed : IsClosed (A^(γ)) := ih γ (Order.lt_succ γ)
+        -- By IH, A^[γ] is closed
+        have h_closed : IsClosed (A^[γ]) := ih γ (Order.lt_succ γ)
         -- The derived set of a closed set is closed in T1 spaces
-        -- We need to show that A^(Order.succ γ) is closed
-        -- A^(Order.succ γ) = derivedSet (A^(γ)) by definition
+        -- We need to show that A^[Order.succ γ] is closed
+        -- A^[Order.succ γ] = derivedSet (A^[γ]) by definition
         unfold CantorBendixsonDerivative
         rw [if_neg (Ordinal.succ_ne_zero _)]
         have : ∃ β, Order.succ γ = Order.succ β := ⟨γ, rfl⟩
         rw [dif_pos this]
-        -- The expression is `have this := ...; derivedSet A^(choose this)`
+        -- The expression is `have this := ...; derivedSet A^[choose this]`
         -- We need to show that it's closed
         exact derivedSet_closed
       · -- Limit case: CB^β(A) = ⋂_{γ<β} CB^γ(A)
         push_neg at hsucc
         -- Intersection of closed sets is closed
-        -- We need to show that A^(β) is closed
-        -- A^(β) = ⋂_{γ<β} A^(γ) by definition (since β is limit)
-        -- For limit ordinals, A^(β) = ⋂ γ < β, A^(γ)
-        -- Each A^(γ) is closed by IH, so their intersection is closed
+        -- We need to show that A^[β] is closed
+        -- A^[β] = ⋂_{γ<β} A^[γ] by definition (since β is limit)
+        -- For limit ordinals, A^[β] = ⋂ γ < β, A^[γ]
+        -- Each A^[γ] is closed by IH, so their intersection is closed
         unfold CantorBendixsonDerivative
         rw [if_neg h0]
         have h_neg : ¬∃ β_1, β = Order.succ β_1 := by
@@ -163,13 +165,13 @@ lemma CB_derivative_closed [T1Space X] (α : Ordinal) (A : Set X) (hA : IsClosed
         exact isClosed_iInter fun γ => isClosed_iInter fun hγ => ih γ hγ
 
 lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : Set X) (hA : IsClosed A) :
-  A^(β) ⊆ A^(α) := by
+  A^[β] ⊆ A^[α] := by
   -- We prove by transfinite induction on β
   induction β using Ordinal.induction with
   | h γ ih =>
     -- Case split on whether α = γ
     by_cases hαγ : α = γ
-    · -- If α = γ, then A^(γ) ⊆ A^(α) is reflexive
+    · -- If α = γ, then A^[γ] ⊆ A^[α] is reflexive
       rw [hαγ]
     · -- If α < γ, we need to use the structure of γ
       have hlt : α < γ := lt_of_le_of_ne h hαγ
@@ -178,27 +180,27 @@ lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : 
       · -- Successor case
         obtain ⟨δ, rfl⟩ := hsucc
         have hδ : α ≤ δ := Order.le_of_lt_succ hlt
-        -- We need to show A^(Order.succ δ) ⊆ A^(α)
-        -- By definition, A^(Order.succ δ) = derivedSet (A^(δ))
+        -- We need to show A^[Order.succ δ] ⊆ A^[α]
+        -- By definition, A^[Order.succ δ] = derivedSet (A^[δ])
         -- Case split on whether α = δ or α < δ
         by_cases hαδ : α = δ
-        · -- Case α = δ: need to show derivedSet (A^(δ)) ⊆ A^(δ)
+        · -- Case α = δ: need to show derivedSet (A^[δ]) ⊆ A^[δ]
           rw [hαδ]
           -- By definition of Cantor-Bendixson derivative, derivedSet only removes points
           -- This is a standard fact about derived sets
           -- First, show that derivedSet S ⊆ S for closed sets S
           intro x hx
-          -- hx : x ∈ A^(Order.succ δ) = derivedSet (A^(δ))
-          -- Goal: x ∈ A^(δ)
-          have hclosed : IsClosed (A^(δ)) := CB_derivative_closed δ A hA
+          -- hx : x ∈ A^[Order.succ δ] = derivedSet (A^[δ])
+          -- Goal: x ∈ A^[δ]
+          have hclosed : IsClosed (A^[δ]) := CB_derivative_closed δ A hA
           -- Use the fact that for closed sets, derivedSet subset the set
-          have h_sub : derivedSet (A^(δ)) ⊆ A^(δ) := by
+          have h_sub : derivedSet (A^[δ]) ⊆ A^[δ] := by
             rw [derivedSet_eq_mathlib]
             exact (isClosed_iff_derivedSet_subset _).mp hclosed
-          -- Now unfold A^(Order.succ δ) to show it equals derivedSet (A^(δ))
-          -- By definition, A^(Order.succ δ) = derivedSet (A^(δ))
+          -- Now unfold A^[Order.succ δ] to show it equals derivedSet (A^[δ])
+          -- By definition, A^[Order.succ δ] = derivedSet (A^[δ])
           apply h_sub
-          -- Need to show x ∈ derivedSet (A^(δ))
+          -- Need to show x ∈ derivedSet (A^[δ])
           unfold CantorBendixsonDerivative at hx
           rw [if_neg (Ordinal.succ_ne_zero _)] at hx
           have hex : ∃ β, Order.succ δ = Order.succ β := ⟨δ, rfl⟩
@@ -211,13 +213,13 @@ lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : 
           exact this.symm
         · -- Case α < δ: use IH
           have hα_lt_δ : α < δ := lt_of_le_of_ne hδ hαδ
-          have h_sub : A^(δ) ⊆ A^(α) := ih δ (Order.lt_succ δ) (le_of_lt hα_lt_δ)
-          -- Need to show A^(Order.succ δ) ⊆ A^(α), i.e., derivedSet (A^(δ)) ⊆ A^(α)
-          -- We have A^(δ) ⊆ A^(α), so derivedSet (A^(δ)) ⊆ derivedSet (A^(α))
+          have h_sub : A^[δ] ⊆ A^[α] := ih δ (Order.lt_succ δ) (le_of_lt hα_lt_δ)
+          -- Need to show A^[Order.succ δ] ⊆ A^[α], i.e., derivedSet (A^[δ]) ⊆ A^[α]
+          -- We have A^[δ] ⊆ A^[α], so derivedSet (A^[δ]) ⊆ derivedSet (A^[α])
           -- Since derivedSet is monotone
-          trans derivedSet (A^(α))
-          · -- Need to show: A^(Order.succ δ) ⊆ derivedSet (A^(α))
-            -- First show A^(Order.succ δ) = derivedSet (A^(δ))
+          trans derivedSet (A^[α])
+          · -- Need to show: A^[Order.succ δ] ⊆ derivedSet (A^[α])
+            -- First show A^[Order.succ δ] = derivedSet (A^[δ])
             intro x hx
             unfold CantorBendixsonDerivative at hx
             rw [if_neg (Ordinal.succ_ne_zero _)] at hx
@@ -227,27 +229,27 @@ lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : 
               have : Order.succ δ = Order.succ (Classical.choose hex) := Classical.choose_spec hex
               have : Order.succ (Classical.choose hex) = Order.succ δ := this.symm
               exact Order.succ_eq_succ_iff.mp this
-            -- hx is of the form x ∈ (have this := ...; derivedSet A^(choose hex))
-            -- We need to show x ∈ derivedSet (A^(α))
+            -- hx is of the form x ∈ (have this := ...; derivedSet A^[choose hex])
+            -- We need to show x ∈ derivedSet (A^[α])
             apply derivedSet_mono h_sub
             convert hx
             exact heq.symm
-          · -- Need: derivedSet (A^(α)) ⊆ A^(α)
-            have hclosed_α : IsClosed (A^(α)) := CB_derivative_closed α A hA
+          · -- Need: derivedSet (A^[α]) ⊆ A^[α]
+            have hclosed_α : IsClosed (A^[α]) := CB_derivative_closed α A hA
             rw [derivedSet_eq_mathlib]
             exact (isClosed_iff_derivedSet_subset _).mp hclosed_α
       · -- Limit case
         -- CB^γ(A) = ⋂_{δ<γ} CB^δ(A)
         -- Since α < γ, CB^γ(A) ⊆ CB^α(A)
         push_neg at hsucc
-        -- We need to show A^(γ) ⊆ A^(α)
-        -- By definition, A^(γ) = ⋂ δ < γ, A^(δ) (since γ is a limit ordinal)
+        -- We need to show A^[γ] ⊆ A^[α]
+        -- By definition, A^[γ] = ⋂ δ < γ, A^[δ] (since γ is a limit ordinal)
         -- Since α < γ, we have α ∈ {δ | δ < γ}
-        -- So ⋂ δ < γ, A^(δ) ⊆ A^(α)
-        -- For limit ordinals, A^(γ) = ⋂ β < γ, A^(β) by definition
+        -- So ⋂ δ < γ, A^[δ] ⊆ A^[α]
+        -- For limit ordinals, A^[γ] = ⋂ β < γ, A^[β] by definition
         -- Since α < γ, the intersection is over a set containing α
         intro x hx
-        -- hx : x ∈ A^(γ)
+        -- hx : x ∈ A^[γ]
         -- By definition of limit case
         unfold CantorBendixsonDerivative at hx
         by_cases h0' : γ = 0
@@ -260,8 +262,8 @@ lemma CB_derivative_monotone [T1Space X] {α β : Ordinal} (h : α ≤ β) (A : 
           push_neg
           exact hsucc
         rw [dif_neg h_neg] at hx
-        -- hx : x ∈ ⋂ β < γ, A^(β)
-        -- Since α < γ, we have x ∈ A^(α)
+        -- hx : x ∈ ⋂ β < γ, A^[β]
+        -- Since α < γ, we have x ∈ A^[α]
         simp only [Set.mem_iInter] at hx
         exact hx α hlt
 
@@ -275,7 +277,7 @@ noncomputable def CantorBendixsonRank (A : Set X) : WithTop Ordinal.{v} :=
 /-- The Cantor-Bendixson degree of a compact set with finite rank -/
 noncomputable def CantorBendixsonDegree (A : Set X) [CompactSpace X] 
   (h : CantorBendixsonRank A < ⊤) : ℕ :=
-  -- The degree is the cardinality of A^(α-1) where α is the rank
+  -- The degree is the cardinality of A^[α-1] where α is the rank
   -- Since the rank is finite (not ∞), we can extract it
   match CantorBendixsonRank A, h with
   | some α, _ => 
@@ -287,25 +289,25 @@ noncomputable def CantorBendixsonDegree (A : Set X) [CompactSpace X]
       if hfin : A.Finite then hfin.toFinset.card else 0
     else if h : ∃ β, α = Order.succ β then
       -- α = β + 1 for some β
-      -- The degree is the cardinality of A^(β)
+      -- The degree is the cardinality of A^[β]
       let β := Classical.choose h
       have : α = Order.succ β := Classical.choose_spec h
-      -- A^(β) is finite and non-empty (since A^(α) = ∅ but A^(β) ≠ ∅)
-      if hfin : (A^(β)).Finite then hfin.toFinset.card else 0
+      -- A^[β] is finite and non-empty (since A^[α] = ∅ but A^[β] ≠ ∅)
+      if hfin : (A^[β]).Finite then hfin.toFinset.card else 0
     else
       -- α is a limit ordinal
       -- This shouldn't happen for finite rank in typical spaces
       0
   | none, h => absurd h (lt_irrefl ⊤)
 
-/-- The rank of a point x is the least α such that x ∉ X^(α) -/
+/-- The rank of a point x is the least α such that x ∉ X^[α] -/
 noncomputable def rank (x : X) : Ordinal.{v} :=
-  sInf {α : Ordinal.{v} | x ∉ (univ : Set X)^(α)}
+  sInf {α : Ordinal.{v} | x ∉ (univ : Set X)^[α]}
 
 -- Additional lemmas about CB derivatives
 
 /-- The CB derivative is empty iff the original set is empty (for 0th derivative) -/
-lemma CB_derivative_zero (A : Set X) : A^(0) = A := by
+lemma CB_derivative_zero (A : Set X) : A^[0] = A := by
   unfold CantorBendixsonDerivative
   simp
 
@@ -363,11 +365,86 @@ lemma derivedSet_of_finite [T1Space X] {A : Set X} (h : A.Finite) :
 
 end CantorBendixson
 
+section CompactOrdinals
+
+open Topology
+
+-- Helper lemma: ordinal intervals are compact
+lemma isCompact_ordinal_Icc (a b : Ordinal.{u}) : IsCompact (Icc a b) := by
+  -- For ordinals, closed intervals are compact
+  -- This uses the fact that ordinals with order topology have nice properties
+  -- Key insight: Icc a b in ordinals is homeomorphic to a successor ordinal
+  -- which is compact because it has a maximum element
+  by_cases hab : a ≤ b
+  · -- Case: a ≤ b, so Icc is nonempty
+    -- The interval [a,b] is order-homeomorphic to an ordinal
+    -- Specifically, it's order-isomorphic to the ordinal corresponding to
+    -- the order type of the interval
+    
+    -- Key insight: Icc a b has a maximum element (namely b)
+    -- So it's order-isomorphic to a successor ordinal
+    -- Successor ordinals are compact in their order topology
+    
+    -- We can show this by proving that Icc a b satisfies the 
+    -- topological characterization of compactness
+    
+    -- For ordinals, we can use the following approach:
+    -- 1) Icc a b is a closed subset of the ordinal space
+    -- 2) It has the subspace topology from the order topology
+    -- 3) As a well-ordered set with a maximum, it's compact
+    
+    -- Actually, let's use a more direct approach
+    -- The set Icc a b is homeomorphic to a closed bounded interval
+    -- in a well-ordered space, which is compact
+    
+    sorry -- This requires showing successor ordinals are compact
+  · -- Case: b < a, so Icc is empty
+    simp only [not_le] at hab
+    rw [Set.Icc_eq_empty_of_lt hab]
+    exact isCompact_empty
+
+-- We need to show ordinals satisfy CompactIccSpace
+instance ordinalSpace_compactIccSpace : CompactIccSpace (Ordinal.{u}) := by
+  -- Use our helper lemma
+  refine CompactIccSpace.mk' fun {a b} _ => isCompact_ordinal_Icc a b
+
+/-- Successor ordinals are compact in the order topology -/
+instance ordinalSpace_compactSpace (α : Ordinal.{u}) (hα : SuccessorOrdinal α) : 
+  CompactSpace (OrdinalSpace α) := by
+  -- A successor ordinal α = β + 1 for some β
+  obtain ⟨β, rfl⟩ := hα
+  
+  -- The key insight: OrdinalSpace (β + 1) is the same as
+  -- the ordinal β + 1 with its order topology
+  -- This space has a maximum element (corresponding to β itself)
+  
+  -- We need to show CompactSpace (OrdinalSpace (Order.succ β))
+  -- This is equivalent to showing the whole space is compact
+  
+  -- Since OrdinalSpace (Order.succ β) is homeomorphic to 
+  -- Iic β in the ordinal space, we can use that fact
+  
+  -- Actually, let's use a more direct approach
+  -- The space OrdinalSpace (Order.succ β) can be viewed as
+  -- the set of ordinals less than Order.succ β
+  
+  sorry -- This requires showing that ordinals ≤ β form a compact space
+
+/-- The space X α d is compact -/
+instance (α : Ordinal.{u}) (d : ℕ) : CompactSpace (X α d) := by
+  -- X α d = OrdinalSpace (ω^(α+1)·d + 1)
+  -- and ω^(α+1)·d + 1 is a successor ordinal
+  have h : SuccessorOrdinal ((ω : Ordinal.{u})^(α+1) * (d : Ordinal.{u}) + 1) := by
+    use (ω : Ordinal.{u})^(α+1) * (d : Ordinal.{u})
+    rfl
+  exact ordinalSpace_compactSpace _ h
+
+end CompactOrdinals
+
 section OrdinalCantorBendixson
 
 /-- The CB rank of ω^(α+1)·d + 1 is α + 2 -/
-theorem CB_rank_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0) 
-  [CompactSpace (X α d)] :
+theorem CB_rank_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0) :
   ∃ β : Ordinal.{u}, CantorBendixsonRank (univ : Set (X α d)) = ↑β ∧ β = α + 2 := by
   -- X α d = ω^(α+1)·d + 1 is a successor ordinal
   -- By Proposition in the paper: CB rank = successor of limit capacity
@@ -376,8 +453,8 @@ theorem CB_rank_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0)
   
   -- This is a deep theorem about ordinal topology that requires:
   -- 1. Computing CB derivatives explicitly for ordinal spaces
-  -- 2. Showing (univ)^(α+2) = ∅
-  -- 3. Showing (univ)^(α+1) ≠ ∅ and consists of exactly d points
+  -- 2. Showing (univ)^[α+2] = ∅
+  -- 3. Showing (univ)^[α+1] ≠ ∅ and consists of exactly d points
   -- 4. Understanding the relationship between Cantor normal form and CB rank
   
   -- The proof uses transfinite induction and properties of ordinal arithmetic
@@ -385,7 +462,6 @@ theorem CB_rank_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0)
 
 /-- The CB degree of ω^(α+1)·d + 1 is d -/
 theorem CB_degree_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0) 
-  [CompactSpace (X α d)] 
   (h_rank : CantorBendixsonRank (univ : Set (X α d)) < ⊤) :
   CantorBendixsonDegree (univ : Set (X α d)) h_rank = d := by
   -- By the paper: CB degree = coefficient
@@ -397,7 +473,7 @@ theorem CB_degree_successor_ordinal (α : Ordinal.{u}) (d : ℕ) (hd : d ≠ 0)
   
   -- This theorem requires:
   -- 1. Knowing that CB rank is α + 2 (from previous theorem)
-  -- 2. Computing that (univ)^(α+1) = {maximal rank elements}
+  -- 2. Computing that (univ)^[α+1] = {maximal rank elements}
   -- 3. Showing there are exactly d maximal rank elements
   
   sorry
@@ -412,11 +488,11 @@ lemma rank_classification (α : Ordinal.{u}) (x : X α 1) :
   constructor
   · intro h_rank
     -- If rank x = α + 1, then x must be the maximal rank element
-    -- By definition, rank x is the least β such that x ∉ (univ)^(β)
-    -- So x ∈ (univ)^(α+1) but x ∉ (univ)^(α+2)
+    -- By definition, rank x is the least β such that x ∉ (univ)^[β]
+    -- So x ∈ (univ)^[α+1] but x ∉ (univ)^[α+2]
     
-    -- From CB_rank_successor_ordinal, we know (univ)^(α+2) = ∅
-    -- and (univ)^(α+1) contains only maximal rank elements
+    -- From CB_rank_successor_ordinal, we know (univ)^[α+2] = ∅
+    -- and (univ)^[α+1] contains only maximal rank elements
     
     -- Therefore x must be a maximal rank element
     sorry
@@ -427,11 +503,11 @@ lemma rank_classification (α : Ordinal.{u}) (x : X α 1) :
     -- but are removed in the (α+2)-th derivative
     
     unfold rank
-    -- We need to show sInf {β | x ∉ (univ)^(β)} = α + 1
+    -- We need to show sInf {β | x ∉ (univ)^[β]} = α + 1
     
     -- Key facts:
-    -- 1. x ∈ (univ)^(α+1) (maximal elements survive α+1 derivatives)
-    -- 2. x ∉ (univ)^(α+2) (all elements are gone after α+2 derivatives)
+    -- 1. x ∈ (univ)^[α+1] (maximal elements survive α+1 derivatives)
+    -- 2. x ∉ (univ)^[α+2] (all elements are gone after α+2 derivatives)
     
     sorry
 
@@ -451,7 +527,6 @@ theorem rank_determines_structure (α : Ordinal.{u}) (x : X α 1) :
   -- Use that X α 1 has CB rank α + 2
   -- Every point has rank less than the space's CB rank
   have h_space_rank : ∃ β : Ordinal.{u}, CantorBendixsonRank (univ : Set (X α 1)) = ↑β ∧ β = α + 2 := by
-    haveI : CompactSpace (X α 1) := inferInstance  -- X α 1 is compact as it's a successor ordinal
     apply CB_rank_successor_ordinal α 1 (by norm_num : 1 ≠ 0)
     
   obtain ⟨β, hβ_eq, hβ_val⟩ := h_space_rank
@@ -467,23 +542,22 @@ theorem rank_determines_structure (α : Ordinal.{u}) (x : X α 1) :
     -- The space has CB rank β means eventually the derivatives are empty
     -- But we can't directly iterate CantorBendixsonDerivative β times for ordinal β
     -- This requires understanding how CB rank works for ordinals
-    sorry -- Need proper handling of transfinite CB derivatives
-      
     -- Since x ∈ univ, and (univ)^β = ∅, x must have disappeared before stage β
     -- This means rank x < β
-    sorry -- Need to formalize the connection between rank and derivatives
+    sorry -- Need proper handling of transfinite CB derivatives and connection between rank and derivatives
     
   -- Therefore rank x ≤ α + 1
   rw [hβ_val] at h_bound
   -- h_bound : rank x < α + 2
   -- Since α + 2 is the successor of α + 1 for ordinals
   -- and rank is an ordinal, rank x < α + 2 means rank x ≤ α + 1
-  sorry -- Need proper ordinal successor reasoning
+  -- This is a standard ordinal arithmetic fact
+  sorry -- rank x < α + 2 implies rank x ≤ α + 1
 
 -- Helper lemmas for understanding ordinal structure
 
 /-- Points in X α d correspond to ordinals less than ω^(α+1)·d + 1 -/
-lemma point_characterization {α : Ordinal.{u}} {d : ℕ} (x : X α d) :
+lemma point_characterization {α : Ordinal.{u}} {d : ℕ} (_ : X α d) :
   True := by 
   -- X α d is defined as OrdinalSpace (ω^(α+1)·d + 1)
   -- So points correspond to ordinals less than this bound
