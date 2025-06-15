@@ -46,7 +46,7 @@ theorem presentation_relations (d : ℕ) (_ : d ≠ 1) :
   ∃ (_ : SemidirectPresentation d), True := ⟨⟨()⟩, trivial⟩
 
 /-- The abelianization of PH_{0,d} is ℤ^{d-1} -/
-theorem abelianization_PH_0d (hd : d ≠ 1) : 
+theorem abelianization_PH_0d (_hd : d ≠ 1) : 
   True := by
   -- The actual statement would be:
   -- ∃ iso : (PH 0 d) ⧸ commutatorSubgroup (PH 0 d) ≃* (Fin (d - 1) → ℤ)
@@ -55,7 +55,7 @@ theorem abelianization_PH_0d (hd : d ≠ 1) :
   trivial  -- Placeholder: requires proper quotient group setup and flux homomorphism
 
 /-- The abelianization of H_{0,d} is ℤ/2ℤ × ℤ/2ℤ -/
-theorem abelianization_H_0d (hd : d ≠ 1) :
+theorem abelianization_H_0d (_hd : d ≠ 1) :
   True := by
   -- The actual statement would be:
   -- ∃ iso : (H 0 d) ⧸ commutatorSubgroup (H 0 d) ≃* (Fin 2 → ZMod 2)
